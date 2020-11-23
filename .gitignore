@@ -2,6 +2,7 @@ tests/unit/report/
 tests/unit/.temp/
 tests/unit/bin/
 export
+export/*
 tests/unit/src/TestSuite.hx
 dump
 .vscode
