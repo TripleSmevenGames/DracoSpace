@@ -9,6 +9,35 @@ import views.GameMapView;
 
 class PlayState extends FlxState
 {
+	static inline var SCROLL_SPEED = 25;
+
+	private function updateMovement()
+	{
+		var up:Bool = false;
+		var down:Bool = false;
+		var left:Bool = false;
+		var right:Bool = false;
+
+		up = FlxG.keys.anyPressed([UP, W]);
+		down = FlxG.keys.anyPressed([DOWN, S]);
+		left = FlxG.keys.anyPressed([LEFT, A]);
+		right = FlxG.keys.anyPressed([RIGHT, D]);
+
+		if (up && down)
+			up = down = false;
+		if (left && right)
+			left = right = false;
+
+		if (up)
+			FlxG.camera.scroll.y -= SCROLL_SPEED;
+		else if (down)
+			FlxG.camera.scroll.y += SCROLL_SPEED;
+		else if (left)
+			FlxG.camera.scroll.x -= SCROLL_SPEED;
+		else if (right)
+			FlxG.camera.scroll.x += SCROLL_SPEED;
+	}
+
 	override public function create()
 	{
 		#if debug
@@ -24,7 +53,7 @@ class PlayState extends FlxState
 		map.print();
 		#end
 
-		var mapView = new GameMapView(map, 50, FlxG.height / 2);
+		var mapView = new GameMapView(map, 50, FlxG.height / 3);
 		add(mapView);
 
 		// add some stuff to see border
@@ -40,5 +69,6 @@ class PlayState extends FlxState
 			// Mouse wheel logic goes here, for example zooming in / out:
 			FlxG.camera.scroll.x += (FlxG.mouse.wheel * 50);
 		}
+		updateMovement();
 	}
 }

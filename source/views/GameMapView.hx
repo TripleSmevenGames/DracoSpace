@@ -3,6 +3,7 @@ package views;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import models.GameMap.Node;
@@ -34,6 +35,13 @@ class NodeSprite extends FlxSprite
 			default:
 				color = FlxColor.GRAY;
 		}
+
+		// add mouse listeners to the node sprite
+		function onMouseOver(sprite:FlxSprite)
+		{
+			trace('Moused over node');
+		}
+		FlxMouseEventManager.add(this, null, null, onMouseOver);
 
 		makeGraphic(64, 64, color);
 	}
