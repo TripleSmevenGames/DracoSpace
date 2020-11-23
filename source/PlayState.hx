@@ -1,7 +1,9 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.util.FlxColor;
 import models.GameMap;
 import views.GameMapView;
 
@@ -14,13 +16,20 @@ class PlayState extends FlxState
 		#else
 		trace('normal mode');
 		#end
+
 		super.create();
 		var map = new GameMap();
+
 		#if debug
 		map.print();
 		#end
-		var mapView = new GameMapView(map);
+
+		var mapView = new GameMapView(map, 50, FlxG.height / 2);
 		add(mapView);
+
+		// add some stuff to see border
+		add(new FlxSprite(0, 0).makeGraphic(100, 10, FlxColor.GRAY));
+		add(new FlxSprite(0, FlxG.height).makeGraphic(100, 10, FlxColor.GRAY));
 	}
 
 	override public function update(elapsed:Float)
