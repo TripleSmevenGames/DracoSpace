@@ -2,7 +2,8 @@ package views;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.group.FlxGroup.FlxTypedGroup;
+import flixel.group.FlxSpriteGroup.FlxTypedSpriteGroup;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
 import models.GameMap.Node;
@@ -35,28 +36,38 @@ class NodeSprite extends FlxSprite
 				color = FlxColor.GRAY;
 		}
 
-		makeGraphic(16, 16, color);
+		// add mouse listeners to the node sprite
+		function onMouseOver(sprite:FlxSprite)
+		{
+			trace('Moused over node');
+		}
+		FlxMouseEventManager.add(this, null, null, onMouseOver);
+
+		makeGraphic(64, 64, color);
 	}
 }
 
-class GameMapView extends FlxTypedGroup<FlxSprite>
+class GameMapView extends FlxTypedSpriteGroup<FlxSprite>
 {
 	var gameMap:GameMap;
 
 	static inline var COL_WIDTH = 200;
-	static inline var NODE_GAP = 50;
+	static inline var COL_HEIGHT = 500;
 
-	public function new(gameMap:GameMap)
+	public function new(gameMap:GameMap, x:Float = 0, y:Float = 0)
 	{
-		super();
+		super(x, y);
 		this.gameMap = gameMap;
 
 		for (i in 0...gameMap.columns.length)
 		{
-			for (j in 0...gameMap.columns[i].length)
+			var column = gameMap.columns[i];
+			for (j in 0...column.length)
 			{
-				var node:Node = gameMap.columns[i][j];
-				var nodeView = new NodeSprite(node, i * COL_WIDTH + 50, j * NODE_GAP);
+				var node:Node = column[j];
+				var xCoord = i * COL_WIDTH + 50;
+				var yCoord = (COL_HEIGHT / (column.length + 1) * (j + 1));
+				var nodeView = new NodeSprite(node, xCoord, yCoord);
 				add(nodeView);
 			}
 		}
