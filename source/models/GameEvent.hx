@@ -40,6 +40,25 @@ class BattleEvent implements GameEvent
 	}
 }
 
+class BossEvent implements GameEvent
+{
+	public var name:String;
+	public var enemy:Enemy;
+
+	public var type:GameEventType = BOSS;
+
+	public static function sample()
+	{
+		return new BossEvent('Sample Boss', new SlimeEnemy(1));
+	}
+
+	public function new(name:String, enemy:Enemy)
+	{
+		this.name = name;
+		this.enemy = enemy;
+	}
+}
+
 class TreasureEvent implements GameEvent
 {
 	public var name:String;
