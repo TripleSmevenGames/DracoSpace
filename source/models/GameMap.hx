@@ -25,7 +25,6 @@ class GameMap
 
 	public function print()
 	{
-		var retVal:String;
 		for (i in 0...size)
 		{
 			var traceVal:String = '';
@@ -55,13 +54,19 @@ class GameMap
 				var node = new Node(0, new HomeEvent('Home'));
 				column.push(node);
 			}
+			// create the boss node in the last column
+			else if (i == size - 1)
+			{
+				var node = new Node(0, BossEvent.sample());
+				column.push(node);
+			}
 			// for every other column after...
 			else
 			{
 				// create this column's 2-4 nodes
 				for (i in 0...random.int(2, 4))
 				{
-					// get a random even for this node
+					// get a random event for this node
 					var event:GameEvent;
 					var randInt = random.int(0, 2);
 					switch (randInt)

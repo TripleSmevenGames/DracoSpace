@@ -30,11 +30,11 @@ class PlayState extends FlxState
 
 		if (up)
 			FlxG.camera.scroll.y -= SCROLL_SPEED;
-		else if (down)
+		if (down)
 			FlxG.camera.scroll.y += SCROLL_SPEED;
-		else if (left)
+		if (left)
 			FlxG.camera.scroll.x -= SCROLL_SPEED;
-		else if (right)
+		if (right)
 			FlxG.camera.scroll.x += SCROLL_SPEED;
 	}
 
@@ -53,12 +53,12 @@ class PlayState extends FlxState
 		map.print();
 		#end
 
-		var mapView = new GameMapView(map, 50, FlxG.height / 3);
+		var mapView = new GameMapView(map, 50, 0);
 		add(mapView);
 
 		// add some stuff to see border
 		add(new FlxSprite(0, 0).makeGraphic(100, 10, FlxColor.GRAY));
-		add(new FlxSprite(0, FlxG.height).makeGraphic(100, 10, FlxColor.GRAY));
+		add(new FlxSprite(FlxG.width, FlxG.height - 100).makeGraphic(10, 100, FlxColor.GRAY));
 	}
 
 	override public function update(elapsed:Float)
