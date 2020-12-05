@@ -146,6 +146,8 @@ class GameMapView extends FlxSpriteGroup
 	var columnSprites = new Array<ColumnSprite>();
 	// flattened column sprites
 	var nodeSprites = new Array<NodeSprite>();
+	//Current Node
+	var currentNode: NodeSprite;
 
 	public var eventView:EventView;
 
@@ -201,9 +203,15 @@ class GameMapView extends FlxSpriteGroup
 
 	public function visit(nodeSprite:NodeSprite)
 	{
-		markHere(nodeSprite);
-		eventView.showEvent(nodeSprite.node.event);
-		this.active = false;
+		if(currentNode.connectedNodesId.contains(nodeSprite.id))
+		{
+			currentNode = nodeSprite;
+			markHere(nodeSprite);
+			eventView.showEvent(nodeSprite.node.event);
+			this.active = false;
+
+		}
+		else trace("Please click on a node in the next column!");
 	}
 
 	// draw lines between every node and its connected nodes in the next column
@@ -276,6 +284,8 @@ class GameMapView extends FlxSpriteGroup
 		add(new FlxSprite(0, 0).makeGraphic(100, 10, FlxColor.GREEN));
 		add(new FlxSprite(0, this.height).makeGraphic(100, 10, FlxColor.GREEN));
 		drawConnectingLines();
+		currentNode = nodeSprites[0];
+		markHere(currentNode);
 	}
 
 	override function update(elapsed:Float)
