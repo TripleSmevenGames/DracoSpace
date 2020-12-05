@@ -3,41 +3,15 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
 import models.GameMap;
+import views.BattleView;
+import views.EventView;
 import views.GameMapView;
 
 class PlayState extends FlxState
 {
-	static inline var SCROLL_SPEED = 25;
-
-	private function updateMovement()
-	{
-		var up:Bool = false;
-		var down:Bool = false;
-		var left:Bool = false;
-		var right:Bool = false;
-
-		up = FlxG.keys.anyPressed([UP, W]);
-		down = FlxG.keys.anyPressed([DOWN, S]);
-		left = FlxG.keys.anyPressed([LEFT, A]);
-		right = FlxG.keys.anyPressed([RIGHT, D]);
-
-		if (up && down)
-			up = down = false;
-		if (left && right)
-			left = right = false;
-
-		if (up)
-			FlxG.camera.scroll.y -= SCROLL_SPEED;
-		if (down)
-			FlxG.camera.scroll.y += SCROLL_SPEED;
-		if (left)
-			FlxG.camera.scroll.x -= SCROLL_SPEED;
-		if (right)
-			FlxG.camera.scroll.x += SCROLL_SPEED;
-	}
-
 	override public function create()
 	{
 		#if debug
@@ -47,28 +21,28 @@ class PlayState extends FlxState
 		#end
 
 		super.create();
-		var map = new GameMap();
 
 		#if debug
-		map.print();
 		#end
 
-		var mapView = new GameMapView(map, 50, 0);
+		var battleView = new BattleView();
+		var eventView = new EventView(battleView);
+		var mapView = new GameMapView(50, 100, eventView);
 		add(mapView);
+		add(eventView);
+		add(battleView);
+		// keeps views in view of the camera;
+		eventView.scrollFactor.set(0, 0);
+		battleView.scrollFactor.set(0, 0);
 
-		// add some stuff to see border
-		add(new FlxSprite(0, 0).makeGraphic(100, 10, FlxColor.GRAY));
-		add(new FlxSprite(FlxG.width, FlxG.height - 100).makeGraphic(10, 100, FlxColor.GRAY));
+		FlxG.camera.minScrollX = 0;
+		FlxG.camera.maxScrollX = 5000; // arbitrary
+		FlxG.camera.minScrollY = 0;
+		FlxG.camera.maxScrollY = 1000;
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-		if (FlxG.mouse.wheel != 0)
-		{
-			// Mouse wheel logic goes here, for example zooming in / out:
-			FlxG.camera.scroll.x += (FlxG.mouse.wheel * 50);
-		}
-		updateMovement();
 	}
 }
