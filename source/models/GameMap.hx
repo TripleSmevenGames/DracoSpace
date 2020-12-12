@@ -2,6 +2,7 @@ package models;
 
 import constants.Constants.MapGenerationConsts;
 import flixel.math.FlxRandom;
+import flixel.util.FlxSave;
 import haxe.Exception;
 import models.events.*;
 import utils.GameUtils;
@@ -27,6 +28,9 @@ class Node
 class GameMap
 {
 	public var columns:Array<Column>;
+
+	// reference to the global RNG
+	var random:FlxRandom;
 
 	public function print()
 	{
@@ -102,7 +106,6 @@ class GameMap
 
 	function fillVariableNodes(variableNodes:Array<Node>)
 	{
-		var random = new FlxRandom();
 		// add a treasure somewhere in the first half.
 		var nodeInd = random.int(0, Math.round(variableNodes.length / 2) - 1);
 		variableNodes[nodeInd].event = TreasureEvent.sample();
@@ -138,7 +141,6 @@ class GameMap
 
 	function connectNodes()
 	{
-		var random = new FlxRandom();
 		for (i in 0...columns.length - 1)
 		{
 			var column = columns[i];
@@ -185,7 +187,13 @@ class GameMap
 
 	public function new(numColumns:Int = 18)
 	{
-		// nodes that are empty at first. We will fill them with an event after creation
+		this.random = GameUtils.rng;
+
+		trace('generated map with seed ${random.currentSeed}');
+		GameUtils.save.data.seed = random.currentSeed;
+
+		// nodes that are empty until the end. We will fill them with an event after we
+		// fill in the pre determined nodes (e.g. the starting home node)
 		var variableNodes = new Array<Node>();
 		var idCounter = 0;
 

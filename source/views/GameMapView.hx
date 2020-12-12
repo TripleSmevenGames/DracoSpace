@@ -20,8 +20,8 @@ class NodeSprite extends FlxTypedSpriteGroup<FlxSprite>
 	public var id:Int;
 	public var connectedNodesId:Array<Int>;
 	// relative to parent
-	public var xCoord:Float;
-	public var yCoord:Float;
+	public var relativeX:Float;
+	public var relativeY:Float;
 
 	var gameMapView:GameMapView;
 
@@ -72,8 +72,8 @@ class NodeSprite extends FlxTypedSpriteGroup<FlxSprite>
 	public function new(node:Node, x:Float = 0, y:Float = 0, mapView:GameMapView)
 	{
 		super(x, y);
-		this.xCoord = x;
-		this.yCoord = y;
+		this.relativeX = x;
+		this.relativeY = y;
 		this.node = node;
 		this.id = node.id;
 		this.connectedNodesId = node.connectedNodesId;
@@ -146,8 +146,8 @@ class GameMapView extends FlxSpriteGroup
 	var columnSprites = new Array<ColumnSprite>();
 	// flattened column sprites
 	var nodeSprites = new Array<NodeSprite>();
-	//Current Node
-	var currentNode: NodeSprite;
+	// Current Node
+	var currentNode:NodeSprite;
 
 	public var eventView:EventView;
 
@@ -203,15 +203,13 @@ class GameMapView extends FlxSpriteGroup
 
 	public function visit(nodeSprite:NodeSprite)
 	{
-		if(currentNode.connectedNodesId.contains(nodeSprite.id))
+		if (currentNode.connectedNodesId.contains(nodeSprite.id))
 		{
 			currentNode = nodeSprite;
 			markHere(nodeSprite);
 			eventView.showEvent(nodeSprite.node.event);
 			this.active = false;
-
 		}
-		else trace("Please click on a node in the next column!");
 	}
 
 	// draw lines between every node and its connected nodes in the next column
@@ -225,7 +223,8 @@ class GameMapView extends FlxSpriteGroup
 			for (id in nodeSprite.node.connectedNodesId)
 			{
 				var otherNodeSprite = nodeSprites[id];
-				connectingLinesScreen.drawLine(nodeSprite.xCoord, nodeSprite.yCoord, otherNodeSprite.xCoord, otherNodeSprite.yCoord, lineStyle, drawStyle);
+				connectingLinesScreen.drawLine(nodeSprite.relativeX, nodeSprite.relativeY, otherNodeSprite.relativeX, otherNodeSprite.relativeY, lineStyle,
+					drawStyle);
 			}
 		}
 	}
@@ -234,7 +233,7 @@ class GameMapView extends FlxSpriteGroup
 	{
 		super(x, y);
 
-		this.gameMap = new GameMap();
+		this.gameMap = new GameMap(18);
 		this.eventView = eventView;
 		this.eventView.exitCallback = function()
 		{

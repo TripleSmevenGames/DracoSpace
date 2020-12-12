@@ -1,7 +1,5 @@
 package models.player;
 
-import flixel.math.FlxRandom;
-import haxe.Exception;
 import models.cards.Card;
 
 typedef Cards = Array<Card>;

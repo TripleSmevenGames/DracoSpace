@@ -3,14 +3,15 @@ package ui;
 import constants.Constants.UIMeasurements.*;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
+import utils.GameUtils;
 import utils.ViewUtils;
 
-// represents either a drawpile or discard pile. Or maybe another pile in the future (exiled cards?)
+// represents either a drawpile or discard pile during battle. Or maybe another pile in the future (exiled cards?)
+// used with DeckSprite.
 class CardPile extends FlxSpriteGroup
 {
 	public var pileName:String;
@@ -66,7 +67,7 @@ class CardPile extends FlxSpriteGroup
 
 	public function shuffle()
 	{
-		new FlxRandom().shuffle(cards);
+		GameUtils.rng.shuffle(cards);
 	}
 
 	public function new(x:Int = 0, y:Int = 0, color:FlxColor, ?pileName:String = 'unnamed pile')

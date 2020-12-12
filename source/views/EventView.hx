@@ -1,7 +1,9 @@
 package views;
 
+import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
@@ -9,18 +11,20 @@ import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
 import models.events.BattleEvent;
 import models.events.GameEvent;
+import ui.buttons.EventButton;
 import utils.ViewUtils;
 
 // this overlays the map. Triggers when you visit a node.
 class EventView extends FlxSpriteGroup
 {
-	// the overlay that should cover the entire camera
+	// the overlay that should cover the entire camera, dimming the map behind it.
 	var screen:FlxSprite;
 
 	var titleSprite:FlxText;
 	var descSprite:FlxText;
-	var battleButton:FlxButton;
-	var exitButton:FlxButton;
+	var windowSprite:FlxUI9SliceSprite;
+	var battleButton:EventButton;
+	var exitButton:EventButton;
 
 	var battleView:BattleView;
 
@@ -28,7 +32,10 @@ class EventView extends FlxSpriteGroup
 
 	public var event:GameEvent;
 
-	function onClickExit(_)
+	// how many pixels below the screen midpoint that the choices start rendering from.
+	static inline final CHOICES_TOP = 200;
+
+	function onClickExit()
 	{
 		if (!active)
 			return;
@@ -37,7 +44,7 @@ class EventView extends FlxSpriteGroup
 		exitCallback();
 	}
 
-	function onClickBattle(_)
+	function onClickBattle()
 	{
 		if (!active)
 			return;
@@ -50,10 +57,17 @@ class EventView extends FlxSpriteGroup
 
 	function centerSprites()
 	{
-		ViewUtils.centerSprite(titleSprite, Math.round(screen.width / 2), Math.round(screen.height / 2) - 200);
-		ViewUtils.centerSprite(descSprite, Math.round(screen.width / 2), Math.round(screen.height / 2));
-		ViewUtils.centerSprite(battleButton, Math.round(screen.width / 2), Math.round(screen.height / 2) + 100);
-		ViewUtils.centerSprite(exitButton, Math.round(screen.width / 2), Math.round(screen.height / 2) + 200);
+		var centerX = Math.round(screen.width / 2);
+		var centerY = Math.round(screen.height / 2);
+		ViewUtils.centerSprite(titleSprite, centerX, centerY - 200);
+		ViewUtils.centerSprite(descSprite, centerX, centerY);
+		ViewUtils.centerSprite(windowSprite, centerX, centerY);
+
+		var choiceButtons = [battleButton, exitButton];
+		for (i in 0...choiceButtons.length)
+		{
+			ViewUtils.centerSprite(choiceButtons[i], centerX, centerY + CHOICES_TOP + (i * 35));
+		}
 	}
 
 	// called by GameMapView to show the event screen over itself
@@ -81,7 +95,11 @@ class EventView extends FlxSpriteGroup
 
 		screen = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(0, 0, 0, 200));
 		add(screen);
+		// I think this prevents clicks from "bleeding" through the screen
 		FlxMouseEventManager.add(screen, null, null, null, null, false);
+
+		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.space__png, new Rectangle(0, 0, 1000, 600), [8, 8, 40, 40]);
+		add(windowSprite);
 
 		titleSprite = new FlxText(0, 0, 0, 'title');
 		titleSprite.setFormat(AssetPaths.DOSWin__ttf, 32);
@@ -91,15 +109,11 @@ class EventView extends FlxSpriteGroup
 		descSprite.setFormat(AssetPaths.DOSWin__ttf, 24);
 		add(descSprite);
 
-		battleButton = new FlxButton(0, 0, 'Battle');
-		exitButton = new FlxButton(0, 0, 'Exit');
+		battleButton = new EventButton('Battle', onClickBattle);
+		exitButton = new EventButton('Exit', onClickExit);
 
 		add(battleButton);
 		add(exitButton);
-		FlxMouseEventManager.add(exitButton, null, null, null, null, false);
-		FlxMouseEventManager.setMouseClickCallback(exitButton, onClickExit);
-		FlxMouseEventManager.add(battleButton, null, null, null, null, false);
-		FlxMouseEventManager.setMouseClickCallback(battleButton, onClickBattle);
 
 		centerSprites();
 		visible = false;

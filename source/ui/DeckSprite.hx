@@ -5,7 +5,6 @@ import flixel.FlxSprite;
 import flixel.addons.ui.FlxUIButton;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
