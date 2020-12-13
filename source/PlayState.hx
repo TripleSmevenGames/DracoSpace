@@ -4,8 +4,11 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.math.FlxRandom;
 import flixel.util.FlxColor;
+import flixel.util.FlxSave;
 import models.GameMap;
+import utils.GameUtils;
 import views.BattleView;
 import views.EventView;
 import views.GameMapView;
@@ -22,8 +25,9 @@ class PlayState extends FlxState
 
 		super.create();
 
-		#if debug
-		#end
+		// you must set up the rng before anything other views.
+		var seed:Null<Int> = GameUtils.save.data.seed;
+		GameUtils.rng = new FlxRandom(seed);
 
 		var battleView = new BattleView();
 		var eventView = new EventView(battleView);
@@ -44,5 +48,7 @@ class PlayState extends FlxState
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
+		if (FlxG.keys.anyPressed([ESCAPE]))
+			FlxG.switchState(new MenuState());
 	}
 }

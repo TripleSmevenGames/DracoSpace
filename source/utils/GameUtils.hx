@@ -1,37 +1,24 @@
 package utils;
 
 import flixel.math.FlxRandom;
+import flixel.util.FlxSave;
 import haxe.Exception;
 
+// utility functions and globals for game logic.
 class GameUtils
 {
-	public static function weightedPick<T>(items:Array<T>, weights:Array<Int>)
+	// global RNG to use throughout a run
+	public static var rng:FlxRandom;
+
+	// global save object
+	public static var save:FlxSave;
+
+	public static function weightedPick<T>(items:Array<T>, weights:Array<Float>)
 	{
-		if (items.length != weights.length || items.length == 0 || weights.length == 0)
+		if (items.length != weights.length)
 		{
-			throw new Exception('bad weighted pick');
+			throw new Exception('items and weights not same length');
 		}
-		if (items.length == 1)
-		{
-			return items[0];
-		}
-		var sum = 0;
-		for (weight in weights)
-		{
-			sum += weight;
-		}
-		var pick = new FlxRandom().int(1, sum);
-		for (i in 0...items.length)
-		{
-			if (pick <= weights[i])
-			{
-				return items[i];
-			}
-			else
-			{
-				pick -= weights[i];
-			}
-		}
-		throw new Exception('weighted pick got to end');
+		return items[rng.weightedPick(weights)];
 	}
 }

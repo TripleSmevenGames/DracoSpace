@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxNestedSprite;
 import flixel.util.FlxColor;
 
+// utils for handling sprites and views.
 class ViewUtils
 {
 	public static function centerNestedSprite(sprite:FlxNestedSprite, x:Int = 0, y:Int = 0)
@@ -13,6 +14,7 @@ class ViewUtils
 	}
 
 	// make sure to center first before add()'ing the sprite!!! Or else it wont work!!
+	// bested used to center sprites inside sprite groups.
 	public static function centerSprite(sprite:FlxSprite, x:Int = 0, y:Int = 0)
 	{
 		sprite.x = x - (sprite.width / 2);
