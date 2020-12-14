@@ -1,12 +1,15 @@
-package views;
+package substates;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxSubState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.GameMap;
+import utils.GameController;
+import utils.SubStateManager;
 import utils.ViewUtils;
 
 using flixel.util.FlxSpriteUtil;
@@ -14,7 +17,7 @@ using flixel.util.FlxSpriteUtil;
 typedef ColumnSprite = Array<NodeSprite>;
 
 // represents on node on the map view
-class NodeSprite extends FlxTypedSpriteGroup<FlxSprite>
+class NodeSprite extends FlxSpriteGroup
 {
 	public var node:Node;
 	public var id:Int;
@@ -79,7 +82,6 @@ class NodeSprite extends FlxTypedSpriteGroup<FlxSprite>
 		this.connectedNodesId = node.connectedNodesId;
 		this.gameMapView = mapView;
 		this.visited = false;
-		active = false;
 
 		var color:FlxColor;
 		var nodeType = node.event.type;
@@ -134,7 +136,7 @@ class NodeSprite extends FlxTypedSpriteGroup<FlxSprite>
 		add(tooltip);
 		tooltip.visible = false;
 
-		FlxMouseEventManager.add(nodeBody, null, null, null, null, true);
+		FlxMouseEventManager.add(nodeBody, null, null, null, null, false);
 		here = false;
 	}
 }
@@ -144,50 +146,21 @@ class GameMapView extends FlxSpriteGroup
 {
 	var gameMap:GameMap;
 	var columnSprites = new Array<ColumnSprite>();
-	// flattened column sprites
+
+	// flattened version of columnSprites
 	var nodeSprites = new Array<NodeSprite>();
+
 	// Current Node
 	var currentNode:NodeSprite;
 
-	public var eventView:EventView;
-
+	// large sprite that draws the lines connecting the nodes
 	var connectingLinesScreen:FlxSprite;
+
+	// reference to global sub state manager
+	var ssm:SubStateManager;
 
 	static inline final COL_WIDTH = 200;
 	static inline final COL_HEIGHT = 600;
-	static inline var SCROLL_SPEED = 25;
-
-	private function updateMovement()
-	{
-		var up:Bool = false;
-		var down:Bool = false;
-		var left:Bool = false;
-		var right:Bool = false;
-
-		up = FlxG.keys.anyPressed([UP, W]);
-		down = FlxG.keys.anyPressed([DOWN, S]);
-		left = FlxG.keys.anyPressed([LEFT, A]);
-		right = FlxG.keys.anyPressed([RIGHT, D]);
-
-		if (up && down)
-			up = down = false;
-		if (left && right)
-			left = right = false;
-
-		if (up)
-			FlxG.camera.scroll.y -= SCROLL_SPEED;
-		if (down)
-			FlxG.camera.scroll.y += SCROLL_SPEED;
-		if (left)
-			FlxG.camera.scroll.x -= SCROLL_SPEED;
-		if (right)
-			FlxG.camera.scroll.x += SCROLL_SPEED;
-
-		if (FlxG.mouse.wheel != 0)
-		{
-			FlxG.camera.scroll.x -= (FlxG.mouse.wheel * 100);
-		}
-	}
 
 	public function markHere(nodeSprite:NodeSprite)
 	{
@@ -207,8 +180,7 @@ class GameMapView extends FlxSpriteGroup
 		{
 			currentNode = nodeSprite;
 			markHere(nodeSprite);
-			eventView.showEvent(nodeSprite.node.event);
-			this.active = false;
+			ssm.initEvent(nodeSprite.node.event);
 		}
 	}
 
@@ -229,16 +201,12 @@ class GameMapView extends FlxSpriteGroup
 		}
 	}
 
-	public function new(x:Float = 0, y:Float = 0, eventView:EventView)
+	public function new(x:Float = 0, y:Float = 0)
 	{
 		super(x, y);
 
 		this.gameMap = new GameMap(18);
-		this.eventView = eventView;
-		this.eventView.exitCallback = function()
-		{
-			this.active = true;
-		}
+		this.ssm = GameController.subStateManager;
 
 		// add this screen first, so the connecting lines will be under the nodes
 		this.connectingLinesScreen = new FlxSprite(0, 0);
@@ -286,10 +254,78 @@ class GameMapView extends FlxSpriteGroup
 		currentNode = nodeSprites[0];
 		markHere(currentNode);
 	}
+}
+
+// a substate containing the map view
+class MapSubState extends FlxSubState
+{
+	var view:GameMapView;
+
+	static inline final SCROLL_SPEED = 25;
+
+	override public function create()
+	{
+		super.create();
+		view = new GameMapView(50, 100);
+		add(view);
+		remove(view, true);
+		view = new GameMapView(50, 100);
+		add(view);
+	}
+
+	public function readd()
+	{
+		remove(view, true);
+		view = new GameMapView(50, 100);
+		add(view);
+	}
+
+	function updateMovement()
+	{
+		var up:Bool = false;
+		var down:Bool = false;
+		var left:Bool = false;
+		var right:Bool = false;
+
+		up = FlxG.keys.anyPressed([UP, W]);
+		down = FlxG.keys.anyPressed([DOWN, S]);
+		left = FlxG.keys.anyPressed([LEFT, A]);
+		right = FlxG.keys.anyPressed([RIGHT, D]);
+
+		if (up && down)
+			up = down = false;
+		if (left && right)
+			left = right = false;
+
+		if (up)
+			FlxG.camera.scroll.y -= SCROLL_SPEED;
+		if (down)
+			FlxG.camera.scroll.y += SCROLL_SPEED;
+		if (left)
+			FlxG.camera.scroll.x -= SCROLL_SPEED;
+		if (right)
+			FlxG.camera.scroll.x += SCROLL_SPEED;
+
+		if (FlxG.mouse.wheel != 0)
+		{
+			FlxG.camera.scroll.x -= (FlxG.mouse.wheel * 100);
+		}
+
+		if (FlxG.keys.anyJustPressed([T]))
+		{
+			readd();
+		}
+	}
 
 	override function update(elapsed:Float)
 	{
 		super.update(elapsed);
 		updateMovement();
+	}
+
+	override public function destroy()
+	{
+		super.destroy();
+		// view.destroy();
 	}
 }
