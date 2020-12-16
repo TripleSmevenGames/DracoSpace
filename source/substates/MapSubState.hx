@@ -136,7 +136,7 @@ class NodeSprite extends FlxSpriteGroup
 		add(tooltip);
 		tooltip.visible = false;
 
-		FlxMouseEventManager.add(nodeBody, null, null, null, null, false);
+		FlxMouseEventManager.add(nodeBody);
 		here = false;
 	}
 }
@@ -148,7 +148,7 @@ class GameMapView extends FlxSpriteGroup
 	var columnSprites = new Array<ColumnSprite>();
 
 	// flattened version of columnSprites
-	var nodeSprites = new Array<NodeSprite>();
+	public var nodeSprites = new Array<NodeSprite>();
 
 	// Current Node
 	var currentNode:NodeSprite;
@@ -223,6 +223,7 @@ class GameMapView extends FlxSpriteGroup
 				var xCoord = i * COL_WIDTH + 50;
 				var yCoord = (COL_HEIGHT / (column.length + 1) * (j + 1));
 				var nodeSprite = new NodeSprite(node, xCoord, yCoord, this);
+				FlxMouseEventManager.add(nodeSprite.nodeBody);
 
 				nodeSprite.addClickListener(function(_)
 				{
@@ -266,9 +267,6 @@ class MapSubState extends FlxSubState
 	override public function create()
 	{
 		super.create();
-		view = new GameMapView(50, 100);
-		add(view);
-		remove(view, true);
 		view = new GameMapView(50, 100);
 		add(view);
 	}

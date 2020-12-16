@@ -2,13 +2,9 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.math.FlxRandom;
 import flixel.text.FlxText;
-import flixel.util.FlxColor;
-import flixel.util.FlxSave;
 import openfl.system.System;
 import utils.GameController;
-import utils.GameUtils;
 import utils.SubStateManager;
 
 class PlayState extends FlxState
@@ -24,7 +20,7 @@ class PlayState extends FlxState
 		destroySubStates = false;
 
 		persistentUpdate = true;
-		persistentDraw = true;
+		persistentDraw = false;
 
 		GameController.subStateManager = new SubStateManager(this);
 		GameController.subStateManager.returnToMap();

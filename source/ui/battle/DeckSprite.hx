@@ -1,4 +1,4 @@
-package ui;
+package ui.battle;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -8,10 +8,12 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
+import ui.buttons.EndTurnButton;
+import ui.buttons.MenuButton;
 
 // DeckSprite builds the UI for your draw pile, hand and discard pile during battle.
 // handles all interactions between hand, draw, and discard.
-// any logic that is self-contained within a location should be in the class itself, ie. re-rendering on change.
+// This does NOT handle the rerendering or updating of the sprites. The sprite itself should handle that.
 // You should never interact with Hand or CardPile's internal card array.
 class DeckSprite extends FlxSpriteGroup
 {
@@ -52,17 +54,14 @@ class DeckSprite extends FlxSpriteGroup
 		}
 		var card = drawPile.drawCard();
 		if (card != null)
-		{
-			#if debug
-			trace('drew a card');
-			#end
-			hand.addCard(card);
-		}
+			return hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y));
+		else
+			return null;
 	}
 
 	public function drawCards(num:Int)
 	{
-		for (_ in 0...num)
+		for (i in 0...num)
 		{
 			drawCard();
 		}
@@ -85,6 +84,12 @@ class DeckSprite extends FlxSpriteGroup
 		hand.clearHandAnimate(Std.int(discardPile.x), Std.int(discardPile.y));
 	}
 
+	public function endTurn()
+	{
+		discardHand();
+		drawCards(2);
+	}
+
 	public function new(x:Int = 0, y:Int = 0, height:Int, deck:Deck)
 	{
 		super(x, y);
@@ -92,18 +97,18 @@ class DeckSprite extends FlxSpriteGroup
 		this.deck = deck;
 
 		body = new FlxSprite(0, 0).makeGraphic(FlxG.width, height, FlxColor.fromRGB(255, 255, 255, 10));
-		add(body);
 
-		drawPile = new CardPile(200, Math.round(body.height / 2), FlxColor.GREEN, 'Draw');
+		drawPile = new CardPile(300, Math.round(body.height / 2), FlxColor.GREEN, 'Draw');
 		add(drawPile);
 		FlxMouseEventManager.add(drawPile);
 		FlxMouseEventManager.setMouseClickCallback(drawPile, function(_) drawCard());
 
-		discardPile = new CardPile(Math.round(body.width - 200), Math.round(body.height / 2), FlxColor.RED, 'Discard');
+		discardPile = new CardPile(Math.round(body.width - 300), Math.round(body.height / 2), FlxColor.RED, 'Discard');
 		add(discardPile);
 
-		var endTurnBtn = new FlxUIButton(discardPile.x, discardPile.y - 100, 'End Turn', discardHand);
-		// endTurnBtn.loadGraphicSlice9();
+		var endTurnBtn = new EndTurnButton('End Turn', discardHand);
+		endTurnBtn.setPosition(Math.round(body.width - 200), Math.round(body.height / 2) + 50);
+		add(endTurnBtn);
 
 		hand = new Hand(Math.round(body.width / 2), Math.round(body.height / 2));
 		add(hand);

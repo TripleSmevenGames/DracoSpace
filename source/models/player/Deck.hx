@@ -6,7 +6,7 @@ typedef Cards = Array<Card>;
 
 class Deck
 {
-	public var cardList(get, null):Array<Card>;
+	public var cardList(get, null):Cards;
 
 	public function get_cardList()
 	{

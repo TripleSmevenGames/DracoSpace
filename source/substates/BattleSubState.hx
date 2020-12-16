@@ -8,7 +8,9 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
 import models.events.BattleEvent;
 import models.player.Deck;
-import ui.DeckSprite;
+import ui.battle.Character;
+import ui.battle.DeckSprite;
+import utils.BattleManager;
 import utils.GameController;
 import utils.SubStateManager;
 
@@ -17,9 +19,13 @@ class BattleView extends FlxSpriteGroup
 	// reference to global sub state manager
 	var ssm:SubStateManager;
 
-	var screen:FlxSprite;
 	var exitButton:FlxSprite;
 	var deckSprite:DeckSprite;
+
+	var playerChars:Array<Character> = new Array<Character>();
+	var enemyChars:Array<Character> = new Array<Character>();
+
+	static inline final PLAYER_X = 100;
 
 	var wait:Bool;
 
@@ -27,15 +33,18 @@ class BattleView extends FlxSpriteGroup
 	{
 		trace('battle init with ${event.enemy.name}');
 		var sampleDeck = Deck.sample();
-		deckSprite = new DeckSprite(0, Math.round(screen.height - 200), 200, sampleDeck);
+		deckSprite = new DeckSprite(0, Math.round(FlxG.height - 200), 200, sampleDeck);
 		deckSprite.restart();
 		deckSprite.drawCards(2);
 		add(deckSprite);
+
+		var playerChar = Character.sampleRyder();
+		playerChar.setPosition(PLAYER_X, FlxG.height / 2);
+		add(playerChar);
 	}
 
 	public function exitBattle(_)
 	{
-		trace('clicked on exit button');
 		ssm.returnToMap();
 		remove(deckSprite);
 	}
@@ -45,12 +54,6 @@ class BattleView extends FlxSpriteGroup
 		super();
 
 		ssm = GameController.subStateManager;
-
-		screen = new FlxSprite(0, 0);
-		screen.makeGraphic(FlxG.width, FlxG.height, FlxColor.BLACK);
-		add(screen);
-		screen.scrollFactor.set(0, 0);
-		FlxMouseEventManager.add(this, null, null, null, null, false);
 
 		exitButton = new FlxSprite(0, 0);
 		exitButton.makeGraphic(10, 10, FlxColor.RED);
@@ -71,6 +74,7 @@ class BattleView extends FlxSpriteGroup
 class BattleSubState extends FlxSubState
 {
 	var view:BattleView;
+	var battleManager:BattleManager;
 
 	public function initBattle(event:BattleEvent)
 	{
@@ -83,15 +87,6 @@ class BattleSubState extends FlxSubState
 		view = new BattleView();
 		view.scrollFactor.set(0, 0);
 		add(view);
-		openCallback = function()
-		{
-			trace('opened battle');
-		}
-
-		closeCallback = function()
-		{
-			trace('closed battle');
-		}
 	}
 
 	override public function destroy()

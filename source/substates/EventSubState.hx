@@ -22,9 +22,6 @@ class EventView extends FlxSpriteGroup
 	// reference to global sub state manager
 	var ssm:SubStateManager;
 
-	// the overlay that should cover the entire camera, dimming the map behind it.
-	var screen:FlxSprite;
-
 	var titleSprite:FlxText;
 	var descSprite:FlxText;
 	var windowSprite:FlxUI9SliceSprite;
@@ -45,21 +42,19 @@ class EventView extends FlxSpriteGroup
 
 	function onClickBattle()
 	{
-		try
+		if (!Std.is(this.event, BattleEvent))
 		{
-			var battleEvent:BattleEvent = cast(this.event, BattleEvent);
-			ssm.initBattle(battleEvent);
+			trace('Tried to start battle with a non-battle event: ${event.type.getName()}');
+			return;
 		}
-		catch (err)
-		{
-			trace('error during onClickBattle(), ${err.message}');
-		}
+		var battleEvent:BattleEvent = cast(this.event, BattleEvent);
+		ssm.initBattle(battleEvent);
 	}
 
 	function centerSprites()
 	{
-		var centerX = Math.round(screen.width / 2);
-		var centerY = Math.round(screen.height / 2);
+		var centerX = Math.round(FlxG.width / 2);
+		var centerY = Math.round(FlxG.height / 2);
 		ViewUtils.centerSprite(titleSprite, centerX, centerY - 200);
 		ViewUtils.centerSprite(descSprite, centerX, centerY);
 		ViewUtils.centerSprite(windowSprite, centerX, centerY);
@@ -88,14 +83,8 @@ class EventView extends FlxSpriteGroup
 	public function new()
 	{
 		super();
-		trace('in new() for event view');
 
 		this.ssm = GameController.subStateManager;
-
-		screen = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(0, 0, 0, 200));
-		add(screen);
-		// I think this prevents clicks from "bleeding" through the screen
-		FlxMouseEventManager.add(screen, null, null, null, null, false);
 
 		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.space__png, new Rectangle(0, 0, 1000, 600), [8, 8, 40, 40]);
 		add(windowSprite);
@@ -121,35 +110,19 @@ class EventView extends FlxSpriteGroup
 // a substate containing the event view
 class EventSubState extends FlxSubState
 {
-	var view:EventView;
+	public var view:EventView;
 
 	public function showEvent(event:GameEvent)
 	{
-		if (view == null)
-		{
-			trace('bad view in ess');
-		}
 		view.showEvent(event);
 	}
 
 	override public function create()
 	{
-		trace('calling create in event');
 		super.create();
-		trace('calling new EventView()');
 		this.view = new EventView();
-		trace('finished new EventView()');
 		this.view.scrollFactor.set(0, 0);
 		add(view);
-		openCallback = function()
-		{
-			trace('opened event');
-		}
-
-		closeCallback = function()
-		{
-			trace('closed event');
-		}
 	}
 
 	override public function destroy()

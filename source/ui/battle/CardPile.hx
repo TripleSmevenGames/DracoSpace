@@ -1,4 +1,4 @@
-package ui;
+package ui.battle;
 
 import constants.Constants.UIMeasurements.*;
 import flixel.FlxSprite;

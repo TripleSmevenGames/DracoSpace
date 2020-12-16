@@ -2,8 +2,8 @@ package models.events;
 
 import haxe.Exception;
 import haxe.macro.Expr.Error;
-import models.characters.Character;
 import models.events.GameEvent.GameEventType;
+import ui.battle.Character;
 
 class BattleEvent implements GameEvent
 {

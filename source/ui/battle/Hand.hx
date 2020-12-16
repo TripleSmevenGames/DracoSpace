@@ -1,4 +1,4 @@
-package ui;
+package ui.battle;
 
 import constants.Constants.UIMeasurements.*;
 import flixel.FlxSprite;
@@ -7,6 +7,7 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.tweens.misc.VarTween;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
@@ -43,6 +44,9 @@ class SkillPointsIndicator extends FlxSpriteGroup
 	}
 }
 
+// allows you to access the otherwise private VarTween constructor
+
+@:access(flixel.tweens)
 class Hand extends FlxSpriteGroup
 {
 	public var cards(null, null):Cards;
@@ -55,6 +59,11 @@ class Hand extends FlxSpriteGroup
 	var pickedCards:Cards = new Cards();
 	var anchor:FlxSprite;
 	var wait:Bool = false;
+
+	// to keep the sprites consistent with the current state of the actual cards in hand,
+	// we pretty much have to wipe and rerender the sprites every time we change it.
+	// so we call wipe visual before modifying the cards
+	// and updateVisual after.
 
 	function wipeVisual()
 	{
@@ -90,8 +99,10 @@ class Hand extends FlxSpriteGroup
 
 			var yCoord = picked ? PICK_HEIGHT : 0;
 			card.setPosition(xCoord, yCoord);
+
 			if (picked)
 				skillPointsAmongCards.push(card.skillPoints);
+
 			add(card);
 		}
 
@@ -104,11 +115,15 @@ class Hand extends FlxSpriteGroup
 		return pickedCards.contains(card);
 	}
 
+	// handles picking or unpicking the card.
 	function pick(card:Card)
 	{
 		wipeVisual();
-		var absX = this.getPosition().x + card.x;
-		var absY = this.getPosition().y + card.y;
+		// get the absolute position of the card, since card.x/y
+		// will give you the local position in this group.
+		// But this.x/y gives you this group's global position.
+		var absX = this.x + card.x;
+		var absY = this.y + card.y;
 
 		// remove the listener at the start of animation
 		function onStart(_)
@@ -116,6 +131,7 @@ class Hand extends FlxSpriteGroup
 			FlxMouseEventManager.setObjectMouseEnabled(card, false);
 		}
 
+		// unpick the card if its picked
 		if (isPicked(card))
 		{
 			function onUnPickFinish(_)
@@ -132,6 +148,7 @@ class Hand extends FlxSpriteGroup
 				ease: FlxEase.cubeOut
 			});
 		}
+		// pick the card if its unpicked
 		else
 		{
 			function onPickFinish(_)
@@ -156,7 +173,7 @@ class Hand extends FlxSpriteGroup
 		return cards.copy();
 	}
 
-	public function addCard(card:Card)
+	function addCard(card:Card)
 	{
 		wipeVisual();
 		FlxMouseEventManager.add(card);
@@ -166,6 +183,24 @@ class Hand extends FlxSpriteGroup
 		});
 		cards.push(card);
 		renderVisual();
+	}
+
+	public function addCardAnimate(card:Card, drawX:Int, drawY:Int)
+	{
+		// card starts on the draw pile.
+		// adding the card sets it locally, but the coord of the draw pile are global.
+		// so get the position of the draw pile relative to the hand first.
+		card.setPosition(drawX - this.x, drawY - this.y);
+		add(card);
+
+		// this.x/y will get local 0, 0 in global coords, which is
+		// what we need for tween.
+		return FlxTween.tween(card, {x: this.x, y: this.y}, 0.1, {
+			onComplete: function(_)
+			{
+				addCard(card);
+			}
+		});
 	}
 
 	public function removeCard(card:Card)
@@ -184,21 +219,24 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
-	public function clearHandAnimate(tweenX:Int, tweenY:Int)
+	public function clearHandAnimate(discardX:Int, discardY:Int)
 	{
+		var finalTween:Null<VarTween> = null;
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
 			if (i == cards.length - 1)
-				FlxTween.tween(card, {x: tweenX, y: tweenY}, 0.1, {
+				finalTween = FlxTween.tween(card, {x: discardX, y: discardY}, 0.1, {
 					onComplete: function(_)
 					{
 						clearHand();
 					}
 				});
 			else
-				FlxTween.tween(card, {x: tweenX, y: tweenY}, 0.1);
+				FlxTween.tween(card, {x: discardX, y: discardY}, 0.1);
 		}
+
+		return finalTween;
 	}
 
 	public function new(x:Int = 0, y:Int = 0)

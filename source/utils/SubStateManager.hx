@@ -18,12 +18,21 @@ class SubStateManager
 	public function initEvent(event:GameEvent)
 	{
 		playState.openSubState(ess);
+		// the substate's sprites are not ready yet until the its opened.
+		// so whatever want to happen once the state is ready, put in its openCallback.
+		ess.openCallback = function()
+		{
+			ess.showEvent(event);
+		}
 	}
 
 	public function initBattle(event:BattleEvent)
 	{
 		playState.openSubState(bss);
-		bss.initBattle(event);
+		bss.openCallback = function()
+		{
+			bss.initBattle(event);
+		}
 	}
 
 	public function returnToMap()
