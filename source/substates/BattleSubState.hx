@@ -10,6 +10,7 @@ import models.events.BattleEvent;
 import models.player.Deck;
 import ui.battle.Character;
 import ui.battle.DeckSprite;
+import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;
 import utils.SubStateManager;
@@ -75,10 +76,12 @@ class BattleSubState extends FlxSubState
 {
 	var view:BattleView;
 	var battleManager:BattleManager;
+	var bam:BattleAnimationManager;
 
 	public function initBattle(event:BattleEvent)
 	{
 		view.initBattle(event);
+		add(bam);
 	}
 
 	override public function create()
@@ -87,11 +90,14 @@ class BattleSubState extends FlxSubState
 		view = new BattleView();
 		view.scrollFactor.set(0, 0);
 		add(view);
+
+		this.bam = GameController.battleAnimationManager;
 	}
 
 	override public function destroy()
 	{
 		super.destroy();
-		// view.destroy();
+		if (view != null)
+			this.view.destroy();
 	}
 }

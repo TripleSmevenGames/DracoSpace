@@ -4,7 +4,9 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import models.skills.Skill;
 
-// represents a skill "tile" during battle.
+/** 
+	Represents a skill "tile" sprite during battle.
+ */
 class SkillSprite extends FlxSpriteGroup
 {
 	var skill:Skill;

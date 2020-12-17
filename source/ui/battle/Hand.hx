@@ -12,6 +12,8 @@ import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
+import utils.BattleAnimationManager;
+import utils.GameController;
 import utils.ViewUtils;
 
 class SkillPointsIndicator extends FlxSpriteGroup
@@ -44,8 +46,11 @@ class SkillPointsIndicator extends FlxSpriteGroup
 	}
 }
 
-// allows you to access the otherwise private VarTween constructor
-
+/**
+	A SpriteGroup representing the player's cards in hand.
+	Remember that funky stuff can happen during tweens because of
+	global vs local positioning. Tweens always want global positioning!!!
+ */
 @:access(flixel.tweens)
 class Hand extends FlxSpriteGroup
 {
@@ -60,16 +65,14 @@ class Hand extends FlxSpriteGroup
 	var anchor:FlxSprite;
 	var wait:Bool = false;
 
+	var bam:BattleAnimationManager;
+
 	// to keep the sprites consistent with the current state of the actual cards in hand,
 	// we pretty much have to wipe and rerender the sprites every time we change it.
 	// so we call wipe visual before modifying the cards
 	// and updateVisual after.
-
 	function wipeVisual()
 	{
-		#if debug
-		trace('ran wipeVisual with ${cards.length} cards');
-		#end
 		for (card in cards)
 		{
 			remove(card);
@@ -80,9 +83,6 @@ class Hand extends FlxSpriteGroup
 	// and if they are picked or not
 	function renderVisual()
 	{
-		#if debug
-		trace('ran updateVisual with ${cards.length} cards');
-		#end
 		var width = CARD_WIDTH + 10; // padding
 		var maxCardsWithoutOverlap = Math.floor(body.width / width);
 		var skillPointsAmongCards = new Array<SkillPointCombination>();
@@ -168,6 +168,7 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/** Get a shallow copy of the cards in your hand */
 	public function getCards()
 	{
 		return cards.copy();
@@ -185,6 +186,7 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/**Animate a card moving from the draw pile to your hand. Then adds the card and updates the hand.**/
 	public function addCardAnimate(card:Card, drawX:Int, drawY:Int)
 	{
 		// card starts on the draw pile.
@@ -192,15 +194,12 @@ class Hand extends FlxSpriteGroup
 		// so get the position of the draw pile relative to the hand first.
 		card.setPosition(drawX - this.x, drawY - this.y);
 		add(card);
+		card.visible = false;
 
-		// this.x/y will get local 0, 0 in global coords, which is
-		// what we need for tween.
-		return FlxTween.tween(card, {x: this.x, y: this.y}, 0.1, {
-			onComplete: function(_)
-			{
-				addCard(card);
-			}
-		});
+		var onStart = (_) -> card.visible = true;
+		var onComplete = () -> addCard(card);
+
+		bam.addAnim(FlxTween.tween(card, {x: this.x, y: this.y}, 0.1, {onStart: onStart}), onComplete);
 	}
 
 	public function removeCard(card:Card)
@@ -211,6 +210,7 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/** Clear the cards in your hand, but doesn't animate it. */
 	public function clearHand()
 	{
 		wipeVisual();
@@ -219,24 +219,18 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/** Animate and clear the cards in your hand. **/
 	public function clearHandAnimate(discardX:Int, discardY:Int)
 	{
-		var finalTween:Null<VarTween> = null;
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
+			var onComplete = () -> removeCard(card);
 			if (i == cards.length - 1)
-				finalTween = FlxTween.tween(card, {x: discardX, y: discardY}, 0.1, {
-					onComplete: function(_)
-					{
-						clearHand();
-					}
-				});
+				bam.addAnim(FlxTween.tween(card, {x: discardX, y: discardY}, 0.1), onComplete);
 			else
-				FlxTween.tween(card, {x: discardX, y: discardY}, 0.1);
+				bam.addAnim(FlxTween.tween(card, {x: discardX, y: discardY}, 0.1), onComplete);
 		}
-
-		return finalTween;
 	}
 
 	public function new(x:Int = 0, y:Int = 0)
@@ -250,6 +244,8 @@ class Hand extends FlxSpriteGroup
 
 		this.skillPointsIndicator = new SkillPointsIndicator(Std.int(body.width / 2), Std.int(-body.height / 2));
 		add(skillPointsIndicator);
+
+		bam = GameController.battleAnimationManager;
 
 		#if debug
 		this.anchor = new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);

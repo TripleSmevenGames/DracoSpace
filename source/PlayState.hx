@@ -4,12 +4,15 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import openfl.system.System;
+import ui.debug.BAMIndicator;
+import ui.debug.MemIndicator;
 import utils.GameController;
 import utils.SubStateManager;
 
 class PlayState extends FlxState
 {
-	var memoryUsage:FlxText;
+	var memIndicator:MemIndicator;
+	var bamIndicator:BAMIndicator;
 
 	override public function create()
 	{
@@ -20,9 +23,10 @@ class PlayState extends FlxState
 		destroySubStates = false;
 
 		persistentUpdate = true;
-		persistentDraw = false;
+		persistentDraw = true;
 
-		GameController.subStateManager = new SubStateManager(this);
+		GameController.initSSM(this);
+		GameController.initBAM();
 		GameController.subStateManager.returnToMap();
 
 		FlxG.camera.minScrollX = 0;
@@ -31,23 +35,20 @@ class PlayState extends FlxState
 		FlxG.camera.maxScrollY = 1000;
 
 		#if debug
-		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-		memoryUsage = new FlxText(0, 0, 0, 'MEM: ${mem}MB', 10);
-		memoryUsage.scrollFactor.set(0, 0);
-		add(memoryUsage);
+		memIndicator = new MemIndicator();
+		add(memIndicator);
+
+		bamIndicator = new BAMIndicator(GameController.battleAnimationManager);
+		add(bamIndicator);
 		#end
 	}
 
 	override public function update(elapsed:Float)
 	{
-		super.update(elapsed);
 		if (FlxG.keys.anyPressed([ESCAPE]))
 			FlxG.switchState(new MenuState());
 
-		#if debug
-		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-		memoryUsage.text = 'MEM: ${mem}MB';
-		#end
+		super.update(elapsed);
 	}
 
 	override public function destroy()

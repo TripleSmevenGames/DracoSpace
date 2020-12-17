@@ -32,12 +32,14 @@ class SubStateManager
 		bss.openCallback = function()
 		{
 			bss.initBattle(event);
+			GameController.battleAnimationManager.reset();
 		}
 	}
 
 	public function returnToMap()
 	{
 		playState.openSubState(mss);
+		GameController.battleAnimationManager.reset();
 	}
 
 	// paranoid function to free up memory. Might be un-needed.

@@ -128,6 +128,7 @@ class EventSubState extends FlxSubState
 	override public function destroy()
 	{
 		super.destroy();
-		// this.view.destroy();
+		if (view != null)
+			this.view.destroy();
 	}
 }

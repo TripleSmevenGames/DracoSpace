@@ -12,8 +12,11 @@ class GameController
 	// global save object
 	public static var save:FlxSave;
 
-	// global view manager for playState views
+	/** global view manager for playState views. */
 	public static var subStateManager:SubStateManager;
+
+	/** global manager for animations during battle. */
+	public static var battleAnimationManager:BattleAnimationManager;
 
 	public static function initSave()
 	{
@@ -28,5 +31,15 @@ class GameController
 			rng = new FlxRandom();
 		else
 			rng = new FlxRandom(seed);
+	}
+
+	public static function initSSM(playState:PlayState)
+	{
+		subStateManager = new SubStateManager(playState);
+	}
+
+	public static function initBAM()
+	{
+		battleAnimationManager = new BattleAnimationManager();
 	}
 }

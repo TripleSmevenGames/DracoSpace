@@ -6,13 +6,14 @@ import flixel.text.FlxText;
 import flixel.util.FlxSave;
 import openfl.system.System;
 import ui.buttons.MenuButton;
+import ui.debug.MemIndicator;
 import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 
 class MenuState extends FlxState
 {
-	var memoryUsage:FlxText;
+	var memIndicator:MemIndicator;
 
 	function clickNew()
 	{
@@ -68,20 +69,13 @@ class MenuState extends FlxState
 
 		// watch mem usage
 		#if debug
-		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-		memoryUsage = new FlxText(0, 0, 0, 'MEM: ${mem}MB', 10);
-		memoryUsage.scrollFactor.set(0, 0);
-		add(memoryUsage);
+		memIndicator = new MemIndicator();
+		add(memIndicator);
 		#end
 	}
 
 	override public function update(elapsed:Float)
 	{
 		super.update(elapsed);
-
-		#if debug
-		var mem:Float = Math.round(System.totalMemory / 1024 / 1024 * 100) / 100;
-		memoryUsage.text = 'MEM: ${mem}MB';
-		#end
 	}
 }

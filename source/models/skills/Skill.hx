@@ -31,10 +31,14 @@ enum SkillPointType
 typedef Costs = Array<SkillPointCombination>;
 typedef Effect = (Array<Character>) -> Void;
 
-// represents a combination of skill points.
-// eg. 1 POW and 3 AGI
-// eg. 2 KNO and 2 ANY
-// used for skill's costs and card's skill points
+/** Represents a combination of skill points.
+ *
+ * eg. 1 POW and 3 AGI
+ *
+ * eg. 2 KNO and 2 ANY
+ *
+ * Used for skill's costs and card's skill points
+ */
 class SkillPointCombination
 {
 	var map:Map<SkillPointType, Int> = new Map<SkillPointType, Int>();

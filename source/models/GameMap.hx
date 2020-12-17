@@ -100,7 +100,7 @@ class GameMap
 		}
 		if (eventPool.length != length)
 		{
-			throw new Exception('bad eventPool length ${eventPool.length}');
+			throw new Exception('bad eventPool length. eventPool:${eventPool.length}, input lenght: ${length}');
 		}
 		return eventPool;
 	}

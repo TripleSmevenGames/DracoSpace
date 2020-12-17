@@ -16,7 +16,7 @@ using flixel.util.FlxSpriteUtil;
 
 typedef ColumnSprite = Array<NodeSprite>;
 
-// represents on node on the map view
+/** Represents on node on the map view */
 class NodeSprite extends FlxSpriteGroup
 {
 	public var node:Node;
@@ -324,6 +324,7 @@ class MapSubState extends FlxSubState
 	override public function destroy()
 	{
 		super.destroy();
-		// view.destroy();
+		if (view != null)
+			this.view.destroy();
 	}
 }

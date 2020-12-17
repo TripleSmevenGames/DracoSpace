@@ -54,9 +54,9 @@ class DeckSprite extends FlxSpriteGroup
 		}
 		var card = drawPile.drawCard();
 		if (card != null)
-			return hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y));
+			hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y));
 		else
-			return null;
+			return;
 	}
 
 	public function drawCards(num:Int)
@@ -86,6 +86,7 @@ class DeckSprite extends FlxSpriteGroup
 
 	public function endTurn()
 	{
+		trace('tried to end turn');
 		discardHand();
 		drawCards(2);
 	}
@@ -106,7 +107,7 @@ class DeckSprite extends FlxSpriteGroup
 		discardPile = new CardPile(Math.round(body.width - 300), Math.round(body.height / 2), FlxColor.RED, 'Discard');
 		add(discardPile);
 
-		var endTurnBtn = new EndTurnButton('End Turn', discardHand);
+		var endTurnBtn = new EndTurnButton('End Turn', endTurn);
 		endTurnBtn.setPosition(Math.round(body.width - 200), Math.round(body.height / 2) + 50);
 		add(endTurnBtn);
 

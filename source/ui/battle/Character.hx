@@ -10,7 +10,7 @@ enum CharacterType
 	ENEMY;
 }
 
-// represents a character inside battle.
+/** Represents a character's sprite during battle. */
 class Character extends FlxSpriteGroup
 {
 	public var name:String;

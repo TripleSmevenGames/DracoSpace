@@ -49,12 +49,12 @@ class Card extends FlxSpriteGroup
 		var lineStyle:LineStyle = {thickness: 1, color: FlxColor.WHITE};
 		outline.drawRect(0, 0, body.width, body.height, FlxColor.TRANSPARENT, lineStyle);
 		ViewUtils.centerSprite(outline);
-		add(outline);
+		// add(outline);
 
 		var titleText = new FlxText(0, 0, CARD_WIDTH, name, 10);
 		titleText.setFormat(AssetPaths.DOSWin__ttf, CARD_FONT_SIZE, FlxColor.WHITE, FlxTextAlign.CENTER);
 		ViewUtils.centerSprite(titleText, 0, -50);
-		add(titleText);
+		// add(titleText);
 
 		#if debug
 		this.anchor = new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
