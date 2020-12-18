@@ -1,8 +1,9 @@
-package views;
+package substates;
 
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.FlxSubState;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
@@ -12,21 +13,20 @@ import flixel.util.FlxColor;
 import models.events.BattleEvent;
 import models.events.GameEvent;
 import ui.buttons.EventButton;
+import utils.GameController;
+import utils.SubStateManager;
 import utils.ViewUtils;
 
-// this overlays the map. Triggers when you visit a node.
 class EventView extends FlxSpriteGroup
 {
-	// the overlay that should cover the entire camera, dimming the map behind it.
-	var screen:FlxSprite;
+	// reference to global sub state manager
+	var ssm:SubStateManager;
 
 	var titleSprite:FlxText;
 	var descSprite:FlxText;
 	var windowSprite:FlxUI9SliceSprite;
 	var battleButton:EventButton;
 	var exitButton:EventButton;
-
-	var battleView:BattleView;
 
 	public var exitCallback:Void->Void;
 
@@ -37,28 +37,24 @@ class EventView extends FlxSpriteGroup
 
 	function onClickExit()
 	{
-		if (!active)
-			return;
-		visible = false;
-		active = false;
-		exitCallback();
+		ssm.returnToMap();
 	}
 
 	function onClickBattle()
 	{
-		if (!active)
+		if (!Std.is(this.event, BattleEvent))
+		{
+			trace('Tried to start battle with a non-battle event: ${event.type.getName()}');
 			return;
-
+		}
 		var battleEvent:BattleEvent = cast(this.event, BattleEvent);
-		battleView.initBattle(battleEvent);
-		visible = false;
-		active = false;
+		ssm.initBattle(battleEvent);
 	}
 
 	function centerSprites()
 	{
-		var centerX = Math.round(screen.width / 2);
-		var centerY = Math.round(screen.height / 2);
+		var centerX = Math.round(FlxG.width / 2);
+		var centerY = Math.round(FlxG.height / 2);
 		ViewUtils.centerSprite(titleSprite, centerX, centerY - 200);
 		ViewUtils.centerSprite(descSprite, centerX, centerY);
 		ViewUtils.centerSprite(windowSprite, centerX, centerY);
@@ -70,11 +66,8 @@ class EventView extends FlxSpriteGroup
 		}
 	}
 
-	// called by GameMapView to show the event screen over itself
 	public function showEvent(event:GameEvent)
 	{
-		visible = true;
-		active = true;
 		this.event = event;
 		titleSprite.text = '${event.name} (${event.type.getName()})';
 		descSprite.text = event.desc;
@@ -87,16 +80,11 @@ class EventView extends FlxSpriteGroup
 		centerSprites();
 	}
 
-	public function new(battleView:BattleView)
+	public function new()
 	{
 		super();
 
-		this.battleView = battleView;
-
-		screen = new FlxSprite(0, 0).makeGraphic(FlxG.width, FlxG.height, FlxColor.fromRGB(0, 0, 0, 200));
-		add(screen);
-		// I think this prevents clicks from "bleeding" through the screen
-		FlxMouseEventManager.add(screen, null, null, null, null, false);
+		this.ssm = GameController.subStateManager;
 
 		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.space__png, new Rectangle(0, 0, 1000, 600), [8, 8, 40, 40]);
 		add(windowSprite);
@@ -116,7 +104,31 @@ class EventView extends FlxSpriteGroup
 		add(exitButton);
 
 		centerSprites();
-		visible = false;
-		active = false;
+	}
+}
+
+// a substate containing the event view
+class EventSubState extends FlxSubState
+{
+	public var view:EventView;
+
+	public function showEvent(event:GameEvent)
+	{
+		view.showEvent(event);
+	}
+
+	override public function create()
+	{
+		super.create();
+		this.view = new EventView();
+		this.view.scrollFactor.set(0, 0);
+		add(view);
+	}
+
+	override public function destroy()
+	{
+		super.destroy();
+		if (view != null)
+			this.view.destroy();
 	}
 }

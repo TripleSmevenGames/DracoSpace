@@ -34,6 +34,9 @@ class Card extends FlxSpriteGroup
 	public function new(name:String, skillPoints:Map<SkillPointType, Int>)
 	{
 		super();
+
+		// a lot of cards on the screen lag for some reason
+		// try looking at http://forum.haxeflixel.com/topic/20/super-cute-alien-1-4-players-platformer-about-friendship-love-and-what-it-means-to-be-human/14
 		this.name = name;
 		this.skillPoints = new SkillPointCombination(skillPoints);
 		this.effect = function()
@@ -47,7 +50,7 @@ class Card extends FlxSpriteGroup
 
 		var outline = new FlxSprite(0, 0).makeGraphic(Std.int(body.width), Std.int(body.height), FlxColor.TRANSPARENT);
 		var lineStyle:LineStyle = {thickness: 1, color: FlxColor.WHITE};
-		outline.drawRect(0, 0, body.width, body.height, FlxColor.TRANSPARENT, lineStyle);
+		outline.drawRect(0, 0, body.width, body.height, FlxColor.TRANSPARENT, lineStyle, {smoothing: false});
 		ViewUtils.centerSprite(outline);
 		add(outline);
 

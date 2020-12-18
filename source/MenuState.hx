@@ -4,21 +4,28 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.util.FlxSave;
+import openfl.system.System;
 import ui.buttons.MenuButton;
+import ui.debug.MemIndicator;
+import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 
 class MenuState extends FlxState
 {
+	var memIndicator:MemIndicator;
+
 	function clickNew()
 	{
 		// clear the saved seed
-		GameUtils.save.data.seed = null;
+		GameController.save.data.seed = null;
+		GameController.initRng();
 		FlxG.switchState(new PlayState());
 	}
 
 	function clickContinue()
 	{
+		GameController.initRng();
 		FlxG.switchState(new PlayState());
 	}
 
@@ -27,7 +34,7 @@ class MenuState extends FlxState
 		Sys.exit(0);
 	}
 
-	override public function create()
+	function setupScreen()
 	{
 		var titleText = new FlxText(0, 0, 0, "DrakoSpace");
 		titleText.setFormat(AssetPaths.font04B30__ttf, 100);
@@ -47,9 +54,28 @@ class MenuState extends FlxState
 		exitButton.screenCenter();
 		exitButton.y += 160;
 		add(exitButton);
+	}
 
-		// set up the global save
-		GameUtils.save = new FlxSave();
-		GameUtils.save.bind('save');
+	override public function create()
+	{
+		#if debug
+		trace('debug activated');
+		#else
+		trace('normal mode');
+		#end
+		setupScreen();
+
+		GameController.initSave();
+
+		// watch mem usage
+		#if debug
+		memIndicator = new MemIndicator();
+		add(memIndicator);
+		#end
+	}
+
+	override public function update(elapsed:Float)
+	{
+		super.update(elapsed);
 	}
 }

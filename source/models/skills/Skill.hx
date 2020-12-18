@@ -1,13 +1,18 @@
 package models.skills;
 
+import flixel.system.FlxAssets.FlxGraphicAsset;
 import models.cards.Card;
-import models.characters.Character;
+import ui.battle.Character;
 
 enum TargetMethod
 {
-	SINGLE;
-	RANDOM;
-	ALL;
+	SINGLE_ENEMY;
+	RANDOM_ENEMY;
+	ALL_ENEMY;
+	SINGLE_ALLY;
+	SINGLE_OTHER_ALLY;
+	RANDOM_ALLY;
+	ALL_ALLY;
 	SELF;
 }
 
@@ -26,10 +31,14 @@ enum SkillPointType
 typedef Costs = Array<SkillPointCombination>;
 typedef Effect = (Array<Character>) -> Void;
 
-// represents a combination of skill points.
-// eg. 1 POW and 3 AGI
-// eg. 2 KNO and 2 ANY
-// used for skill's costs and card's skill points
+/** Represents a combination of skill points.
+ *
+ * eg. 1 POW and 3 AGI
+ *
+ * eg. 2 KNO and 2 ANY
+ *
+ * Used for skill's costs and card's skill points
+ */
 class SkillPointCombination
 {
 	var map:Map<SkillPointType, Int> = new Map<SkillPointType, Int>();
@@ -94,9 +103,9 @@ class Skill
 	public var name:String;
 	public var desc:String;
 	public var costs:Costs = new Costs();
-	public var targetType:CharacterType;
 	public var targetMethod:TargetMethod;
 	public var effect:Effect;
+	public var spritePath:FlxGraphicAsset;
 
 	public static function sampleAttack()
 	{
@@ -110,7 +119,12 @@ class Skill
 				target.takeDamage(10);
 			}
 		}
-		return new Skill(name, desc, costs, effect);
+		var skill = new Skill(name, desc, costs, effect);
+
+		skill.spritePath = AssetPaths.WhiteSword__png;
+		skill.targetMethod = SINGLE_ENEMY;
+
+		return skill;
 	}
 
 	public static function sampleDefend()
@@ -125,7 +139,12 @@ class Skill
 				target.currBlock += 5;
 			}
 		}
-		return new Skill(name, desc, costs, effect);
+		var skill = new Skill(name, desc, costs, effect);
+
+		skill.spritePath = AssetPaths.TanShield__png;
+		skill.targetMethod = SELF;
+
+		return skill;
 	}
 
 	public static function sampleEnemyAttack()
@@ -178,5 +197,8 @@ class Skill
 		this.desc = desc;
 		this.costs = costs;
 		this.effect = effect;
+
+		spritePath = '';
+		targetMethod = SINGLE_ENEMY;
 	}
 }

@@ -5,6 +5,7 @@ import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import haxe.Exception;
 import models.events.*;
+import utils.GameController;
 import utils.GameUtils;
 
 typedef Column = Array<Node>;
@@ -99,7 +100,7 @@ class GameMap
 		}
 		if (eventPool.length != length)
 		{
-			throw new Exception('bad eventPool length ${eventPool.length}');
+			throw new Exception('bad eventPool length. eventPool:${eventPool.length}, input lenght: ${length}');
 		}
 		return eventPool;
 	}
@@ -187,10 +188,11 @@ class GameMap
 
 	public function new(numColumns:Int = 18)
 	{
-		this.random = GameUtils.rng;
+		this.random = GameController.rng;
 
 		trace('generated map with seed ${random.currentSeed}');
-		GameUtils.save.data.seed = random.currentSeed;
+		GameController.save.data.seed = random.currentSeed;
+		GameController.save.flush();
 
 		// nodes that are empty until the end. We will fill them with an event after we
 		// fill in the pre determined nodes (e.g. the starting home node)

@@ -1,4 +1,4 @@
-package ui;
+package ui.battle;
 
 import constants.Constants.UIMeasurements.*;
 import flixel.FlxSprite;
@@ -7,12 +7,17 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.tweens.misc.VarTween;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
+import utils.BattleAnimationManager;
+import utils.GameController;
 import utils.ViewUtils;
 
+// indicator on the side of the "Hand" telling you how many
+// of each skill point you will get from the picked cards.
 class SkillPointsIndicator extends FlxSpriteGroup
 {
 	var pointList:Array<FlxText>;
@@ -43,6 +48,12 @@ class SkillPointsIndicator extends FlxSpriteGroup
 	}
 }
 
+/**
+	A SpriteGroup representing the player's cards in hand.
+	Remember that funky stuff can happen during tweens because of
+	global vs local positioning. Tweens always want global positioning!!!
+ */
+@:access(flixel.tweens)
 class Hand extends FlxSpriteGroup
 {
 	public var cards(null, null):Cards;
@@ -56,11 +67,14 @@ class Hand extends FlxSpriteGroup
 	var anchor:FlxSprite;
 	var wait:Bool = false;
 
+	var bam:BattleAnimationManager;
+
+	// to keep the sprites consistent with the current state of the actual cards in hand,
+	// we pretty much have to wipe and rerender the sprites every time we change it.
+	// so we call wipe visual before modifying the cards
+	// and updateVisual after.
 	function wipeVisual()
 	{
-		#if debug
-		trace('ran wipeVisual with ${cards.length} cards');
-		#end
 		for (card in cards)
 		{
 			remove(card);
@@ -71,9 +85,6 @@ class Hand extends FlxSpriteGroup
 	// and if they are picked or not
 	function renderVisual()
 	{
-		#if debug
-		trace('ran updateVisual with ${cards.length} cards');
-		#end
 		var width = CARD_WIDTH + 10; // padding
 		var maxCardsWithoutOverlap = Math.floor(body.width / width);
 		var skillPointsAmongCards = new Array<SkillPointCombination>();
@@ -90,8 +101,10 @@ class Hand extends FlxSpriteGroup
 
 			var yCoord = picked ? PICK_HEIGHT : 0;
 			card.setPosition(xCoord, yCoord);
+
 			if (picked)
 				skillPointsAmongCards.push(card.skillPoints);
+
 			add(card);
 		}
 
@@ -104,11 +117,15 @@ class Hand extends FlxSpriteGroup
 		return pickedCards.contains(card);
 	}
 
+	// handles picking or unpicking the card.
 	function pick(card:Card)
 	{
 		wipeVisual();
-		var absX = this.getPosition().x + card.x;
-		var absY = this.getPosition().y + card.y;
+		// get the absolute position of the card, since card.x/y
+		// will give you the local position in this group.
+		// But this.x/y gives you this group's global position.
+		var absX = this.x + card.x;
+		var absY = this.y + card.y;
 
 		// remove the listener at the start of animation
 		function onStart(_)
@@ -116,6 +133,7 @@ class Hand extends FlxSpriteGroup
 			FlxMouseEventManager.setObjectMouseEnabled(card, false);
 		}
 
+		// unpick the card if its picked
 		if (isPicked(card))
 		{
 			function onUnPickFinish(_)
@@ -132,6 +150,7 @@ class Hand extends FlxSpriteGroup
 				ease: FlxEase.cubeOut
 			});
 		}
+		// pick the card if its unpicked
 		else
 		{
 			function onPickFinish(_)
@@ -151,12 +170,13 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/** Get a shallow copy of the cards in your hand */
 	public function getCards()
 	{
 		return cards.copy();
 	}
 
-	public function addCard(card:Card)
+	function addCard(card:Card)
 	{
 		wipeVisual();
 		FlxMouseEventManager.add(card);
@@ -168,6 +188,22 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/**Animate a card moving from the draw pile to your hand. Then adds the card and updates the hand.**/
+	public function addCardAnimate(card:Card, drawX:Int, drawY:Int)
+	{
+		// card starts on the draw pile.
+		// adding the card sets it locally, but the coord of the draw pile are global.
+		// so get the position of the draw pile relative to the hand first.
+		card.setPosition(drawX - this.x, drawY - this.y);
+		add(card);
+		card.visible = false;
+
+		var onStart = (_) -> card.visible = true;
+		var onComplete = () -> addCard(card);
+
+		bam.addAnim(FlxTween.tween(card, {x: this.x, y: this.y}, 0.1, {onStart: onStart}), onComplete);
+	}
+
 	public function removeCard(card:Card)
 	{
 		wipeVisual();
@@ -176,6 +212,7 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
+	/** Clear the cards in your hand, but doesn't animate it. */
 	public function clearHand()
 	{
 		wipeVisual();
@@ -184,20 +221,17 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
-	public function clearHandAnimate(tweenX:Int, tweenY:Int)
+	/** Animate and clear the cards in your hand. **/
+	public function clearHandAnimate(discardX:Int, discardY:Int)
 	{
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
+			var onComplete = () -> removeCard(card);
 			if (i == cards.length - 1)
-				FlxTween.tween(card, {x: tweenX, y: tweenY}, 0.1, {
-					onComplete: function(_)
-					{
-						clearHand();
-					}
-				});
+				bam.addAnim(FlxTween.tween(card, {x: discardX, y: discardY}, 0.1), onComplete);
 			else
-				FlxTween.tween(card, {x: tweenX, y: tweenY}, 0.1);
+				bam.addAnim(FlxTween.tween(card, {x: discardX, y: discardY}, 0.1), onComplete);
 		}
 	}
 
@@ -212,6 +246,8 @@ class Hand extends FlxSpriteGroup
 
 		this.skillPointsIndicator = new SkillPointsIndicator(Std.int(body.width / 2), Std.int(-body.height / 2));
 		add(skillPointsIndicator);
+
+		bam = GameController.battleAnimationManager;
 
 		#if debug
 		this.anchor = new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);

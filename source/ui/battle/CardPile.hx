@@ -1,4 +1,4 @@
-package ui;
+package ui.battle;
 
 import constants.Constants.UIMeasurements.*;
 import flixel.FlxSprite;
@@ -7,6 +7,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
+import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 
@@ -24,7 +25,7 @@ class CardPile extends FlxSpriteGroup
 	inline function updateNum()
 	{
 		#if debug
-		trace('called updatedNum on ${pileName} with ${cards.length} cards');
+		// trace('called updatedNum on ${pileName} with ${cards.length} cards');
 		#end
 		numCards.text = '${pileName}: ${cards.length}';
 	}
@@ -67,7 +68,7 @@ class CardPile extends FlxSpriteGroup
 
 	public function shuffle()
 	{
-		GameUtils.rng.shuffle(cards);
+		GameController.rng.shuffle(cards);
 	}
 
 	public function new(x:Int = 0, y:Int = 0, color:FlxColor, ?pileName:String = 'unnamed pile')
