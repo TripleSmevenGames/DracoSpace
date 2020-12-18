@@ -17,6 +17,8 @@ class SubStateManager
 
 	public function initEvent(event:GameEvent)
 	{
+		killAll();
+		ess.revive();
 		playState.openSubState(ess);
 		// the substate's sprites are not ready yet until the its opened.
 		// so whatever want to happen once the state is ready, put in its openCallback.
@@ -28,6 +30,8 @@ class SubStateManager
 
 	public function initBattle(event:BattleEvent)
 	{
+		killAll();
+		bss.revive();
 		playState.openSubState(bss);
 		bss.openCallback = function()
 		{
@@ -38,6 +42,8 @@ class SubStateManager
 
 	public function returnToMap()
 	{
+		killAll();
+		mss.revive();
 		playState.openSubState(mss);
 		GameController.battleAnimationManager.reset();
 	}
@@ -53,6 +59,14 @@ class SubStateManager
 		mss = null;
 		ess = null;
 		bss = null;
+	}
+
+	// killing the state prevents it from recieving click events
+	public function killAll()
+	{
+		mss.kill();
+		ess.kill();
+		bss.kill();
 	}
 
 	public function new(playState:PlayState)

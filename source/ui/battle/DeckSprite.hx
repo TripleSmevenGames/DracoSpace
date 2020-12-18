@@ -86,7 +86,6 @@ class DeckSprite extends FlxSpriteGroup
 
 	public function endTurn()
 	{
-		trace('tried to end turn');
 		discardHand();
 		drawCards(2);
 	}

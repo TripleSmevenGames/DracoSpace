@@ -25,6 +25,8 @@ class PlayState extends FlxState
 		persistentUpdate = true;
 		persistentDraw = true;
 
+		FlxG.fixedTimestep = false;
+
 		GameController.initSSM(this);
 		GameController.initBAM();
 		GameController.subStateManager.returnToMap();

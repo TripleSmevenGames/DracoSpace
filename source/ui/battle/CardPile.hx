@@ -25,7 +25,7 @@ class CardPile extends FlxSpriteGroup
 	inline function updateNum()
 	{
 		#if debug
-		trace('called updatedNum on ${pileName} with ${cards.length} cards');
+		// trace('called updatedNum on ${pileName} with ${cards.length} cards');
 		#end
 		numCards.text = '${pileName}: ${cards.length}';
 	}

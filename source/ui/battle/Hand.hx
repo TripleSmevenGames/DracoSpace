@@ -16,6 +16,8 @@ import utils.BattleAnimationManager;
 import utils.GameController;
 import utils.ViewUtils;
 
+// indicator on the side of the "Hand" telling you how many
+// of each skill point you will get from the picked cards.
 class SkillPointsIndicator extends FlxSpriteGroup
 {
 	var pointList:Array<FlxText>;

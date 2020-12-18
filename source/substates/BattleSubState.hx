@@ -42,6 +42,16 @@ class BattleView extends FlxSpriteGroup
 		var playerChar = Character.sampleRyder();
 		playerChar.setPosition(PLAYER_X, FlxG.height / 2);
 		add(playerChar);
+
+		for (i in 0...10)
+		{
+			// var sprite = Character.sampleRyder();
+			var sprite = new FlxSprite();
+			sprite.loadGraphic(AssetPaths.KiwiCat__png);
+			sprite.setGraphicSize(0, Std.int(sprite.height * 8));
+			sprite.setPosition(PLAYER_X + i * 100, FlxG.height / 2);
+			add(sprite);
+		}
 	}
 
 	public function exitBattle(_)
