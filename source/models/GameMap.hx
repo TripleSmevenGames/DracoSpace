@@ -1,6 +1,6 @@
 package models;
 
-import constants.Constants.MapGenerationConsts;
+import constants.Constants.MapGenerationConsts as MapGenConsts;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import haxe.Exception;
@@ -49,36 +49,35 @@ class GameMap
 
 	function numNodesWeightedPick()
 	{
-		var items = MapGenerationConsts.NUM_NODE_CHANCE_ITEMS;
-		var weights = MapGenerationConsts.NUM_NODE_CHANCE_WEIGHTS;
+		var items = MapGenConsts.NUM_NODE_CHANCE_ITEMS;
+		var weights = MapGenConsts.NUM_NODE_CHANCE_WEIGHTS;
 		return GameUtils.weightedPick(items, weights);
 	}
 
 	function nodeTypeWeightedPick()
 	{
-		var items = MapGenerationConsts.NODE_TYPE_CHANCE_ITEMS;
-		var weights = MapGenerationConsts.NODE_TYPE_CHANCE_WEIGHTS;
+		var items = MapGenConsts.NODE_TYPE_CHANCE_ITEMS;
+		var weights = MapGenConsts.NODE_TYPE_CHANCE_WEIGHTS;
 		return GameUtils.weightedPick(items, weights);
 	}
 
 	function createEventPool(length:Int)
 	{
 		var eventPool = new Array<GameEvent>();
-		var counter = 0;
 		// add the guaranteed events in first
-		for (i in 0...MapGenerationConsts.MIN_BATTLES)
+		for (i in 0...MapGenConsts.MIN_BATTLES)
 		{
-			eventPool.push(BattleEvent.sampleBattle());
-			counter++;
+			if (eventPool.length < length)
+				eventPool.push(BattleEvent.sampleBattle());
 		}
-		for (i in 0...MapGenerationConsts.MIN_CHOICES)
+		for (i in 0...MapGenConsts.MIN_CHOICES)
 		{
-			eventPool.push(ChoiceEvent.sample());
-			counter++;
+			if (eventPool.length < length)
+				eventPool.push(ChoiceEvent.sample());
 		}
 
 		// now add the variable events to the pool, based on their weight;
-		while (counter < length)
+		while (eventPool.length < length)
 		{
 			var event:GameEvent;
 			var type = nodeTypeWeightedPick();
@@ -96,38 +95,44 @@ class GameMap
 					event = new NoneEvent();
 			}
 			eventPool.push(event);
-			counter++;
 		}
 		if (eventPool.length != length)
 		{
-			throw new Exception('bad eventPool length. eventPool:${eventPool.length}, input lenght: ${length}');
+			throw new Exception('bad eventPool length. eventPool:${eventPool.length}, input length: ${length}');
 		}
 		return eventPool;
 	}
 
 	function fillVariableNodes(variableNodes:Array<Node>)
 	{
-		// add a treasure somewhere in the first half.
-		var nodeInd = random.int(0, Math.round(variableNodes.length / 2) - 1);
-		variableNodes[nodeInd].event = TreasureEvent.sample();
-		variableNodes.splice(nodeInd, 1);
+		var nodeInd:Int = 0;
+		// add treasures somewhere in the first half.
+		for (i in 0...MapGenConsts.TREASURES_IN_FIRST_HALF)
+		{
+			var nodeInd = random.int(0, Math.round(variableNodes.length / 2) - 1);
+			variableNodes[nodeInd].event = TreasureEvent.sample();
+			variableNodes.splice(nodeInd, 1);
+		}
 		// add a treasure somewhere in the second half.
-		nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-		variableNodes[nodeInd].event = TreasureEvent.sample();
-		variableNodes.splice(nodeInd, 1);
-		// add 2 elites to the second half.
-		nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-		variableNodes[nodeInd].event = BattleEvent.sampleElite();
-		variableNodes.splice(nodeInd, 1);
+		for (i in 0...MapGenConsts.TREASURES_IN_SECOND_HALF)
+		{
+			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
+			variableNodes[nodeInd].event = TreasureEvent.sample();
+			variableNodes.splice(nodeInd, 1);
+		}
 
-		nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-		variableNodes[nodeInd].event = BattleEvent.sampleElite();
-		variableNodes.splice(nodeInd, 1);
+		// add 2 elites to the second half.
+		for (i in 0...MapGenConsts.ELITES_IN_SECOND_HALF)
+		{
+			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
+			variableNodes[nodeInd].event = BattleEvent.sampleElite();
+			variableNodes.splice(nodeInd, 1);
+		}
 
 		// now, create a pool of events to be assigned to the rest nodes
 		var eventPool = createEventPool(variableNodes.length);
 
-		// for each of these nodes, assign an event to it and remove the event from the pool
+		// for each of these nodes, assign a random event from the pool to it and remove the event from the pool
 		for (i in 0...variableNodes.length)
 		{
 			var eventInd = random.int(0, eventPool.length - 1);
@@ -136,7 +141,8 @@ class GameMap
 		}
 		if (eventPool.length != 0)
 		{
-			throw new Exception('event pool not empty after assignment: ${eventPool.length}');
+			throw new Exception(' event pool not empty after assignment:${eventPool.length}
+				');
 		}
 	}
 
@@ -146,19 +152,25 @@ class GameMap
 		{
 			var column = columns[i];
 			var nextColumn = columns[i + 1];
-			var highestConnectedNode = 0; // index of that node in the next column
+
+			// index of the node with the highest index number in the next column, that a node in this column is connected to
+			// e.g. the next column has nodes 0, 1, 2. 0 and 1 have connections to nodes in this column, but 2 doesn' t have any. // So 1 is the highestConnectedNode.
+			var highestConnectedNode = 0;
+
 			for (j in 0...column.length)
 			{
 				var node = column[j];
 				var connectToHighestConnected:Bool;
+
 				// you must connect to the previously highest connected node if you are the first node in your column,
-				// or if the highest connected node is the last node in the next column
+				// or if the highest connected node is the last node in the next column.
+				// the highest connected node is always 0 if you are the first node in your column.
 				if (j == 0 || highestConnectedNode == nextColumn.length - 1)
 					connectToHighestConnected = true;
 				else
 					connectToHighestConnected = random.bool();
 
-				// the first connected node is either the highest connected node from the previous node in this column
+				// the first connected node for this node is either the highest connected node from the previous node in this column
 				// or the next one after the highest connected node.
 				var connectedStart:Int;
 				if (connectToHighestConnected)
@@ -166,11 +178,24 @@ class GameMap
 				else
 					connectedStart = highestConnectedNode + 1;
 
-				// if you are the last node, your connectEnd must be the end of the next column
-				// else, it can be anywhere from your connectedStart to the end of the next column
+				// if you are the last node, the last node you connect to must be the end of the next column.
+				// else, the last node you connect to can be anywhere from your connectedStart to the end of the next column.
+				// finally if you are the first node in your column, you have slightly different rules to make the pathing more even.
 				var connectedEnd:Int;
 				if (j == column.length - 1)
 					connectedEnd = nextColumn.length - 1;
+				else if (j == 0)
+				{
+					// without this exception for the first node, the map slightly favors the first node connecting to all the other nodes in the next column.
+					// So make the first node connecting to all nodes in the next column half as likely as any other choice.
+					var weights = new Array<Float>();
+					for (k in 0...nextColumn.length)
+					{
+						var weight = k == nextColumn.length - 1 ? 1 : 2;
+						weights.push(weight);
+					}
+					connectedEnd = random.weightedPick(weights);
+				}
 				else
 					connectedEnd = random.int(connectedStart, nextColumn.length - 1);
 

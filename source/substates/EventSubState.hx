@@ -32,6 +32,9 @@ class EventView extends FlxSpriteGroup
 
 	public var event:GameEvent;
 
+	static inline final TITLE_FONT_SIZE = 32;
+	static inline final DESC_FONT_SIZE = 24;
+
 	// how many pixels below the screen midpoint that the choices start rendering from.
 	static inline final CHOICES_TOP = 200;
 
@@ -53,8 +56,8 @@ class EventView extends FlxSpriteGroup
 
 	function centerSprites()
 	{
-		var centerX = Math.round(FlxG.width / 2);
-		var centerY = Math.round(FlxG.height / 2);
+		var centerX = FlxG.width / 2;
+		var centerY = FlxG.height / 2;
 		ViewUtils.centerSprite(titleSprite, centerX, centerY - 200);
 		ViewUtils.centerSprite(descSprite, centerX, centerY);
 		ViewUtils.centerSprite(windowSprite, centerX, centerY);
@@ -90,11 +93,11 @@ class EventView extends FlxSpriteGroup
 		add(windowSprite);
 
 		titleSprite = new FlxText(0, 0, 0, 'title');
-		titleSprite.setFormat(AssetPaths.DOSWin__ttf, 32);
+		titleSprite.setFormat(AssetPaths.DOSWin__ttf, TITLE_FONT_SIZE);
 		add(titleSprite);
 
 		descSprite = new FlxText(0, 0, 0, 'this is a sample desc. You should not see this in a real game');
-		descSprite.setFormat(AssetPaths.DOSWin__ttf, 24);
+		descSprite.setFormat(AssetPaths.DOSWin__ttf, DESC_FONT_SIZE);
 		add(descSprite);
 
 		battleButton = new EventButton('Battle', onClickBattle);

@@ -2,17 +2,18 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.text.FlxText;
-import openfl.system.System;
 import ui.debug.BAMIndicator;
+import ui.debug.BMIndicator;
 import ui.debug.MemIndicator;
 import utils.GameController;
-import utils.SubStateManager;
 
 class PlayState extends FlxState
 {
+	#if debug
 	var memIndicator:MemIndicator;
 	var bamIndicator:BAMIndicator;
+	var bmIndicator:BMIndicator;
+	#end
 
 	override public function create()
 	{
@@ -28,7 +29,7 @@ class PlayState extends FlxState
 		FlxG.fixedTimestep = false;
 
 		GameController.initSSM(this);
-		GameController.initBAM();
+		GameController.initBattleManagers();
 		GameController.subStateManager.returnToMap();
 
 		FlxG.camera.minScrollX = 0;
@@ -42,6 +43,9 @@ class PlayState extends FlxState
 
 		bamIndicator = new BAMIndicator(GameController.battleAnimationManager);
 		add(bamIndicator);
+
+		bmIndicator = new BMIndicator(GameController.battleManager);
+		add(bmIndicator);
 		#end
 	}
 

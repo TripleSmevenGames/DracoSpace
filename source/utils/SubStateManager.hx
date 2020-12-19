@@ -7,6 +7,8 @@ import substates.EventSubState;
 import substates.MapSubState;
 
 // handles sub state swaps in playState
+@:access(substates.BattleSubState)
+@:access(substates.BattleSubState.BattleView)
 class SubStateManager
 {
 	var playState:PlayState;
@@ -17,7 +19,7 @@ class SubStateManager
 
 	public function initEvent(event:GameEvent)
 	{
-		killAll();
+		cleanupAll();
 		ess.revive();
 		playState.openSubState(ess);
 		// the substate's sprites are not ready yet until the its opened.
@@ -30,19 +32,18 @@ class SubStateManager
 
 	public function initBattle(event:BattleEvent)
 	{
-		killAll();
+		cleanupAll();
 		bss.revive();
 		playState.openSubState(bss);
 		bss.openCallback = function()
 		{
 			bss.initBattle(event);
-			GameController.battleAnimationManager.reset();
 		}
 	}
 
 	public function returnToMap()
 	{
-		killAll();
+		cleanupAll();
 		mss.revive();
 		playState.openSubState(mss);
 		GameController.battleAnimationManager.reset();
@@ -55,18 +56,15 @@ class SubStateManager
 		mss.destroy();
 		ess.destroy();
 		bss.destroy();
-
-		mss = null;
-		ess = null;
-		bss = null;
 	}
 
 	// killing the state prevents it from recieving click events
-	public function killAll()
+	public function cleanupAll()
 	{
 		mss.kill();
 		ess.kill();
 		bss.kill();
+		bss.cleanup();
 	}
 
 	public function new(playState:PlayState)

@@ -1,10 +1,10 @@
 package;
 
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.FlxState;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
-import flixel.util.FlxSave;
-import openfl.system.System;
 import ui.buttons.MenuButton;
 import ui.debug.MemIndicator;
 import utils.GameController;
@@ -38,7 +38,7 @@ class MenuState extends FlxState
 	{
 		var titleText = new FlxText(0, 0, 0, "DrakoSpace");
 		titleText.setFormat(AssetPaths.font04B30__ttf, 100);
-		ViewUtils.centerSprite(titleText, Math.round(FlxG.width / 2), 200);
+		ViewUtils.centerSprite(titleText, FlxG.width / 2, 200);
 		add(titleText);
 
 		var newGameButton = new MenuButton('New Game', clickNew);

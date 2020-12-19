@@ -11,6 +11,8 @@ class EventButton extends FlxUIButton
 	{
 		super(0, 0, text, onClick);
 
+		final FONT_SIZE = 24;
+
 		var upSprite = AssetPaths.grey_light__png;
 		var hoverSprite = AssetPaths.grey__png;
 		var downSprite = AssetPaths.grey_pressed__png;
@@ -20,7 +22,7 @@ class EventButton extends FlxUIButton
 		var slice9Array = [slice9, slice9, slice9];
 		loadGraphicSlice9(graphicArray, 500, 32, slice9Array);
 
-		setLabelFormat(AssetPaths.DOSWin__ttf, 24, FlxColor.WHITE);
+		setLabelFormat(AssetPaths.DOSWin__ttf, FONT_SIZE, FlxColor.WHITE);
 		autoCenterLabel();
 	}
 }

@@ -1,5 +1,6 @@
 package utils;
 
+import models.player.Player;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
@@ -15,8 +16,13 @@ class GameController
 	/** global view manager for playState views. */
 	public static var subStateManager:SubStateManager;
 
+	/** global manager for handling battle "business logic". **/
+	public static var battleManager:BattleManager;
+
 	/** global manager for animations during battle. */
 	public static var battleAnimationManager:BattleAnimationManager;
+
+	public static var player:Player;
 
 	public static function initSave()
 	{
@@ -38,8 +44,9 @@ class GameController
 		subStateManager = new SubStateManager(playState);
 	}
 
-	public static function initBAM()
+	public static function initBattleManagers()
 	{
 		battleAnimationManager = new BattleAnimationManager();
+		battleManager = new BattleManager();
 	}
 }

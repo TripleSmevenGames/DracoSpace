@@ -1,8 +1,10 @@
 package models.skills;
 
+import constants.Constants.Colors;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.util.FlxColor;
 import models.cards.Card;
-import ui.battle.Character;
+import ui.battle.CharacterSprite;
 
 enum TargetMethod
 {
@@ -14,6 +16,7 @@ enum TargetMethod
 	RANDOM_ALLY;
 	ALL_ALLY;
 	SELF;
+	NONE;
 }
 
 enum SkillPointType
@@ -27,9 +30,9 @@ enum SkillPointType
 }
 
 // a skill's cost is just a skill point combination
-// skill can have multiple costs, each of which will activate the skill when paid
+// skill can have multiple costs, any valid cost paid will activate the skill.
 typedef Costs = Array<SkillPointCombination>;
-typedef Effect = (Array<Character>) -> Void;
+typedef Effect = Array<CharacterSprite>->Void;
 
 /** Represents a combination of skill points.
  *
@@ -43,6 +46,7 @@ class SkillPointCombination
 {
 	var map:Map<SkillPointType, Int> = new Map<SkillPointType, Int>();
 
+	/** For easy iterating for each skill point type.**/
 	public static var ARRAY = [POW, AGI, CON, KNO, WIS, ANY];
 
 	// helper to fill in 0's for keys that don't exist
@@ -56,6 +60,7 @@ class SkillPointCombination
 		return result;
 	}
 
+	/** Take in an array of SPC's and sum them, returning a new SPC. **/
 	public static function sum(combos:Array<SkillPointCombination>)
 	{
 		var result = new SkillPointCombination([]);
@@ -67,6 +72,35 @@ class SkillPointCombination
 			}
 		}
 		return result;
+	}
+
+	/** Add to this SPC IN PLACE. **/
+	public function add(other:SkillPointCombination)
+	{
+		for (type in ARRAY) {
+			var sum = this.get(type) + other.get(type);
+			this.set(type, sum);
+		}
+	}
+
+	/** Returns a new SPC, subracting each val in the map. **/
+	public function subtract(other:SkillPointCombination) {
+		var retVal = new SkillPointCombination();
+		for (type in ARRAY) {
+			var val = this.get(type) - other.get(type);
+			retVal.set(type, val);
+		}
+		return retVal;
+	}
+
+	/** If this SPC would help pay for this cost. Assumes you don't care about overpaying. **/
+	public function contributesTo(other:SkillPointCombination) {
+		for (type in ARRAY) {
+			if (this.get(type) > 0 && other.get(type) > 0) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	public function get(key:SkillPointType)
@@ -84,6 +118,17 @@ class SkillPointCombination
 		return map.exists(key);
 	}
 
+	public function toString()
+	{
+		var string = '';
+		for (type in SkillPointCombination.ARRAY)
+		{
+			string += '${type.getName()}: ${this.get(type)}, ';
+		}
+
+		return string;
+	}
+
 	public function new(?inputMap:Map<SkillPointType, Int>)
 	{
 		if (inputMap == null)
@@ -98,25 +143,29 @@ class SkillPointCombination
 	}
 }
 
+/* Represents the skill data itself. Its tile during a battle is represented by SkillSprite. */
 class Skill
 {
-	public var name:String;
-	public var desc:String;
-	public var costs:Costs = new Costs();
-	public var targetMethod:TargetMethod;
-	public var effect:Effect;
-	public var spritePath:FlxGraphicAsset;
+	public var name(default, null):String;
+	public var desc(default, null):String;
+	public var costs(default, null):Costs = new Costs();
+	public var targetMethod(default, null):TargetMethod;
+	public var effect(default, null):Effect;
+	public var cooldown(default, null):Int = 1;
+	public var maxCharges(default, null):Int = 1;
+	public var chargesPerCD(default, null):Int = 1;
+	public var spritePath(default, null):FlxGraphicAsset;
 
 	public static function sampleAttack()
 	{
 		var name = 'Prying Tool';
-		var desc = 'Pry \'em real good.';
+		var desc = 'Pry \'em real good. \n\n1POW or 2ANY';
 		var costs:Costs = SkillPointCombination.newCosts([[POW => 1], [ANY => 2]]);
-		var effect = function(targets:Array<Character>)
+		var effect = function(targets:Array<CharacterSprite>)
 		{
 			for (target in targets)
 			{
-				target.takeDamage(10);
+				target.takeDamage(7);
 			}
 		}
 		var skill = new Skill(name, desc, costs, effect);
@@ -130,9 +179,9 @@ class Skill
 	public static function sampleDefend()
 	{
 		var name = 'Welder\'s Helmet';
-		var desc = 'Eye protection is best protection.';
+		var desc = 'Eye protection is best protection. \n\n1CON or 2ANY';
 		var costs:Costs = SkillPointCombination.newCosts([[CON => 1], [ANY => 2]]);
-		var effect = function(targets:Array<Character>)
+		var effect = function(targets:Array<CharacterSprite>)
 		{
 			for (target in targets)
 			{
@@ -150,44 +199,53 @@ class Skill
 	public static function sampleEnemyAttack()
 	{
 		var name = 'Claw';
-		var desc = 'This enemy may or may not actually have a claw.';
+		var desc = 'This enemy may or may not actually have a claw. \n\n1POW';
 		var costs:Costs = SkillPointCombination.newCosts([[POW => 1]]);
-		var effect = function(targets:Array<Character>)
+		var effect = function(targets:Array<CharacterSprite>)
 		{
 			for (target in targets)
 			{
 				target.takeDamage(6);
 			}
 		}
-		return new Skill(name, desc, costs, effect);
+
+		var skill = new Skill(name, desc, costs, effect);
+
+		skill.spritePath = AssetPaths.WhiteBox__png;
+		skill.targetMethod = RANDOM_ALLY;
+
+		return skill;
 	}
 
-	static function paysCost(pay:SkillPointCombination, cost:SkillPointCombination)
+	static function paysCost(pay:SkillPointCombination, cost:SkillPointCombination, overpay:Bool = false)
 	{
 		var leftover:Int = 0;
 		for (type in SkillPointCombination.ARRAY)
 		{
-			if (type != ANY && pay.get(type) < cost.get(type))
+			if (type == ANY)
+				continue;
+			else if (type != ANY && pay.get(type) < cost.get(type))
 				return false;
 			else
-				leftover += pay.get(type) - cost.get(type);
+				leftover += pay.get(type) - cost.get(type); // convert all leftover into ANY.
 		}
-		// finally, compare the ANY
-		var payAny = pay.exists(ANY) ? pay.get(ANY) : 0;
-		var costAny = cost.exists(ANY) ? cost.get(ANY) : 0;
-		return leftover + payAny >= costAny;
+		// finally, compare the ANY. Your total ANY is your explicit ANY and leftovers.
+		if (overpay)
+			return leftover + pay.get(ANY) >= cost.get(ANY);
+		else
+			return leftover + pay.get(ANY) == cost.get(ANY);
 	}
 
-	public function canPayWith(pay:SkillPointCombination)
+	/** Returns false if the pay combo can't pay any of the card's costs. **/
+	public function canPayWith(pay:SkillPointCombination, overpay:Bool = false)
 	{
 		for (cost in costs)
 		{
-			if (paysCost(pay, cost))
+			if (paysCost(pay, cost, overpay))
 			{
 				return true;
 			}
 		}
-		trace('cant pay with this');
 		return false;
 	}
 

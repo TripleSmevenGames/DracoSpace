@@ -27,7 +27,7 @@ class CardPile extends FlxSpriteGroup
 		#if debug
 		// trace('called updatedNum on ${pileName} with ${cards.length} cards');
 		#end
-		numCards.text = '${pileName}: ${cards.length}';
+		numCards.text = '${cards.length}';
 	}
 
 	public function getCards()
@@ -76,13 +76,13 @@ class CardPile extends FlxSpriteGroup
 		super(x, y);
 		cards = [];
 
-		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH, CARD_HEIGHT, color);
+		this.body = new FlxSprite(0, 0).makeGraphic(Std.int(CARD_WIDTH / 2), Std.int(CARD_HEIGHT / 2), color);
 		ViewUtils.centerSprite(body);
 		add(body);
 
-		this.numCards = new FlxText(0, 0, 0, '${pileName}: ${cards.length}');
-		numCards.setFormat(AssetPaths.DOSWin__ttf, BATTLE_UI_FONT_SIZE_SM, FlxColor.WHITE, FlxTextAlign.CENTER);
-		ViewUtils.centerSprite(numCards, 0, -90);
+		this.numCards = new FlxText(0, 0, body.width, '${cards.length}');
+		numCards.setFormat(AssetPaths.origamiMommy__ttf, BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, FlxTextAlign.CENTER);
+		ViewUtils.centerSprite(numCards);
 		add(numCards);
 
 		#if debug
