@@ -1,6 +1,6 @@
 package ui.battle;
 
-import utils.ViewUtils;
+import constants.Fonts;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -10,6 +10,7 @@ import flixel.util.FlxColor;
 import ui.buttons.BasicWhiteButton;
 import utils.GameController;
 import utils.SubStateManager;
+import utils.ViewUtils;
 
 class WinScreen extends FlxSpriteGroup
 {
@@ -47,7 +48,7 @@ class WinScreen extends FlxSpriteGroup
 		add(screen);
 
 		this.text = new FlxText(0, 0, 0, 'VICTORY');
-		text.setFormat(AssetPaths.ka1__ttf, 100, FlxColor.WHITE);
+		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE);
 		add(text);
 		ViewUtils.centerSprite(text, FlxG.width / 2, 300);
 

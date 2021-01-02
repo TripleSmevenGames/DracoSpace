@@ -1,7 +1,8 @@
 package ui.battle;
 
-import constants.Constants.Colors;
-import constants.Constants.UIMeasurements.*;
+import constants.Colors;
+import constants.Fonts;
+import constants.UIMeasurements.*;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -14,9 +15,9 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import models.cards.Card;
+import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
-import models.player.CharacterInfo.CharacterType;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;
@@ -32,16 +33,28 @@ class SkillPointDisplay extends FlxSpriteGroup
 	// used for the blink() function
 	var timer:FlxTimer;
 
+	var LINE_HEIGHT = 18;
+
 	/** Rerender the display based on the information. **/
 	function refresh(skillPoints:SkillPointCombination)
 	{
+		var nonZeroCount = 0;
 		for (i in 0...pointList.length)
 		{
+			var line = pointList[i];
+			line.visible = false;
+
 			var type = SkillPointCombination.ARRAY[i];
-			pointList[i].text = '${type.getName()}: ${skillPoints.get(type)}';
+			var name = type.getName();
+			var val = skillPoints.get(type);
+			if (val > 0) // just show the types that are non-zero
+			{
+				line.text = '${val} ${name}';
+				line.setPosition(this.x, this.y + nonZeroCount * LINE_HEIGHT);
+				line.visible = true;
+				nonZeroCount++;
+			}
 		}
-		// tell the global BattleManager the player's new skill points
-		bm.playerSkillPoints = skillPoints;
 	}
 
 	// handles a single "blink", ie turning the sprite white to red, or red to white.
@@ -75,15 +88,13 @@ class SkillPointDisplay extends FlxSpriteGroup
 		timer.cancel();
 		this.bm = GameController.battleManager;
 
-		var height = 20;
 		for (i in 0...SkillPointCombination.ARRAY.length)
 		{
-			var type = SkillPointCombination.ARRAY[i];
-			var text = '${type.getName()}: 0';
-			var flxText = new FlxText(0, i * height, 0, text);
-			flxText.setFormat(AssetPaths.DOSWin__ttf, BATTLE_UI_FONT_SIZE_SM);
+			var flxText = new FlxText(0, 0, 0, ' ');
+			flxText.setFormat(Fonts.STANDARD_FONT, BATTLE_UI_FONT_SIZE_SM);
 			pointList.push(flxText);
 			add(flxText);
+			flxText.visible = false;
 		}
 	}
 }
@@ -103,15 +114,15 @@ class Hand extends FlxSpriteGroup
 	var type:CharacterType;
 
 	var body:FlxSprite;
+
 	var skillPoints:SkillPointCombination;
+
 	var skillPointDisplay:SkillPointDisplay;
 
-	// for player only
-	public var pickedCards:Cards = new Cards();
+	// for player's hand only
+	var pickedCards:Cards = new Cards();
 
 	var anchor:FlxSprite;
-	var wait:Bool = false;
-
 	var bam:BattleAnimationManager;
 	var bm:BattleManager;
 
@@ -123,6 +134,7 @@ class Hand extends FlxSpriteGroup
 	// to keep the sprites consistent with the current state of the actual cards in hand (the array),
 	// we pretty much have to wipe and rerender the sprites every time we change it.
 	// so we call wipe visual before modifying the cards array, and updateVisual after.
+	// EDIT: on second thought, wipeVisual might be useless. If there are perf issues, look at this first.
 	function wipeVisual()
 	{
 		for (card in cards)
@@ -240,6 +252,27 @@ class Hand extends FlxSpriteGroup
 		return cards.copy();
 	}
 
+	/** Get an array of the characters among the picked cards "only" field.
+	 *
+	 * If the array is empty, there are no only's and they can be played on any skill.
+	 *
+	 * If there's 1 in there, they can only be played for that char's skills.
+	 *
+	 * If there are 2+, it's "illegal" and can't be played for any skill.
+	**/
+	public function getPickedCardsOnly()
+	{
+		var onlies = new Array<CharacterSprite>();
+		for (card in pickedCards)
+		{
+			if (card.only != null && !onlies.contains(card.only))
+			{
+				onlies.push(card.only);
+			}
+		}
+		return onlies;
+	}
+
 	function addCard(card:Card)
 	{
 		wipeVisual();
@@ -273,17 +306,15 @@ class Hand extends FlxSpriteGroup
 		var destinationX = getCardXCoordInHand(i, i) + this.x; // this is the ith card drawn among cards we are drawing in a row.
 		var destinationY = this.y;
 
-		var onComplete = () ->
-		{
-			addCard(card);
-		};
+		var onComplete = (_) -> addCard(card);
 		var onStart = (_) ->
 		{
 			card.visible = true;
 			card.setPosition(drawX, drawY);
 		}
 
-		return bam.addAnim(FlxTween.tween(card, {x: destinationX, y: destinationY}, .1, {onStart: onStart}), onComplete);
+		var tween = FlxTween.tween(card, {x: destinationX, y: destinationY}, .1, {onStart: onStart, onComplete: onComplete});
+		bam.addTweens([tween]);
 	}
 
 	public function removeCard(card:Card)
@@ -291,6 +322,8 @@ class Hand extends FlxSpriteGroup
 		wipeVisual();
 		cards.remove(card);
 		pickedCards.remove(card);
+		card.hidden = false;
+		card.only = null;
 		renderVisual();
 	}
 
@@ -300,31 +333,29 @@ class Hand extends FlxSpriteGroup
 	**/
 	public function playCardsAnimate(cards:Array<Card>, skillX:Float, skillY:Float)
 	{
-		var anims = new Array<BattleAnimation>();
+		var tweens = new Array<FlxTween>();
 		var playSound = playSounds[random.int(0, 1)];
 		var onStartAll = () -> playSound.play();
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
-			var onComplete = () ->
+			var onComplete = (_) ->
 			{
 				removeCard(card);
 				// reset tween modifications
 				card.resetLook();
 			}
-			var anim:BattleAnimation = {
-				tween: FlxTween.tween(card, {
-					x: skillX,
-					y: skillY,
-					"scale.x": .5,
-					"scale.y": .5,
-					alpha: .5
-				}, .2),
-				onComplete: onComplete,
-			}
-			anims.push(anim);
+			var tween = FlxTween.tween(card, {
+				x: skillX,
+				y: skillY,
+				"scale.x": .5,
+				"scale.y": .5,
+				alpha: .5
+			}, .2, {onComplete: onComplete});
+			tweens.push(tween);
 		}
-		return bam.addAnims(anims, onStartAll);
+
+		return bam.addTweens(tweens, {onStartAll: onStartAll});
 	}
 
 	/** Flash the indicator red, indicating the skill can't be played because you dont have the right points for it. **/
@@ -352,9 +383,43 @@ class Hand extends FlxSpriteGroup
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
-			var onComplete = () -> removeCard(card);
-			bam.addAnim(FlxTween.tween(card, {x: discardX, y: discardY}, 0.1), onComplete);
+			discardCardAnimate(card, discardX, discardY);
 		}
+	}
+
+	public function discardCardAnimate(card:Card, discardX:Int, discardY:Int)
+	{
+		var onComplete = (_) ->
+		{
+			card.resetLook();
+			removeCard(card);
+		}
+		var tween = FlxTween.tween(card, {
+			x: discardX,
+			y: discardY,
+			'scale.x': .5,
+			'scale.y': .5
+		}, 0.1, {onComplete: onComplete});
+
+		bam.addTweens([tween]);
+	}
+
+	public function discardRandomCardsAnimate(num:Int, discardX:Int, discardY:Int)
+	{
+		if (num > cards.length)
+			num = cards.length;
+
+		var chosen = new Array<Int>();
+		var discardedCards = new Array<Card>();
+		for (i in 0...num)
+		{
+			var choice = random.int(0, cards.length - 1, chosen);
+			chosen.push(choice);
+			discardedCards.push(cards[choice]);
+			discardCardAnimate(cards[choice], discardX, discardY);
+		}
+
+		return discardedCards;
 	}
 
 	/** Called by BM to reveal all hidden cards in the enemy's hand. **/
@@ -379,6 +444,12 @@ class Hand extends FlxSpriteGroup
 		}
 	}
 
+	public function carryOverAll()
+	{
+		for (card in cards)
+			card.carryOver = true;
+	}
+
 	/** Holds the cards in the player's hand and handles animations of cards. It's centered. **/
 	public function new(x:Int = 0, y:Int = 0, type:CharacterType)
 	{
@@ -386,7 +457,7 @@ class Hand extends FlxSpriteGroup
 		this.cards = [];
 		this.type = type;
 
-		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 5, CARD_HEIGHT + 10, Colors.BACKGROUND_BLUE);
+		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 7, CARD_HEIGHT + 10, Colors.BACKGROUND_BLUE);
 		ViewUtils.centerSprite(body);
 		add(body);
 

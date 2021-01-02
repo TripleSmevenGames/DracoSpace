@@ -1,17 +1,19 @@
 package utils;
 
-import models.player.CharacterInfo.CharacterType;
 import flixel.FlxBasic;
 import haxe.Exception;
 import models.ai.BaseAI;
+import models.player.CharacterInfo.CharacterType;
 import models.skills.Skill.SkillPointCombination;
 import substates.BattleSubState;
 import ui.battle.CharacterSprite;
 import ui.battle.DeckSprite;
 import ui.battle.Hand;
-import ui.battle.ITurnable;
+import ui.battle.ITurnTriggerable;
 import ui.battle.SkillSprite;
-import utils.BattleAnimationManager.BattleAnimation;
+import ui.battle.status.Status;
+import utils.battleManagerUtils.BattleContext;
+import utils.battleManagerUtils.BattleSounds;
 
 enum BattleManagerStateNames
 {
@@ -20,26 +22,23 @@ enum BattleManagerStateNames
 	PLAYER_IDLE;
 	PLAYER_ANIMATING_PLAY;
 	PLAYER_TARGET;
+	PLAYER_ANIMATING_SKILL;
 	PLAYER_END;
 	ENEMY_START;
 	ENEMY_IDLE;
 	ENEMY_ANIMATING_PLAY;
 	ENEMY_TARGET;
+	ENEMY_ANIMATING_SKILL;
 	ENEMY_END;
 	WIN;
 	LOSE;
 }
 
-typedef BattleManagerStateOptions =
-{
-	var ?skillSprite:SkillSprite;
-};
-
 typedef BattleManagerState =
 {
 	var name:BattleManagerStateNames;
 	var turn:CharacterType;
-	var start:?BattleManagerStateOptions->Void; // switches to this state and does setup for the state.
+	var start:Void->Void; // switches to this state and does setup for the state.
 	var update:Float->Void; // runs after every frame after start.
 };
 
@@ -59,25 +58,19 @@ class BattleManager extends FlxBasic
 	var playerSkillSprites:Array<SkillSprite>;
 	var enemySkillSprites:Array<SkillSprite>;
 
-	/** How many skill points the player has based on the cards they've picked from their hand.
-		This should get set by the player's Skillpoint display.
-	**/
-	public var playerSkillPoints:SkillPointCombination;
-
-	var activePlayAnim:Array<BattleAnimation>;
 	var activeSkillSprite:SkillSprite;
 	var activeTargets:Array<CharacterSprite>;
 
-	/** The end turn button will flip this flag when pressed. **/
-	public var endTurnFlag(null, set):Bool;
+	/** The end turn button will flip this flag true when pressed. **/
+	public var endTurnFlag(null, set):Bool = false;
 
-	var playerDeckSprite:DeckSprite;
-	var enemyDeckSprite:DeckSprite;
-	var playerChars:Array<CharacterSprite>;
-	var enemyChars:Array<CharacterSprite>;
+	/** When an enemy char sprite dies, it should add to this number. **/
+	public var enemyDiscardCards:Int = 0;
+
+	public var context:BattleContext;
 
 	/** something is "turnable" if it has something to trigger at the start or end of player or enemy turns. **/
-	var turnables:Array<ITurnable>;
+	var turnables:Array<ITurnTriggerable>;
 
 	var enemyAI:BaseAI;
 
@@ -130,18 +123,25 @@ class BattleManager extends FlxBasic
 			return state.turn;
 	}
 
-	public function canEndTurn()
+	function canMoveToNextState()
 	{
-		return getState() == PLAYER_IDLE && bam.isQueueEmpty();
+		return bam.isQueueEmpty() && !context.areCharacterHurtAnimationsPlaying();
 	}
 
-	// make all skill sprites visible and interactable
+	public function canEndTurn()
+	{
+		return getState() == PLAYER_IDLE && canMoveToNextState();
+	}
+
+	// make all skill sprites visible and interactable,
 	function showAllSkillSprites()
 	{
 		for (sprite in playerSkillSprites)
 			sprite.revive();
 		for (sprite in enemySkillSprites)
 			sprite.revive();
+		for (char in context.pChars)
+			char.cancelSkillBtn.kill();
 	}
 
 	// make all skill sprites invisible and un-interactable
@@ -153,19 +153,13 @@ class BattleManager extends FlxBasic
 			sprite.kill();
 	}
 
-	function setTargetArrowsVisible(val:Bool, type:CharacterType) {
-		if (type == ENEMY) {
-			for (char in enemyChars)
-			{
-				char.targetArrow.visible = val;
-				char.targetArrow.alpha = .3;
-			}
-		} else if (type == PLAYER) {
-			for (char in playerChars)
-			{
-				char.targetArrow.visible = val;
-				char.targetArrow.alpha = .3;
-			}
+	function setTargetArrowsVisible(val:Bool, type:CharacterType)
+	{
+		var chars = context.getChars(type);
+		for (char in chars)
+		{
+			char.targetArrow.visible = val;
+			char.targetArrow.alpha = .5;
 		}
 	}
 
@@ -176,66 +170,51 @@ class BattleManager extends FlxBasic
 			return;
 
 		var skill = skillSprite.skill;
-		if (!skill.canPayWith(playerSkillPoints))
+		if (skillSprite.disabled)
+			return;
+
+		var pDeck = context.pDeck;
+
+		if (!skill.canPayWith(context.pDeck.getSkillPoints()))
 		{
-			playerDeckSprite.blinkSkillPointDisplay(); // warn the player they are short on points
+			pDeck.blinkSkillPointDisplay(); // warn the player they are short on points
 			return;
 		}
-		else if (skillSprite.disabled)
+
+		var onlies = pDeck.getPickedCardsOnly();
+		if (onlies.length != 0 && (onlies.length > 1 || onlies[0] != skillSprite.owner))
 		{
-			return;
+			return; // trying to play cards with onlies on the wrong character
 		}
-		else
+
+		activeSkillSprite = skillSprite;
+	}
+
+	function cancelSkillTargeting()
+	{
+		if (getState() == PLAYER_TARGET)
 		{
-			activeSkillSprite = skillSprite;
+			playerIdleState.start();
 		}
 	}
 
 	// called during target state, player is selecting a target for the current skill.
-	function onCharacterClick(char:CharacterSprite) {
-		if (getState() != PLAYER_TARGET)
-			return;
-
-		activeTargets = [char];
-	}
-
-	function onCharacterOver(char:CharacterSprite) {
-		if (getState() != PLAYER_TARGET)
-			return;
-
-		char.targetArrow.alpha = 1;
-	}
-
-	function onCharacterOut(char:CharacterSprite) {
-		if (getState() != PLAYER_TARGET)
-			return;
-
-		char.targetArrow.alpha = .3;
-	}
-
-	function areAllCharsDead(type:CharacterType)
+	function onCharacterClick(char:CharacterSprite)
 	{
-		var chars:Array<CharacterSprite> = [];
-		if (type == ENEMY)
-			chars = enemyChars;
-		if (type == PLAYER)
-			chars = playerChars;
-
-		for (char in chars)
-		{
-			if (!char.dead)
-				return false;
-		}
-		return true;
+		if (getState() == PLAYER_TARGET)
+			activeTargets = [char];
 	}
 
-	function getAliveEnemies() {
-		var aliveEnemies:Array<CharacterSprite> = [];
-		for (char in enemyChars) {
-			if (!char.dead)
-				aliveEnemies.push(char);
-		}
-		return aliveEnemies;
+	function onCharacterOver(char:CharacterSprite)
+	{
+		if (getState() == PLAYER_TARGET)
+			char.targetArrow.alpha = 1;
+	}
+
+	function onCharacterOut(char:CharacterSprite)
+	{
+		if (getState() == PLAYER_TARGET)
+			char.targetArrow.alpha = .5;
 	}
 
 	/** Reset the manager for a new battle. Make sure you add() this to the state after the battle view has been setup. **/
@@ -244,10 +223,7 @@ class BattleManager extends FlxBasic
 	{
 		this.revive();
 
-		this.playerDeckSprite = playerDeckSprite;
-		this.enemyDeckSprite = enemyDeckSprite;
-		this.playerChars = playerChars;
-		this.enemyChars = enemyChars;
+		this.context = new BattleContext(playerDeckSprite, enemyDeckSprite, playerChars, enemyChars);
 		this.playerSkillSprites = [];
 		this.enemySkillSprites = [];
 		this.turnables = [];
@@ -255,6 +231,7 @@ class BattleManager extends FlxBasic
 		for (char in playerChars)
 		{
 			turnables.push(char); // add all player chars to the list of turnables.
+			char.setOnClickCancelSkill(cancelSkillTargeting);
 			for (skillSprite in char.skillSprites)
 			{
 				playerSkillSprites.push(skillSprite);
@@ -278,8 +255,9 @@ class BattleManager extends FlxBasic
 
 		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, enemyDeckSprite, playerChars);
 
-		this.playerSkillPoints = new SkillPointCombination();
 		turnCounter = 1;
+		enemyDiscardCards = 0;
+
 		playerStartState.start();
 	}
 
@@ -293,53 +271,64 @@ class BattleManager extends FlxBasic
 		/**--------------DEFINE ALL THE STATES-----------**/
 		/**                                              **/
 
+		// trigger stuff in this state. Player can't act.
 		this.playerStartState = {
 			name: PLAYER_START,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = playerStartState;
 
 				sounds.startPlayerTurn.play();
 				turnCounter++;
 
+				showAllSkillSprites();
+
 				for (turnable in this.turnables)
-					turnable.onPlayerStartTurn();
+					turnable.onPlayerStartTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{
-				if (bam.isQueueEmpty()) // wait for animations to finish
+				if (canMoveToNextState()) // wait for animations to finish
 				{
 					playerIdleState.start();
 				}
 			}
 		};
 
+		// Do some checks. Otherwise, player can pick cards, play skills, or end their turn.
 		this.playerIdleState = {
 			name: PLAYER_IDLE,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = playerIdleState;
 
 				showAllSkillSprites();
 
 				// reset this stuff
-				activePlayAnim = null;
 				activeSkillSprite = null;
 				activeTargets = null;
 				setTargetArrowsVisible(false, PLAYER);
 				setTargetArrowsVisible(false, ENEMY);
-			},
-			update: (elapsed:Float) ->
-			{
-				if (areAllCharsDead(ENEMY))
+
+				// check if we've won or lost
+				if (context.areAllCharsDead(ENEMY))
 				{
 					winState.start();
 				}
-				else if (areAllCharsDead(PLAYER))
+				else if (context.areAllCharsDead(PLAYER))
 				{
 					loseState.start();
+				}
+			},
+			update: (elapsed:Float) ->
+			{
+				// check if something caused the enemy to discard cards
+				if (enemyDiscardCards > 0)
+				{
+					context.eDeck.discardRandomCards(enemyDiscardCards);
+					enemyDiscardCards = 0;
 				}
 				else
 				{
@@ -347,7 +336,7 @@ class BattleManager extends FlxBasic
 					{
 						playerAnimatingPlayState.start();
 					}
-					else if (endTurnFlag)
+					else if (endTurnFlag && canEndTurn())
 					{
 						playerEndState.start();
 						endTurnFlag = false;
@@ -356,28 +345,30 @@ class BattleManager extends FlxBasic
 			},
 		};
 
+		// Animate the cards being played. Player can't act.
 		this.playerAnimatingPlayState = {
 			name: PLAYER_ANIMATING_PLAY,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				if (activeSkillSprite == null)
 					throw new Exception('entered animating play state, but no skill was active');
 
 				state = playerAnimatingPlayState;
-				activePlayAnim = this.playerDeckSprite.playPickedCards(activeSkillSprite);
+				context.pDeck.playPickedCards(activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
-				if (activePlayAnim != null && activePlayAnim.length == 0) // this will be true when the play animation is done playing.
+				if (canMoveToNextState())
 					playerTargetState.start();
 			},
 		};
 
+		// Let player select a target for their played skill, if possible. Player can't do anything else.
 		this.playerTargetState = {
 			name: PLAYER_TARGET,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = playerTargetState;
 
@@ -385,12 +376,12 @@ class BattleManager extends FlxBasic
 					throw new Exception('entered target state, but no skill was active');
 
 				activeTargets = null;
-				hideAllSkillSprites();
 
+				// Either auto choose the targets, or show the target arrows and let the targets be chosen.
 				switch (activeSkillSprite.skill.targetMethod)
 				{
 					case SINGLE_ENEMY:
-						var aliveEnemies = getAliveEnemies();
+						var aliveEnemies = context.getAliveEnemies();
 						if (aliveEnemies.length == 1)
 						{
 							activeTargets = aliveEnemies; // auto choose the only enemy left
@@ -399,41 +390,73 @@ class BattleManager extends FlxBasic
 						else
 						{
 							setTargetArrowsVisible(true, ENEMY);
+							hideAllSkillSprites();
+							activeSkillSprite.owner.cancelSkillBtn.revive();
 							return; // wait for user selection.
 						}
+					case ALL_ENEMY:
+						var aliveEnemies = context.getAliveEnemies();
+						activeTargets = aliveEnemies;
 					case SINGLE_ALLY:
 						setTargetArrowsVisible(true, PLAYER);
-					case SELF:
+						hideAllSkillSprites();
+						activeSkillSprite.owner.cancelSkillBtn.revive();
+						return; // wait for user selection.
+					case ALL_ALLY:
+						activeTargets = context.pChars;
+					case SELF, DECK:
 						activeTargets = [activeSkillSprite.owner];
 					default:
-						return;
+						throw new Exception('bad target state');
 				}
 			},
 			update: (elapsed:Float) ->
 			{
 				if (activeTargets != null)
 				{
-					activeSkillSprite.runEffect(activeTargets);
-					playerIdleState.start();
+					playerAnimatingSkillState.start();
 				}
 			},
 		};
 
+		this.playerAnimatingSkillState = {
+			name: PLAYER_ANIMATING_SKILL,
+			turn: PLAYER,
+			start: () ->
+			{
+				this.state = playerAnimatingSkillState;
+
+				// remove the cancel button and all target arrows
+				activeSkillSprite.owner.cancelSkillBtn.kill();
+				setTargetArrowsVisible(false, PLAYER);
+				setTargetArrowsVisible(false, ENEMY);
+
+				// play the skill
+				activeSkillSprite.owner.playSkill(activeSkillSprite, activeTargets, context);
+			},
+			update: (elapsed:Float) ->
+			{
+				if (canMoveToNextState())
+					playerIdleState.start();
+			},
+		}
+
+		// Trigger some stuff. Player can't act.
 		this.playerEndState = {
 			name: PLAYER_END,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = playerEndState;
 
 				sounds.endPlayerTurn.play();
 
 				for (turnable in this.turnables)
-					turnable.onPlayerEndTurn();
+					turnable.onPlayerEndTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{
-				if (bam.isQueueEmpty()) // wait for animations to finish before enemy's turn start
+				if (canMoveToNextState()) // wait for animations to finish before enemy's turn start
 					enemyStartState.start();
 			}
 		};
@@ -441,17 +464,17 @@ class BattleManager extends FlxBasic
 		this.enemyStartState = {
 			name: ENEMY_START,
 			turn: PLAYER,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = enemyStartState;
 				for (turnable in this.turnables)
-					turnable.onEnemyStartTurn();
+					turnable.onEnemyStartTurn(context);
 
 				// call all the enemy's things' onStartTurn
 			},
 			update: (elapsed:Float) ->
 			{
-				if (bam.isQueueEmpty()) // wait for animations to finish
+				if (canMoveToNextState()) // wait for animations to finish
 				{
 					enemyIdleState.start();
 				}
@@ -461,23 +484,28 @@ class BattleManager extends FlxBasic
 		this.enemyIdleState = {
 			name: ENEMY_START,
 			turn: ENEMY,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = enemyIdleState;
 
-				activePlayAnim = null;
 				activeSkillSprite = null;
 				activeTargets = null;
-			},
-			update: (elapsed:Float) ->
-			{
-				if (areAllCharsDead(ENEMY))
+
+				if (context.areAllCharsDead(ENEMY))
 				{
 					winState.start();
 				}
-				else if (areAllCharsDead(PLAYER))
+				else if (context.areAllCharsDead(PLAYER))
 				{
 					loseState.start();
+				}
+			},
+			update: (elapsed:Float) ->
+			{
+				if (enemyDiscardCards > 0)
+				{
+					context.eDeck.discardRandomCards(enemyDiscardCards);
+					enemyDiscardCards = 0;
 				}
 				else
 				{
@@ -498,7 +526,7 @@ class BattleManager extends FlxBasic
 		this.enemyAnimatingPlayState = {
 			name: ENEMY_ANIMATING_PLAY,
 			turn: ENEMY,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				if (activeSkillSprite == null)
 				{
@@ -506,11 +534,11 @@ class BattleManager extends FlxBasic
 				}
 				state = enemyAnimatingPlayState;
 				var cards = enemyAI.pickCardsForSkill(activeSkillSprite);
-				activePlayAnim = this.enemyDeckSprite.playCards(cards, activeSkillSprite);
+				context.eDeck.playCards(cards, activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
-				if (activePlayAnim != null && activePlayAnim.length == 0) // this will be true when the play animation is done playing.
+				if (canMoveToNextState())
 					enemyTargetState.start();
 			},
 		};
@@ -518,7 +546,7 @@ class BattleManager extends FlxBasic
 		this.enemyTargetState = {
 			name: ENEMY_TARGET,
 			turn: ENEMY,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = enemyTargetState;
 				activeTargets = enemyAI.decideTargetsForSkill(activeSkillSprite);
@@ -527,25 +555,40 @@ class BattleManager extends FlxBasic
 			{
 				if (activeTargets != null)
 				{
-					activeSkillSprite.runEffect(activeTargets);
-					enemyIdleState.start();
+					enemyAnimatingSkillState.start();
 				}
+			},
+		}
+
+		this.enemyAnimatingSkillState = {
+			name: ENEMY_ANIMATING_SKILL,
+			turn: ENEMY,
+			start: () ->
+			{
+				this.state = enemyAnimatingSkillState;
+
+				activeSkillSprite.owner.playSkill(activeSkillSprite, activeTargets, context);
+			},
+			update: (elapsed:Float) ->
+			{
+				if (canMoveToNextState())
+					enemyIdleState.start();
 			},
 		}
 
 		this.enemyEndState = {
 			name: ENEMY_END,
 			turn: ENEMY,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				state = enemyEndState;
 
 				for (turnable in this.turnables)
-					turnable.onEnemyEndTurn();
+					turnable.onEnemyEndTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{
-				if (bam.isQueueEmpty()) // wait for animations to finish before player's turn start
+				if (canMoveToNextState()) // wait for animations to finish before player's turn start
 					playerStartState.start();
 			}
 		};
@@ -553,7 +596,7 @@ class BattleManager extends FlxBasic
 		this.winState = {
 			name: WIN,
 			turn: NONE,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				this.state = winState;
 				bss.showWinScreen();
@@ -564,7 +607,7 @@ class BattleManager extends FlxBasic
 		this.loseState = {
 			name: LOSE,
 			turn: NONE,
-			start: (?options:BattleManagerStateOptions) ->
+			start: () ->
 			{
 				this.state = loseState;
 				bss.showLoseScreen(); // change this to lose screen

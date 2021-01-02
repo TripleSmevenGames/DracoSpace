@@ -6,7 +6,12 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
+import ui.TooltipLayer;
 import ui.battle.CharacterSprite;
+import utils.BattleManager;
+import utils.GameController;
+import utils.ViewUtils;
+import utils.battleManagerUtils.BattleContext;
 
 /** A sprite representing a skill during battle. This is not the Skill itself, but it should always have a reference to
 	the Skill it represents. This should not exist outside the context of a battle.
@@ -17,17 +22,23 @@ class SkillSprite extends FlxSpriteGroup
 {
 	public var skill:Skill;
 	public var tile:FlxSprite;
+	public var priority:Int = 0;
 	public var owner:CharacterSprite;
 
 	// cooldown of x means the you must wait x turns before it can be used again.
 	// cooldown of 0 means this skill can be used this turn.
 	public var cooldownTimer(default, set):Int = 1;
 	public var currentCharges(default, set):Int = 1;
-
 	public var disabled(default, set):Bool;
+
+	public var mouseOverCallbacks:Array<FlxSprite->Void> = [];
+	public var mouseOutCallbacks:Array<FlxSprite->Void> = [];
 
 	public function set_cooldownTimer(val:Int)
 	{
+		if (cooldownTimer == 99) // cooldown of 99 means it will never go off cooldown.
+			return cooldownTimer = 99;
+
 		if (val == 0) // refund charges on this skill when cooldown hits 0;
 		{
 			currentCharges += skill.chargesPerCD;
@@ -87,12 +98,18 @@ class SkillSprite extends FlxSpriteGroup
 		});
 	}
 
-	public function runEffect(targets:Array<CharacterSprite>)
+	public function addHoverCallback(over:FlxSprite->Void, out:FlxSprite->Void)
+	{
+		mouseOverCallbacks.push(over);
+		mouseOutCallbacks.push(out);
+	}
+
+	public function play(targets:Array<CharacterSprite>, context:BattleContext)
 	{
 		if (this.disabled)
 			return;
 
-		skill.effect(targets);
+		skill.play(targets, this.owner, context);
 		this.currentCharges -= 1;
 		this.cooldownTimer += skill.cooldown;
 	}
@@ -108,21 +125,40 @@ class SkillSprite extends FlxSpriteGroup
 		this.skill = skill;
 
 		tile = new FlxSprite(0, 0, skill.spritePath);
-		tile.scale.set(2, 2);
+		tile.scale.set(3, 3);
 		tile.updateHitbox();
+		ViewUtils.centerSprite(tile, 0, 0);
 		add(tile);
 
 		this.cooldownTimer = 0;
 		this.currentCharges = skill.maxCharges;
 		this.owner = owner;
 
-		var tooltip = new Tooltip(skill.name, skill.desc);
-		tooltip.centerAboveParent(tile);
-		add(tooltip);
-
+		// setup the mouse events
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
-		FlxMouseEventManager.add(tile, null, null, null, null, null, null, false);
-		tooltip.bindTo(tile);
+		FlxMouseEventManager.add(tile, null, null, null, null, false, true, false);
+		FlxMouseEventManager.setMouseOverCallback(tile, (sprite:FlxSprite) ->
+		{
+			for (callback in mouseOverCallbacks)
+				callback(sprite);
+		});
+		FlxMouseEventManager.setMouseOutCallback(tile, (sprite:FlxSprite) ->
+		{
+			for (callback in mouseOutCallbacks)
+				callback(sprite);
+		});
+
+		// setup the hover effect
+		var darken = (_) -> tile.color = FlxColor.fromRGB(200, 200, 200);
+		var undarken = (_) -> tile.color = FlxColor.WHITE;
+		addHoverCallback(darken, undarken);
+
+		// setup the tooltip (which is also a hover effect)
+		var desc = skill.desc + '\n\n' + skill.getInfoString();
+		if (skill.flavor != '')
+			desc += '\n\n' + '"${skill.flavor}"';
+		var tooltip = new Tooltip(skill.name, desc);
+		GameController.battleTooltipLayer.registerTooltipForSkill(tooltip, this);
 
 		disabled = false;
 	}

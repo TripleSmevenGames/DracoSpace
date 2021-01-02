@@ -46,6 +46,10 @@ class SubStateManager
 		cleanupAll();
 		mss.revive();
 		playState.openSubState(mss);
+		mss.openCallback = function()
+		{
+			mss.onSwitch();
+		}
 		GameController.battleAnimationManager.reset();
 	}
 

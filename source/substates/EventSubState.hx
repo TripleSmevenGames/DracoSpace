@@ -1,5 +1,6 @@
 package substates;
 
+import constants.Fonts;
 import flash.geom.Rectangle;
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -93,11 +94,11 @@ class EventView extends FlxSpriteGroup
 		add(windowSprite);
 
 		titleSprite = new FlxText(0, 0, 0, 'title');
-		titleSprite.setFormat(AssetPaths.DOSWin__ttf, TITLE_FONT_SIZE);
+		titleSprite.setFormat(Fonts.STANDARD_FONT, TITLE_FONT_SIZE);
 		add(titleSprite);
 
 		descSprite = new FlxText(0, 0, 0, 'this is a sample desc. You should not see this in a real game');
-		descSprite.setFormat(AssetPaths.DOSWin__ttf, DESC_FONT_SIZE);
+		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE);
 		add(descSprite);
 
 		battleButton = new EventButton('Battle', onClickBattle);

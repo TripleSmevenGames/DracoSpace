@@ -2,6 +2,7 @@ package models.player;
 
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import models.skills.Skill;
+import models.skills.SkillFactory;
 
 enum CharacterType
 {
@@ -11,42 +12,74 @@ enum CharacterType
 }
 
 /** Represents a character outside of battle. Health, skills, etc. **/
-class CharacterInfo {
-    public var spritePath: FlxGraphicAsset;
+class CharacterInfo
+{
+	public var spritePath:FlxGraphicAsset;
+	public var avatarPath:FlxGraphicAsset;
 
-    public var name:String;
-    public var type:CharacterType;
-    public var maxHp:Int;
-    public var currHp:Int;
-    public var skills:Array<Skill>;
+	public var name:String;
+	public var type:CharacterType;
+	public var maxHp:Int = 1;
+	public var currHp:Int = 1;
+	public var skills:Array<Skill>;
+	public var draw:Int = 0;
 
-    public static function sampleRyder() {
-        var ryder = new CharacterInfo();
+	static var sf = SkillFactory;
 
-        ryder.name = 'Ryder';
-        ryder.type = PLAYER;
-        ryder.spritePath = AssetPaths.KiwiCat__png;
-        ryder.maxHp = 30;
-        ryder.currHp = 30;
-        ryder.skills = [Skill.sampleAttack(), Skill.sampleDefend()];
+	public static function sampleRyder()
+	{
+		var ryder = new CharacterInfo();
 
-        return ryder;
-    }
+		ryder.name = 'Ryder';
+		ryder.type = PLAYER;
+		ryder.spritePath = AssetPaths.lucario__png;
+		ryder.avatarPath = AssetPaths.RyderAvatar__png;
+		ryder.maxHp = 30;
+		ryder.currHp = 30;
+		ryder.skills = [
+			sf.fusionHammerSkill(),
+			sf.armGuardSkill(),
+			sf.kunaiSkill(),
+			sf.watchSkill(),
+			sf.plasmaTorchSkill(),
+			sf.adrenalineSkill(),
+			sf.mistyChillSkill()
+		];
+		ryder.draw = 2;
 
-    public static function sampleSlime() {
-        var slime = new CharacterInfo();
+		return ryder;
+	}
 
-        slime.name = 'Slime';
-        slime.type = ENEMY;
-        slime.spritePath = AssetPaths.Waffles__png;
-        slime.maxHp = 10;
-        slime.currHp = 10;
-        slime.skills = [Skill.sampleEnemyAttack()];
+	public static function sampleKiwi()
+	{
+		var kiwi = new CharacterInfo();
 
-        return slime;
-    }
+		kiwi.name = 'Kiwi';
+		kiwi.type = PLAYER;
+		kiwi.spritePath = AssetPaths.zangoose__png;
+		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
+		kiwi.maxHp = 30;
+		kiwi.currHp = 30;
+		kiwi.skills = [sf.patienceSkill(), sf.expertiseSkill(), sf.electricSurgeSkill()];
+		kiwi.draw = 2;
 
-    public function new() {
+		return kiwi;
+	}
 
-    }
+	public static function sampleSlime()
+	{
+		var slime = new CharacterInfo();
+
+		slime.name = 'Slime';
+		slime.type = ENEMY;
+		slime.spritePath = AssetPaths.gulpin__png;
+		slime.maxHp = 10;
+		slime.currHp = 10;
+		slime.skills = [sf.clawSkill(), sf.toughHideSkill()];
+		slime.draw = 2;
+
+		return slime;
+	}
+
+	function new() {}
 }

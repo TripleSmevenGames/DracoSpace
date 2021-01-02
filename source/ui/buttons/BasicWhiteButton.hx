@@ -1,5 +1,6 @@
 package ui.buttons;
 
+import constants.Fonts;
 import flixel.addons.ui.FlxUIButton;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
@@ -33,7 +34,7 @@ class BasicWhiteButton extends FlxUIButton
 		var slice9Array = [slice9, slice9, slice9];
 		loadGraphicSlice9(graphicArray, 100, 32, slice9Array);
 
-		setLabelFormat(AssetPaths.DOSWin__ttf, 18, FlxColor.BLACK);
+		setLabelFormat(Fonts.STANDARD_FONT, 18, FlxColor.BLACK);
 		autoCenterLabel();
 	}
 }

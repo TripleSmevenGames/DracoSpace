@@ -1,0 +1,57 @@
+Blrrpix (Blurred Pixels) Strict
+
+(Strict means that every "pixel" snaps to global grid)
+
+by Vít Èondák
+2005-2014
+
+fonty.condak.cz
+facebook.com/GunnyHandwritingFont
+
+En Cz Sk Pl Fr De Gr
+
+[ English License ]
+
+This font is free for any use except modification and it may not be sold.
+
+If you think something in this font doesn't feel right please contact me.
+
+
+[ Èeská licence ]
+
+Tento font je zdarma pro libovolné užití s výjimkou úprav a nesmí být prodáván.
+
+Pokud ve fontu objevíte nìco, co by bylo vhodné opravit nebo doladit, tak mì prosím kontaktujte.
+
+---
+
+History
+
+0.16	2014-09-02
+	* modified: r
+	+ Greek
+	+ OoUu-tilde 
+	+ GgHhJjSsWwYy-circumflex
+	+ IiOoUu-macron
+
+0.15	2014-02-09
+	* modified: t
+	+ kerning: st
+
+0.14	2014-01-15
+	* moved position: +-*=
+	* modified: rtlvx
+	+ Tweak: kerning T+
+
+0.13	2014-01-14
+	+ strict x tweak
+	* Tweak: ltvx
+
+0.12	2014-01-13
+	* complete basic set
+
+0.10	2014-01-12
+	+ small caps
+
+0.00	2005-09-02
+	+ 5fold

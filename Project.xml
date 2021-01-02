@@ -17,10 +17,10 @@
 	<window width="1440" height="900" fps="60" background="#000000" hardware="true" vsync="false" />
 
 	<!--HTML5-specific-->
-	<window if="html5" resizable="false" />
+	<window if="html5" width="1440" height="900" resizable="false" />
 
 	<!--Desktop-specific-->
-	<window if="desktop" orientation="landscape" fullscreen="false" resizable="true" />
+	<window if="desktop" width="0" height="0" orientation="landscape" fullscreen="true" resizable="true"  vsync="false" />
 
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" />
@@ -37,6 +37,9 @@
 	<haxelib name="flixel-addons" />
 	<haxelib name="flixel-ui" />
  	<haxelib name="nape-haxe4" />
+	<haxelib name="castle" />
+
+	<haxeflag name="-resource" value="assets/data/skillData.cdb" />
 
 	<!--In case you want to use the addons package-->
 	<!--<haxelib name="flixel-addons" />-->

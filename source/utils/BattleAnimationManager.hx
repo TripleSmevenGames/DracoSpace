@@ -2,41 +2,139 @@ package utils;
 
 import flixel.FlxBasic;
 import flixel.addons.nape.FlxNapeSprite;
+import flixel.animation.FlxAnimation;
 import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;
 
-/** This is just an FlxTween with a "holder" for the original onComplete. The animation
-	manager will set the FlxTWeen's actual onComplete with its own.
-**/
-typedef BattleAnimation =
+enum BattleAnimationGroupState
 {
-	var tween:FlxTween; // the tween to play
-	var ?onComplete:Void->Void; // the function to run once it's complete
+	WAITING;
+	ACTIVE;
+	DONE;
 }
 
-typedef BattleAnimGroup =
+typedef BattleAnimationGroupOptions =
 {
-	var anims:Array<BattleAnimation>;
-	var ?onStartAll:Void->Void;
-	var ?onCompleteAll:Void->Void;
+	?onStartAll:Void->Void,
+	?onCompleteAll:Void->Void,
+	?effect:Void->Void,
+	?effectFrame:Int,
+}
+
+/** An animation group holds an array of FlxTweens or FlxAnimations, collectively known here as "animations".
+ *
+ * When it's this groups turn in the BAM's queue, all the flxanimations and tweens will play.
+**/
+class BattleAnimationGroup
+{
+	public var tweens:Array<FlxTween> = [];
+	public var spriteAnims:Array<FlxAnimation> = [];
+	public var onStartAll:Void->Void;
+	public var onCompleteAll:Void->Void;
+	// You may want to run some code at certain point in time of the animation.
+	// E.g. on the 5th frame of this attack animation, run the dealDamage() function.
+	// Assumes you are referring to the first flxAnimation in the array.
+	public var effect:Void->Void;
+	public var effectFrame:Int = 0;
+
+	var effectPlayed:Bool = false;
+	var state:BattleAnimationGroupState = WAITING;
+
+	/** Fire off all the animations and tweens**/
+	public function play()
+	{
+		for (tween in tweens)
+			tween.active = true;
+		for (spriteAnim in spriteAnims)
+			spriteAnim.parent.play(spriteAnim.name);
+
+		onStartAll();
+		state = ACTIVE;
+	}
+
+	public function update()
+	{
+		if (state != ACTIVE)
+			return;
+
+		if (!effectPlayed && spriteAnims.length > 0 && spriteAnims[0].curFrame >= effectFrame)
+		{
+			effect();
+			effectPlayed = true;
+		}
+
+		for (tween in tweens)
+		{
+			if (tween.finished)
+			{
+				tweens.remove(tween);
+				tween.destroy();
+			}
+		}
+
+		for (spriteAnim in spriteAnims)
+		{
+			if (spriteAnim.finished)
+				spriteAnims.remove(spriteAnim);
+		}
+
+		if (tweens.length == 0 && spriteAnims.length == 0)
+		{
+			onCompleteAll();
+			state = DONE;
+			if (!effectPlayed)
+			{
+				trace('uh oh, anim group finished without the effect playing.');
+			}
+		}
+	}
+
+	function getDefaultOptions(options:BattleAnimationGroupOptions)
+	{
+		if (options == null)
+		{
+			options = {};
+		}
+		if (options.onStartAll == null)
+			options.onStartAll = () -> {};
+		if (options.onCompleteAll == null)
+			options.onCompleteAll = () -> {};
+		if (options.effect == null)
+			options.effect = () -> {};
+		if (options.effectFrame == null)
+			options.effectFrame = 0;
+
+		return options;
+	}
+
+	public function new(tweens:Array<FlxTween>, spriteAnims:Array<FlxAnimation>, ?options:BattleAnimationGroupOptions)
+	{
+		options = getDefaultOptions(options);
+
+		// cancel all the tweens, as they will be played as soon as they are created.
+		for (tween in tweens)
+			tween.active = false;
+
+		this.tweens = tweens;
+		this.spriteAnims = spriteAnims;
+		this.onStartAll = options.onStartAll;
+		this.onCompleteAll = options.onCompleteAll;
+		this.effect = options.effect;
+		this.effectFrame = options.effectFrame;
+
+		this.state = WAITING;
+		this.effectPlayed = false;
+	}
 }
 
 /** Allows you to put groups of animations in a queue.
  *
  * Each group is played at the same time. The next group in line is played after all the animations in the current group are done.
 **/
-@:access(flixel.tweens)
+@:access(utils.BattleAnimationGroup)
 class BattleAnimationManager extends FlxBasic
 {
-	var animQueue:Array<BattleAnimGroup> = new Array<BattleAnimGroup>();
-
-	// if are in the middle of an animation.
-	var animating:Bool = false;
-
-	/** reference to the current animation that is animating. */
-	var currAnim:FlxTween;
-
-	var damageNumbersPool:FlxTypedGroup<FlxNapeSprite>;
+	var queue:Array<BattleAnimationGroup> = [];
 
 	/** Reset the BAM for a new battle. Make sure you add() this after the battle view has been set up. **/
 	public function reset()
@@ -44,48 +142,34 @@ class BattleAnimationManager extends FlxBasic
 		this.revive();
 
 		// possible memory leak area
-		animQueue = [];
-		animating = false;
-		currAnim = null;
+		queue = [];
 	}
 
 	/** Use this function to check if there are no more animations to come. **/
 	public function isQueueEmpty()
 	{
-		if (animQueue.length > 0)
-			return false;
-		else
-			return true;
+		return queue.length == 0;
 	}
 
-	/** Add a single animation to the queue to be animated. Returns the animation. **/
-	public function addAnim(tween:FlxTween, ?onComplete:Void->Void)
+	/** Create a new BAG with only tweens and add it to the queue. **/
+	public function addTweens(tweens:Array<FlxTween>, ?options:BattleAnimationGroupOptions)
 	{
-		var anim:BattleAnimation = {tween: tween, onComplete: onComplete};
-		this.addAnims([anim]);
-		return anim;
+		var bag = new BattleAnimationGroup(tweens, [], options);
+		queue.push(bag);
 	}
 
-	/** Add a multiple animations as a single group to the queue.
-	 *
-	 * This means they will all be played at the same time when their turn comes in the queue.
-	 *
-	 * Each individual animation has its own onComplete. Or you can use onStartAll and onCompleteAll.
-	**/
-	public function addAnims(anims:Array<BattleAnimation>, ?onStartAll:Void->Void, ?onCompleteAll:Void->Void)
+	/** Create a new BAG with only FlxAnimations and add it to the queue. **/
+	public function addAnimations(spriteAnims:Array<FlxAnimation>, ?options:BattleAnimationGroupOptions)
 	{
-		for (anim in anims)
-		{
-			anim.tween.active = false;
-		}
-		var animGroup:BattleAnimGroup = {
-			anims: anims,
-			onStartAll: onStartAll,
-			onCompleteAll: onCompleteAll,
-		}
+		var bag = new BattleAnimationGroup([], spriteAnims, options);
+		queue.push(bag);
+	}
 
-		animQueue.push(animGroup);
-		return anims;
+	/** Create a new BattleAnimationGroup and add it to the BAM's queue. **/
+	public function addGroup(tweens:Array<FlxTween>, spriteAnims:Array<FlxAnimation>, ?options:BattleAnimationGroupOptions)
+	{
+		var bag = new BattleAnimationGroup(tweens, spriteAnims, options);
+		queue.push(bag);
 	}
 
 	public function new()
@@ -98,42 +182,18 @@ class BattleAnimationManager extends FlxBasic
 		if (isQueueEmpty())
 			return;
 
-		var animGroup = animQueue[0];
-		var anims = animGroup.anims;
-		if (animating)
+		var next = queue[0];
+		if (next.state == WAITING)
 		{
-			if (anims.length != 0)
-			{
-				return;
-			}
-			else
-			{
-				animating = false;
-
-				if (animGroup.onCompleteAll != null)
-					animGroup.onCompleteAll();
-
-				animQueue.shift();
-			}
+			next.play();
 		}
-		else
+		else if (next.state == ACTIVE)
 		{
-			animating = true;
-
-			if (animGroup.onStartAll != null)
-				animGroup.onStartAll();
-
-			for (anim in anims)
-			{
-				anim.tween.onComplete = (_) ->
-				{
-					if (anim.onComplete != null)
-						anim.onComplete();
-
-					anims.remove(anim);
-				};
-				anim.tween.active = true;
-			}
+			next.update();
+		}
+		else if (next.state == DONE)
+		{
+			queue.shift();
 		}
 		super.update(elapsed);
 	}

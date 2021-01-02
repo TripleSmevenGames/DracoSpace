@@ -1,21 +1,25 @@
 package substates;
 
-import ui.battle.LoseScreen;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.tweens.FlxEase;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.events.BattleEvent;
 import models.player.Deck;
+import models.player.Player;
+import ui.TooltipLayer;
 import ui.battle.CharacterSprite;
+import ui.battle.DamageNumbers;
 import ui.battle.DeckSprite;
+import ui.battle.LoseScreen;
 import ui.battle.WinScreen;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
-import utils.DamageNumbers;
 import utils.GameController;
 import utils.SubStateManager;
 
@@ -23,6 +27,7 @@ class BattleView extends FlxSpriteGroup
 {
 	// reference to global sub state manager
 	var ssm:SubStateManager;
+	var tooltipLayer:TooltipLayer;
 
 	var exitButton:FlxSprite;
 
@@ -34,46 +39,62 @@ class BattleView extends FlxSpriteGroup
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
 
-	static inline final PLAYER_X = 100;
-
-	var ENEMY_X = FlxG.width - 200;
+	final PLAYER_X = FlxG.width * (1 / 5);
+	final ENEMY_X = FlxG.width * (4 / 5);
 
 	var wait:Bool;
 
 	public function initBattle(event:BattleEvent)
 	{
-		var playerDeck = Deck.sample();
-		playerDeckSprite = new DeckSprite(0, FlxG.height - 200, playerDeck, PLAYER);
-		add(playerDeckSprite);
-
-		var enemyDeck = Deck.sample();
-		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, enemyDeck, ENEMY, 1);
-		add(enemyDeckSprite);
+		var background = new FlxSprite();
+		background.loadGraphic(AssetPaths.battlebg_mistywoods__png);
+		background.setGraphicSize(FlxG.width, FlxG.height);
+		background.updateHitbox();
+		add(background);
 
 		playerChars = [];
-		playerChars.push(CharacterSprite.sampleRyder());
+		for (charInfo in Player.chars)
+			playerChars.push(new CharacterSprite(charInfo));
+
+		var cursor:Float = 0;
 		for (i in 0...playerChars.length)
 		{
 			var char = playerChars[i];
-			char.setPosition(PLAYER_X, (FlxG.height / 2) - (i * 150));
+			char.setPosition(PLAYER_X, FlxG.height / 3 + cursor);
 			add(char);
+			if (char.drone != null)
+				FlxTween.tween(char.drone, {y: char.drone.y + 10}, 2, {type: PINGPONG, ease: FlxEase.quadOut});
+			cursor += char.height + 24;
 		}
 
 		enemyChars = [];
-		enemyChars.push(CharacterSprite.sampleSlime());
-		enemyChars.push(CharacterSprite.sampleSlime());
+		for (charInfo in event.enemies)
+			enemyChars.push(new CharacterSprite(charInfo));
+
+		cursor = 0;
 		for (i in 0...enemyChars.length)
 		{
 			var char = enemyChars[i];
-			char.setPosition(ENEMY_X, FlxG.height / 3 + i * 150);
+			char.setPosition(ENEMY_X, FlxG.height / 3 + cursor);
 			add(char);
+			cursor += char.height + 24;
 		}
+
+		var playerDeck = Deck.sample();
+		playerDeckSprite = new DeckSprite(0, FlxG.height - 200, playerDeck, PLAYER, playerChars);
+		add(playerDeckSprite);
+
+		var enemyDeck = Deck.sample();
+		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, enemyDeck, ENEMY, enemyChars, 1);
+		add(enemyDeckSprite);
 
 		winScreen = new WinScreen(this.exitBattle);
 		add(winScreen);
 
 		loseScreen = new LoseScreen(() -> FlxG.switchState(new MenuState()));
 		add(loseScreen);
+
+		add(tooltipLayer);
 	}
 
 	public function exitBattle()
@@ -84,10 +105,14 @@ class BattleView extends FlxSpriteGroup
 
 	public function cleanup()
 	{
+		tooltipLayer.cleanupTooltips();
 		this.forEach((sprite:FlxSprite) ->
 		{
-			remove(sprite);
-			sprite.destroy(); // possibly un needed
+			if (sprite != tooltipLayer)
+			{
+				remove(sprite);
+				sprite.destroy(); // possibly un needed
+			}
 		});
 	}
 
@@ -96,6 +121,8 @@ class BattleView extends FlxSpriteGroup
 		super();
 
 		ssm = GameController.subStateManager;
+		tooltipLayer = GameController.battleTooltipLayer;
+
 		#if debug
 		exitButton = new FlxSprite(0, 0);
 		exitButton.makeGraphic(10, 10, FlxColor.RED);
@@ -122,7 +149,6 @@ class BattleSubState extends FlxSubState
 	var view:BattleView;
 	var bm:BattleManager;
 	var bam:BattleAnimationManager;
-	var damageNumbersLayer:DamageNumbers;
 
 	public function initBattle(event:BattleEvent)
 	{
@@ -149,13 +175,17 @@ class BattleSubState extends FlxSubState
 		view.winScreen.play();
 	}
 
-	public function showLoseScreen(){
+	public function showLoseScreen()
+	{
 		view.loseScreen.play();
 	}
 
 	override public function create()
 	{
 		super.create();
+
+		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+
 		view = new BattleView();
 		view.scrollFactor.set(0, 0);
 		add(view);
@@ -173,9 +203,15 @@ class BattleSubState extends FlxSubState
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
 
+		// layer to draw the sprite animations
+		add(GameController.battleSpriteAnimsLayer);
+
 		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
-		this.damageNumbersLayer = new DamageNumbers();
-		add(damageNumbersLayer);
+		add(GameController.battleDamageNumbers);
+
+		// create the tooltip layer, which is where all tooltips will be added to.
+		// this lets them be rendered on top of the battle view.
+		add(GameController.battleTooltipLayer);
 	}
 
 	override public function destroy()

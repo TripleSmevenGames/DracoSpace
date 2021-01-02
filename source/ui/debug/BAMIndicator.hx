@@ -18,11 +18,12 @@ class BAMIndicator extends FlxText
 
 	override function update(elapsed:Float)
 	{
-		var firstItemLength = null;
-		if (BAM.animQueue.length != 0 ){
-			firstItemLength = BAM.animQueue[0].anims.length;
+		var firstItemLength = 0;
+		if (!BAM.isQueueEmpty())
+		{
+			firstItemLength = BAM.queue[0].tweens.length + BAM.queue[0].spriteAnims.length;
 		}
-		text = 'BAM: in Q: ${BAM.animQueue.length}, anim: ${BAM.animating}, length: ${firstItemLength}';
+		text = 'BAM: in Q: ${BAM.queue.length}, itemsLeft: ${firstItemLength}';
 		super.update(elapsed / 2);
 	}
 }

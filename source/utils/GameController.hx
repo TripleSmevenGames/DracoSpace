@@ -1,9 +1,12 @@
 package utils;
 
-import models.player.Player;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
+import models.player.Player;
+import ui.TooltipLayer;
+import ui.battle.DamageNumbers;
+import ui.battle.SpriteAnimsLayer;
 
 class GameController
 {
@@ -21,6 +24,13 @@ class GameController
 
 	/** global manager for animations during battle. */
 	public static var battleAnimationManager:BattleAnimationManager;
+
+	/** global manager for tooltips during battle. **/
+	public static var battleTooltipLayer:TooltipLayer;
+
+	public static var battleDamageNumbers:DamageNumbers;
+
+	public static var battleSpriteAnimsLayer:SpriteAnimsLayer;
 
 	public static var player:Player;
 
@@ -48,5 +58,8 @@ class GameController
 	{
 		battleAnimationManager = new BattleAnimationManager();
 		battleManager = new BattleManager();
+		battleTooltipLayer = new TooltipLayer();
+		battleDamageNumbers = new DamageNumbers();
+		battleSpriteAnimsLayer = new SpriteAnimsLayer();
 	}
 }

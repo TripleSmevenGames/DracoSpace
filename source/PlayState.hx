@@ -2,6 +2,10 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import models.player.CharacterInfo;
+import models.player.Deck;
+import models.player.Player;
+import models.skills.SkillFactory;
 import ui.debug.BAMIndicator;
 import ui.debug.BMIndicator;
 import ui.debug.MemIndicator;
@@ -32,10 +36,15 @@ class PlayState extends FlxState
 		GameController.initBattleManagers();
 		GameController.subStateManager.returnToMap();
 
+		SkillFactory.init();
+
+		Player.chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
+		Player.deck = Deck.sample();
+
 		FlxG.camera.minScrollX = 0;
-		FlxG.camera.maxScrollX = 5000; // arbitrary
+		// FlxG.camera.maxScrollX = 5000; // arbitrary
 		FlxG.camera.minScrollY = 0;
-		FlxG.camera.maxScrollY = 1000;
+		//	FlxG.camera.maxScrollY = 1000;
 
 		#if debug
 		memIndicator = new MemIndicator();
@@ -49,10 +58,32 @@ class PlayState extends FlxState
 		#end
 	}
 
+	public function reAddDebugs()
+	{
+		#if debug
+		remove(memIndicator);
+		add(memIndicator);
+
+		remove(bamIndicator);
+		add(bamIndicator);
+
+		remove(bmIndicator);
+		add(bmIndicator);
+		#end
+	}
+
 	override public function update(elapsed:Float)
 	{
 		if (FlxG.keys.anyPressed([ESCAPE]))
 			FlxG.switchState(new MenuState());
+
+		#if desktop
+		if (FlxG.keys.justPressed.P)
+		{
+			trace('pressed p');
+			FlxG.fullscreen = !FlxG.fullscreen;
+		}
+		#end
 
 		super.update(elapsed);
 	}

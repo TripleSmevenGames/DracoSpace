@@ -6,12 +6,12 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
 import models.cards.Card;
-import models.player.Deck;
 import models.player.CharacterInfo.CharacterType;
+import models.player.Deck;
 import ui.buttons.BasicWhiteButton;
-import utils.BattleAnimationManager.BattleAnimation;
 import utils.BattleManager;
 import utils.GameController;
+import utils.battleManagerUtils.BattleContext;
 
 /** DeckSprite builds the UI for a draw pile, hand and discard pile during battle.
  * Handles all interactions between hand, draw, and discard.
@@ -19,14 +19,17 @@ import utils.GameController;
  * This does NOT handle the rerendering or animating of the sprites. The sprite itself should handle that.
  * You should never interact with Hand or CardPile's internal card array.
  */
-class DeckSprite extends FlxSpriteGroup implements ITurnable
+@:access(ui.battle.Hand)
+class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 {
 	var drawPile:CardPile;
 	var discardPile:CardPile;
 	var body:FlxSprite;
 	var hand:Hand;
 	var endTurnBtn:BasicWhiteButton;
+
 	var type:CharacterType;
+	var chars:Array<CharacterSprite>;
 
 	// for enemy only
 	public var hiddenCards:Int = 0;
@@ -56,7 +59,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnable
 	}
 
 	/** For animation purposes, pass in the ordinal number of this card among cards we are drawing in a row.**/
-	function drawCard(hidden:Bool = false, i:Int)
+	function drawCard(hidden:Bool = false, ?only:CharacterSprite, i:Int)
 	{
 		if (drawPile.getCards().length == 0)
 		{
@@ -67,37 +70,41 @@ class DeckSprite extends FlxSpriteGroup implements ITurnable
 			hidden = false;
 
 		if (card != null)
+		{
+			card.onDraw();
 			hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y), hidden, i);
+		}
 		else
 			return;
 	}
 
-	public function drawCards(num:Int)
+	public function drawCards(num:Int, ?only:CharacterSprite)
 	{
 		var hiddenCount = hiddenCards;
 		for (i in 0...num)
 		{
 			if (hiddenCount > 0)
 			{
-				drawCard(true, i);
+				drawCard(true, only, i);
 				hiddenCount -= 1;
 			}
 			else
 			{
-				drawCard(false, i);
+				drawCard(false, only, i);
 			}
 		}
 	}
 
-	public function discardCard(card:Card)
+	/** Apply "carry over" to all cards in hand, meaning they don't get discarded at EOT. **/
+	public function carryOverAll()
 	{
-		if (hand.getCards().indexOf(card) == -1)
-		{
-			trace('tried to discard a card that didnt exist in hand: ${card.name}');
-			return;
-		}
-		hand.removeCard(card);
-		discardPile.addCard(card);
+		this.hand.carryOverAll();
+	}
+
+	public function discardRandomCards(num:Int)
+	{
+		var discardedCards = hand.discardRandomCardsAnimate(num, Std.int(discardPile.x), Std.int(discardPile.y));
+		discardPile.addCards(discardedCards);
 	}
 
 	public function discardHand()
@@ -117,6 +124,15 @@ class DeckSprite extends FlxSpriteGroup implements ITurnable
 	public function playPickedCards(skillSprite:SkillSprite)
 	{
 		return playCards(hand.pickedCards, skillSprite);
+	}
+
+	/** This function should be triggered by a player skill during their turn.
+		Pointless to call during the enemy's turn, as they reveal their hand at the start.
+	**/
+	public function revealCards(num:Int)
+	{
+		for (i in 0...num)
+			hand.revealCard();
 	}
 
 	/** Unhide all the cards. Called on enemy hands when their turn starts.
@@ -141,36 +157,62 @@ class DeckSprite extends FlxSpriteGroup implements ITurnable
 		return this.hand.getCards();
 	}
 
-	public function onPlayerStartTurn()
+	public function getSkillPoints()
 	{
-		drawCards(2); // both sides should draw their cards
+		return this.hand.skillPoints;
 	}
 
-	public function onPlayerEndTurn()
+	/**Get an array of the characters among the picked cards "only" field.
+	 *
+	 * If the array is empty, there are no only's and they can be played on any skill.
+	 *
+	 * If there's 1 in there, they can only be played for that char's skills.
+	 *
+	 * If there are 2+, it's "illegal" and can't be played for any skill.
+	**/
+	public function getPickedCardsOnly()
+	{
+		return this.hand.getPickedCardsOnly();
+	}
+
+	public function onPlayerStartTurn(context:BattleContext)
+	{
+		var cardsToDraw = 0;
+		for (char in chars) // this side draws cards equal to the sum of their characters' draw stat.
+		{
+			if (!char.dead)
+				cardsToDraw += char.info.draw;
+		}
+
+		drawCards(cardsToDraw);
+	}
+
+	public function onPlayerEndTurn(context:BattleContext)
 	{
 		if (type == PLAYER) // only the player discards their hand at the end of their turn
 			discardHand();
 	}
 
-	public function onEnemyStartTurn()
+	public function onEnemyStartTurn(context:BattleContext)
 	{
 		if (type == ENEMY)
 			revealHand();
 	}
 
-	public function onEnemyEndTurn()
+	public function onEnemyEndTurn(context:BattleContext)
 	{
 		if (type == ENEMY) // only the enemy discards their hand at the end of their turn
 			discardHand();
 	}
 
-	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, hiddenCards:Int = 0)
+	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>, hiddenCards:Int = 0)
 	{
 		super(x, y);
 
 		this.deck = deck;
 		this.bm = GameController.battleManager;
 		this.type = type;
+		this.chars = chars;
 
 		if (type == ENEMY)
 		{
@@ -204,7 +246,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnable
 		if (type == PLAYER)
 		{
 			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick);
-			endTurnBtn.setPosition(Std.int(body.width - 200), Std.int(body.height / 2) + 50);
+			endTurnBtn.setPosition(Std.int(body.width - 300), Std.int(body.height / 2) + 50);
 			add(endTurnBtn);
 		}
 

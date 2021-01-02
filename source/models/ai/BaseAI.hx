@@ -37,7 +37,7 @@ class BaseAI
 
 	function canPlaySkill(skillSprite:SkillSprite)
 	{
-		if (skillSprite.disabled) // no charges left
+		if (skillSprite.disabled) // no charges left, or owner is dead
 			return false;
 
 		var skillPointTotal = getSkillPointTotal();
@@ -99,6 +99,7 @@ class BaseAI
 		return pickedCards;
 	}
 
+	/** Override this for a smarter target-er**/
 	public function decideTargetsForSkill(skillSprite:SkillSprite)
 	{
 		var skill = skillSprite.skill;
@@ -109,7 +110,7 @@ class BaseAI
 		{
 			targets.push(skillSprite.owner);
 		}
-		else if (method == RANDOM_ALLY)
+		else if (method == RANDOM_ENEMY || method == SINGLE_ENEMY)
 		{
 			var choice = random.int(0, playerChars.length - 1);
 			targets.push(playerChars[choice]);

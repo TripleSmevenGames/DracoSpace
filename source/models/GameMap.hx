@@ -1,6 +1,6 @@
 package models;
 
-import constants.Constants.MapGenerationConsts as MapGenConsts;
+import constants.MapGeneration as MapGenConsts;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import haxe.Exception;

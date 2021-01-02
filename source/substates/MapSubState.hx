@@ -6,141 +6,19 @@ import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.GameMap;
+import ui.MapTile;
+import ui.header.Header;
 import utils.GameController;
 import utils.SubStateManager;
 import utils.ViewUtils;
 
 using flixel.util.FlxSpriteUtil;
 
-typedef ColumnSprite = Array<NodeSprite>;
-
-/** Represents on node on the map view */
-class NodeSprite extends FlxSpriteGroup
-{
-	public var node:Node;
-	public var id:Int;
-	public var connectedNodesId:Array<Int>;
-	// relative to parent
-	public var relativeX:Float;
-	public var relativeY:Float;
-
-	var gameMapView:GameMapView;
-
-	public var nodeBody:FlxSprite;
-	public var tooltip:FlxSprite;
-	public var here(default, set):Bool;
-	public var hereMarker:FlxSprite;
-	public var highlighted(default, set):Bool;
-	public var highlightBorder:FlxSprite;
-	public var visited:Bool;
-
-	public function set_here(val:Bool)
-	{
-		if (val)
-			hereMarker.visible = true;
-		else
-			hereMarker.visible = false;
-
-		return here = val;
-	}
-
-	public function set_highlighted(val:Bool)
-	{
-		if (val)
-		{
-			tooltip.visible = true;
-			highlightBorder.visible = true;
-		}
-		else
-		{
-			tooltip.visible = false;
-			highlightBorder.visible = false;
-		}
-		return highlighted = val;
-	}
-
-	public function addClickListener(listener:FlxSprite->Void)
-	{
-		FlxMouseEventManager.setMouseClickCallback(nodeBody, listener);
-	}
-
-	public function addHoverListener(over:FlxSprite->Void, out:FlxSprite->Void)
-	{
-		FlxMouseEventManager.setMouseOverCallback(nodeBody, over);
-		FlxMouseEventManager.setMouseOutCallback(nodeBody, out);
-	}
-
-	public function new(node:Node, x:Float = 0, y:Float = 0, mapView:GameMapView)
-	{
-		super(x, y);
-		this.relativeX = x;
-		this.relativeY = y;
-		this.node = node;
-		this.id = node.id;
-		this.connectedNodesId = node.connectedNodesId;
-		this.gameMapView = mapView;
-		this.visited = false;
-
-		var color:FlxColor;
-		var nodeType = node.event.type;
-
-		switch (nodeType)
-		{
-			case BATTLE:
-				color = FlxColor.RED;
-			case ELITE:
-				color = FlxColor.fromRGB(255, 16, 16);
-			case BOSS:
-				color = FlxColor.PURPLE;
-			case TREASURE:
-				color = FlxColor.YELLOW;
-			case HOME:
-				color = FlxColor.LIME;
-			case REST:
-				color = FlxColor.LIME;
-			case CHOICE:
-				color = FlxColor.GRAY;
-			default:
-				color = FlxColor.GRAY;
-		}
-
-		var lineStyle:LineStyle = {color: FlxColor.BLACK, thickness: 2};
-		var drawStyle:DrawStyle = {smoothing: false};
-
-		nodeBody = new FlxSprite(0, 0);
-		nodeBody.makeGraphic(64, 64, color);
-		if (nodeType == ELITE)
-		{
-			nodeBody.drawRect(0, 0, 64, 64, FlxColor.TRANSPARENT, {color: FlxColor.GRAY, thickness: 10}, drawStyle);
-		}
-		ViewUtils.centerSprite(nodeBody);
-		add(nodeBody);
-
-		hereMarker = new FlxSprite(0, 0).makeGraphic(64, 64, FlxColor.TRANSPARENT);
-		hereMarker.drawCircle(-1, -1, 14, FlxColor.WHITE, lineStyle, drawStyle);
-		ViewUtils.centerSprite(hereMarker);
-		add(hereMarker);
-		hereMarker.visible = false;
-
-		highlightBorder = new FlxSprite(0, 0);
-		highlightBorder.makeGraphic(74, 74, FlxColor.fromRGB(0, 0, 0, 10));
-		highlightBorder.drawRect(0, 0, 74, 74, FlxColor.TRANSPARENT, {color: FlxColor.GREEN, thickness: 10}, drawStyle);
-		ViewUtils.centerSprite(highlightBorder);
-		add(highlightBorder);
-		highlightBorder.visible = false;
-
-		tooltip = new FlxText(0, 0, 0, nodeType.getName(), 16);
-		ViewUtils.centerSprite(tooltip, 0, 50);
-		add(tooltip);
-		tooltip.visible = false;
-
-		FlxMouseEventManager.add(nodeBody);
-		here = false;
-	}
-}
+typedef ColumnSprite = Array<MapTile>;
 
 // the actual sprite representation of the map and its nodes.
 class GameMapView extends FlxSpriteGroup
@@ -149,39 +27,40 @@ class GameMapView extends FlxSpriteGroup
 	var columnSprites = new Array<ColumnSprite>();
 
 	// flattened version of columnSprites
-	public var nodeSprites = new Array<NodeSprite>();
+	public var mapTiles = new Array<MapTile>();
 
-	// Current Node
-	var currentNode:NodeSprite;
+	var currentTile:MapTile;
 
 	// large sprite that draws the lines connecting the nodes
 	var connectingLinesScreen:FlxSprite;
 
+	var header:Header;
+
 	// reference to global sub state manager
 	var ssm:SubStateManager;
 
-	static inline final COL_WIDTH = 200;
-	static inline final COL_HEIGHT = 600;
+	static inline final COL_WIDTH = 250;
+	static inline final COL_HEIGHT = 800;
 
-	public function markHere(nodeSprite:NodeSprite)
+	public function markHere(mapTile:MapTile)
 	{
 		for (columnSprite in columnSprites)
 		{
-			for (nodeSprite in columnSprite)
+			for (mapTile in columnSprite)
 			{
-				nodeSprite.here = false;
+				mapTile.here = false;
 			}
 		}
-		nodeSprite.here = true;
+		mapTile.here = true;
 	}
 
-	public function visit(nodeSprite:NodeSprite)
+	public function visit(mapTile:MapTile)
 	{
-		if (currentNode.connectedNodesId.contains(nodeSprite.id))
+		if (currentTile.connectedNodesId.contains(mapTile.id))
 		{
-			currentNode = nodeSprite;
-			markHere(nodeSprite);
-			ssm.initEvent(nodeSprite.node.event);
+			currentTile = mapTile;
+			markHere(mapTile);
+			ssm.initEvent(mapTile.node.event);
 		}
 	}
 
@@ -191,15 +70,19 @@ class GameMapView extends FlxSpriteGroup
 		var lineStyle:LineStyle = {color: FlxColor.WHITE, thickness: 10};
 		var drawStyle:DrawStyle = {smoothing: false};
 		connectingLinesScreen.makeGraphic(Math.round(this.width), Math.round(this.height), FlxColor.TRANSPARENT);
-		for (nodeSprite in nodeSprites)
+		for (mapTile in mapTiles)
 		{
-			for (id in nodeSprite.node.connectedNodesId)
+			for (id in mapTile.node.connectedNodesId)
 			{
-				var otherNodeSprite = nodeSprites[id];
-				connectingLinesScreen.drawLine(nodeSprite.relativeX, nodeSprite.relativeY, otherNodeSprite.relativeX, otherNodeSprite.relativeY, lineStyle,
-					drawStyle);
+				var otherMapTile = mapTiles[id];
+				connectingLinesScreen.drawLine(mapTile.x, mapTile.y, otherMapTile.x, otherMapTile.y, lineStyle, drawStyle);
 			}
 		}
+	}
+
+	public function refresh()
+	{
+		header.refresh();
 	}
 
 	public function new(x:Float = 0, y:Float = 0)
@@ -209,52 +92,64 @@ class GameMapView extends FlxSpriteGroup
 		this.gameMap = new GameMap(18);
 		this.ssm = GameController.subStateManager;
 
+		// add the background
+		var bg = new FlxSprite(0, 0, AssetPaths.desertbg__png);
+		bg.setGraphicSize(FlxG.width, FlxG.height);
+		bg.updateHitbox();
+		add(bg);
+
 		// add this screen first, so the connecting lines will be under the nodes
 		this.connectingLinesScreen = new FlxSprite(0, 0);
 		add(connectingLinesScreen);
 
+		var random = new FlxRandom();
+		var yOffset = FlxG.height / 2 - (COL_HEIGHT / 2); // offset so the nodes appear in the middle of the screen.
+		var xOffset = 100; // give a bit of padding on the left side.
 		for (i in 0...gameMap.columns.length)
 		{
 			var column = gameMap.columns[i];
 			var columnSprite = new ColumnSprite();
 			for (j in 0...column.length)
 			{
-				// set the nodeSprite's node and position on the map
+				// set the mapTile's node and position on the map
 				var node:Node = column[j];
-				var xCoord = i * COL_WIDTH + 50;
-				var yCoord = (COL_HEIGHT / (column.length + 1) * (j + 1));
-				var nodeSprite = new NodeSprite(node, xCoord, yCoord, this);
-				FlxMouseEventManager.add(nodeSprite.nodeBody);
+				var xRandom = random.int(-40, 40);
+				var yRandom = random.int(-40, 40);
+				var xCoord = i * COL_WIDTH + xRandom + xOffset;
+				var yCoord = (COL_HEIGHT / (column.length + 1) * (j + 1)) + yRandom + yOffset;
+				var mapTile = new MapTile(node, xCoord, Std.int(yCoord));
 
-				nodeSprite.addClickListener(function(_)
+				mapTile.addClickListener(function(_)
 				{
-					visit(nodeSprite);
+					visit(mapTile);
 				});
-				nodeSprite.addHoverListener(function(_)
+				mapTile.addHoverListener(function(_)
 				{
 					#if debug
 					trace('mouse over node');
 					#end
-					nodeSprite.highlighted = true;
+					mapTile.highlighted = true;
 				}, function(_)
 				{
-					nodeSprite.highlighted = false;
+					mapTile.highlighted = false;
 				});
-				columnSprite.push(nodeSprite);
-				nodeSprites.push(nodeSprite);
+				columnSprite.push(mapTile);
+				mapTiles.push(mapTile);
 
-				add(nodeSprite);
+				add(mapTile);
 				var line = new FlxSprite(0, 0).makeGraphic(8, 8, FlxColor.WHITE);
 				line.setPosition(xCoord, yCoord);
 			}
 			columnSprites.push(columnSprite);
 		}
 
-		add(new FlxSprite(0, 0).makeGraphic(100, 10, FlxColor.GREEN));
-		add(new FlxSprite(0, this.height).makeGraphic(100, 10, FlxColor.GREEN));
 		drawConnectingLines();
-		currentNode = nodeSprites[0];
-		markHere(currentNode);
+		this.header = new Header();
+		header.scrollFactor.set(0, 0);
+		add(header);
+
+		currentTile = mapTiles[0];
+		markHere(currentTile);
 	}
 }
 
@@ -265,17 +160,16 @@ class MapSubState extends FlxSubState
 
 	static inline final SCROLL_SPEED = 25;
 
+	/** Call this when we switch back to this state from the ssm. **/
+	public function onSwitch()
+	{
+		view.refresh();
+	}
+
 	override public function create()
 	{
 		super.create();
-		view = new GameMapView(50, 100);
-		add(view);
-	}
-
-	public function readd()
-	{
-		remove(view, true);
-		view = new GameMapView(50, 100);
+		view = new GameMapView(0, 0);
 		add(view);
 	}
 
@@ -308,11 +202,6 @@ class MapSubState extends FlxSubState
 		if (FlxG.mouse.wheel != 0)
 		{
 			FlxG.camera.scroll.x -= (FlxG.mouse.wheel * 100);
-		}
-
-		if (FlxG.keys.anyJustPressed([T]))
-		{
-			readd();
 		}
 	}
 

@@ -1,7 +1,8 @@
 package models.cards;
 
-import constants.Constants.Colors;
-import constants.Constants.UIMeasurements;
+import constants.Colors;
+import constants.Fonts;
+import constants.UIMeasurements;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
@@ -18,7 +19,7 @@ class CardCover extends FlxSpriteGroup
 		add(body);
 
 		var mark = new FlxText(0, 0, body.width, '?');
-		mark.setFormat(AssetPaths.ka1__ttf, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, 'center');
+		mark.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, 'center');
 		ViewUtils.centerSprite(mark, body.width / 2, body.height / 2);
 		add(mark);
 	}

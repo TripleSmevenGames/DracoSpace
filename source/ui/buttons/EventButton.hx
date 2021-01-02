@@ -1,5 +1,6 @@
 package ui.buttons;
 
+import constants.Fonts;
 import flixel.addons.ui.FlxUIButton;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
@@ -22,7 +23,7 @@ class EventButton extends FlxUIButton
 		var slice9Array = [slice9, slice9, slice9];
 		loadGraphicSlice9(graphicArray, 500, 32, slice9Array);
 
-		setLabelFormat(AssetPaths.DOSWin__ttf, FONT_SIZE, FlxColor.WHITE);
+		setLabelFormat(Fonts.STANDARD_FONT, FONT_SIZE, FlxColor.WHITE);
 		autoCenterLabel();
 	}
 }

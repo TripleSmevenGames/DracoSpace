@@ -1,31 +1,32 @@
 package ui.battle;
 
-import utils.ViewUtils;
-import flixel.system.FlxSound;
+import constants.Fonts;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import ui.buttons.BasicWhiteButton;
 import utils.GameController;
 import utils.SubStateManager;
+import utils.ViewUtils;
 
 class LoseScreen extends FlxSpriteGroup
 {
 	var ssm:SubStateManager;
 	var text:FlxText;
-    var mainMenuBtn:BasicWhiteButton;
-    
-    var youDiedSound:FlxSound;
+	var mainMenuBtn:BasicWhiteButton;
+
+	var youDiedSound:FlxSound;
 
 	/** Play the animation of this screen.**/
 	public function play()
 	{
-        this.revive();
-        
-        youDiedSound.play();
+		this.revive();
+
+		youDiedSound.play();
 
 		text.scale.set(0.1, 0.1);
 		text.alpha = .2;
@@ -52,15 +53,15 @@ class LoseScreen extends FlxSpriteGroup
 		add(screen);
 
 		this.text = new FlxText(0, 0, FlxG.width, 'YOU DIED');
-		text.setFormat(AssetPaths.ka1__ttf, 100, FlxColor.WHITE, 'center');
+		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE, 'center');
 		text.setPosition(0, 300);
 		add(text);
 
 		this.mainMenuBtn = new BasicWhiteButton('Main Menu', onMainMenuClick);
 		ViewUtils.centerSprite(mainMenuBtn, FlxG.width / 2, FlxG.height / 2 + 100);
-        add(mainMenuBtn);
-        
-        this.youDiedSound = FlxG.sound.load(AssetPaths.youDied__wav);
+		add(mainMenuBtn);
+
+		this.youDiedSound = FlxG.sound.load(AssetPaths.youDied__wav);
 
 		this.kill();
 	}

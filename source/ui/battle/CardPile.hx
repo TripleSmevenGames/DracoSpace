@@ -1,6 +1,7 @@
 package ui.battle;
 
-import constants.Constants.UIMeasurements.*;
+import constants.Fonts;
+import constants.UIMeasurements.*;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
@@ -81,7 +82,7 @@ class CardPile extends FlxSpriteGroup
 		add(body);
 
 		this.numCards = new FlxText(0, 0, body.width, '${cards.length}');
-		numCards.setFormat(AssetPaths.origamiMommy__ttf, BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, FlxTextAlign.CENTER);
+		numCards.setFormat(Fonts.NUMBERS_FONT, BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, FlxTextAlign.CENTER);
 		ViewUtils.centerSprite(numCards);
 		add(numCards);
 

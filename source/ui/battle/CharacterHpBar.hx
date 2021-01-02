@@ -1,7 +1,8 @@
 package ui.battle;
 
-import constants.Constants.Colors;
-import constants.Constants.UIMeasurements;
+import constants.Colors;
+import constants.Fonts;
+import constants.UIMeasurements;
 import flixel.addons.ui.FlxUIBar;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
@@ -13,20 +14,20 @@ class HpBarSprite extends FlxUIBar
 {
 	var text:FlxText;
 
-	public function new(x:Float, y:Float, text:FlxText)
+	public function new(x:Float, y:Float, width, height, text:FlxText)
 	{
-		super(x, y);
+		super(x, y, LEFT_TO_RIGHT, width, height);
 		this.text = text;
 	}
 
 	override public function updateBar()
 	{
 		var emptyColor = Colors.BACKGROUND_BLUE;
-		var fillColor = Colors.DARK_GREEN;
+		var fillColor = FlxColor.GREEN;
 		if (this.percent < 25)
-			fillColor = Colors.DARK_RED;
+			fillColor = FlxColor.RED;
 		else if (this.percent < 75)
-			fillColor = Colors.DARK_YELLOW;
+			fillColor = FlxColor.YELLOW;
 
 		this.createFilledBar(emptyColor, fillColor);
 
@@ -37,7 +38,7 @@ class HpBarSprite extends FlxUIBar
 	}
 }
 
-/** Character HP and block indicator during a battle. **/
+/** Character HP and block indicator during a battle or on the header. **/
 class CharacterHpBar extends FlxSpriteGroup
 {
 	var bar:HpBarSprite;
@@ -45,46 +46,47 @@ class CharacterHpBar extends FlxSpriteGroup
 	var blockIndicator:BattleIndicatorIcon;
 	var character:CharacterSprite;
 
-	static inline final BAR_WIDTH = 100;
-	static inline final BAR_HEIGHT = 32;
-	static inline final NUM_FONT_SIZE = 16;
-
 	public function updateBlockIndicator(val:Int)
 	{
 		blockIndicator.updateDisplay(Std.string(val));
 	}
 
-	public function new(character:CharacterSprite)
+	public function new(character:CharacterSprite, w:Int = 100, h:Int = 12, block:Bool = true)
 	{
-		super(0, character.sprite.height);
+		super(0, 0);
 
 		this.character = character;
 
-		numbers = new FlxText(0, 0, BAR_WIDTH, '0/0');
-		numbers.setFormat(AssetPaths.DOSWin__ttf, NUM_FONT_SIZE, FlxColor.WHITE, FlxTextAlign.CENTER);
-		ViewUtils.centerSprite(numbers, BAR_WIDTH / 2, BAR_HEIGHT / 2);
+		numbers = new FlxText(0, 0, w, '0/0');
+		numbers.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_MED, FlxColor.WHITE, FlxTextAlign.CENTER);
+		numbers.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		ViewUtils.centerSprite(numbers, 0, 0);
 
-		bar = new HpBarSprite(0, 0, numbers);
+		bar = new HpBarSprite(0, 0, w, h, numbers);
+		ViewUtils.centerSprite(bar);
 
 		// let the bar watch the character's hp
 		bar.parent = character;
 		bar.parentVariable = 'currHp';
-
-		bar.width = 100;
-		bar.height = 32;
 		bar.setRange(0, character.maxHp);
 
 		// set up the colors for the bar
 		var emptyColor = Colors.BACKGROUND_BLUE;
-		var fillColor = Colors.DARK_GREEN;
+		var fillColor = Colors.CONSTITUTION_GREEN;
 		bar.createFilledBar(emptyColor, fillColor, true);
 
-		// block indicator must be explicitly updaated.
-		blockIndicator = new BattleIndicatorIcon(AssetPaths.Block__png, 2, 16, Colors.BACKGROUND_BLUE, null, 'Block prevents damage until your next turn.');
-		blockIndicator.setPosition(bar.width, 0 - blockIndicator.icon.height / 2);
+		var options = {
+			centered: true,
+			color: Colors.BACKGROUND_BLUE,
+		}
 
 		add(bar);
 		add(numbers);
-		add(blockIndicator);
+		if (block)
+		{
+			blockIndicator = new BattleIndicatorIcon(AssetPaths.Block__png, null, 'Block prevents damage until your next turn.', options);
+			blockIndicator.setPosition(bar.width / 2 + blockIndicator.icon.width / 2, 0);
+			add(blockIndicator);
+		}
 	}
 }

@@ -3,7 +3,6 @@
 * "burden of knowledge", deal damage equal to num of cards enemy has.
 * synergizing skill, "you and the enemy both draw a card".
 * Bleed -> take 1 more damage.
-* poison -> dot damage, like Slay the Spire
 * counter -> return damage taken, even if blocked
 * lock/unlock. Build up? Ramp? Bank?
 * bomb -> make enemy on other side, destroy to deal damage to enemies.
@@ -14,6 +13,10 @@
 * kill allies to damage boss
 * switch modes character
 * mark
+* pets
+* weather + day/night
+* Poison level, enemies put poison on you. NPC gives antidote skill, 1 ANY -> remove poison.
+* consumables
 
 **Burn**: (Status effect that stacks). Burn X: At the end of turn, take X damage and lose 1 stack. If this character didn't play cards this turn, deal the same damage to its allies.
 1. Blowtorch: (1 AGI or 1 KNO) => Apply 5 Burn to an enemy.
@@ -32,4 +35,5 @@
 1. Sniper's Breath: (1 WIS) => If you are Camouflaged, gain Focus.
 2. Hide: (1 WIS or 2 ANY) => Gain Camouflaged.
 
-**Exhausted**: Discard X turns next turn, remove all stacks.
+**Exhausted**: Whenever you play a skill, discard a random card. Remove at end of turn.
+
