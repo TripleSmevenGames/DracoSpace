@@ -4,13 +4,14 @@ import flixel.FlxBasic;
 import haxe.Exception;
 import models.ai.BaseAI;
 import models.player.CharacterInfo.CharacterType;
+import models.player.Player;
 import models.skills.Skill.SkillPointCombination;
 import substates.BattleSubState;
-import ui.battle.CharacterSprite;
 import ui.battle.DeckSprite;
 import ui.battle.Hand;
 import ui.battle.ITurnTriggerable;
 import ui.battle.SkillSprite;
+import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleSounds;
@@ -253,7 +254,7 @@ class BattleManager extends FlxBasic
 		turnables.push(playerDeckSprite);
 		turnables.push(enemyDeckSprite);
 
-		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, enemyDeckSprite, playerChars);
+		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, context);
 
 		turnCounter = 1;
 		enemyDiscardCards = 0;
@@ -600,6 +601,8 @@ class BattleManager extends FlxBasic
 			{
 				this.state = winState;
 				bss.showWinScreen();
+				Player.exp += 1;
+				Player.money += 7;
 			},
 			update: (elapsed:Float) -> {}
 		};

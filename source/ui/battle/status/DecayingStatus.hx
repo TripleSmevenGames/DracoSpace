@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
 import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 

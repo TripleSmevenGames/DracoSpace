@@ -10,7 +10,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.skills.Skill.SkillPointCombination;
 import models.skills.Skill.SkillPointType;
-import ui.battle.CharacterSprite;
+import ui.battle.character.CharacterSprite;
 import utils.GameController;
 import utils.ViewUtils;
 

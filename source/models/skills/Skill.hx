@@ -2,8 +2,8 @@ package models.skills;
 
 import Castle;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import ui.battle.CharacterSprite;
 import ui.battle.DeckSprite;
+import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 
@@ -21,6 +21,7 @@ enum SkillPointType
 // skill can have multiple costs, any valid cost paid will activate the skill.
 typedef Costs = Array<SkillPointCombination>;
 typedef Play = (Array<CharacterSprite>, CharacterSprite, BattleContext) -> Void;
+typedef Effect = (CharacterSprite, CharacterSprite, BattleContext) -> Void;
 
 /** Represents a combination of skill points.
  *
@@ -146,6 +147,8 @@ class Skill
 	public var id(default, null):Int;
 	public var name(default, null):String;
 	public var desc(default, null):String;
+	public var value(default, null):Int;
+	public var value2(default, null):Int;
 	public var flavor(default, null):String;
 	public var rarity(default, null):SkillData_skills_rarity;
 	public var costs(default, null):Costs = new Costs(); // need to translate from DB
@@ -236,6 +239,8 @@ class Skill
 	{
 		this.name = skillData.name;
 		this.desc = skillData.desc;
+		this.value = skillData.value;
+		this.value2 = skillData.value2;
 		this.flavor = skillData.flavor != null ? skillData.flavor : '';
 		this.rarity = skillData.rarity;
 		this.costs = parseCostsFromSkillData(skillData.costs);
@@ -243,5 +248,8 @@ class Skill
 		this.cooldown = skillData.cooldown != null ? skillData.cooldown : 1;
 		this.maxCharges = skillData.maxCharges != null ? skillData.maxCharges : 1;
 		this.chargesPerCD = skillData.chargesPerCD != null ? skillData.chargesPerCD : 1;
+
+		// defaults
+		this.spritePath = AssetPaths.emptySkill__png;
 	}
 }

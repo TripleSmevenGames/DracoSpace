@@ -13,12 +13,27 @@ class Header extends FlxSpriteGroup
 {
 	var body:FlxSprite;
 	var displays:Array<CharacterDisplay> = [];
+	var expBarDisplay:ExpBarDisplay;
+	var moneyDisplay:MoneyDisplay;
+
+	var cursor:Float = 100;
+	var padding = 50;
 
 	/** Refresh the HP numbers so that they are accurate. **/
 	public function refresh()
 	{
 		for (display in displays)
 			display.refresh();
+
+		expBarDisplay.refresh();
+		moneyDisplay.refresh();
+	}
+
+	function addToView(sprite:FlxSprite)
+	{
+		sprite.setPosition(cursor, body.height / 2);
+		add(sprite);
+		cursor += sprite.width + padding;
 	}
 
 	public function new()
@@ -29,15 +44,17 @@ class Header extends FlxSpriteGroup
 		body.makeGraphic(FlxG.width, 100, FlxColor.fromRGB(200, 200, 200, 150));
 		add(body);
 
-		var charDisplay1 = new CharacterDisplay(Player.chars[0]);
-		charDisplay1.setPosition(100, body.height / 2);
-		add(charDisplay1);
+		this.expBarDisplay = new ExpBarDisplay();
+		addToView(expBarDisplay);
 
-		displays.push(charDisplay1);
+		var charDisplay1 = new CharacterDisplay(Player.chars[0]);
+		addToView(charDisplay1);
 
 		var charDisplay2 = new CharacterDisplay(Player.chars[1]);
-		charDisplay2.setPosition(300, body.height / 2);
-		add(charDisplay2);
+		addToView(charDisplay2);
+
+		this.moneyDisplay = new MoneyDisplay();
+		addToView(moneyDisplay);
 
 		displays.push(charDisplay1);
 		displays.push(charDisplay2);

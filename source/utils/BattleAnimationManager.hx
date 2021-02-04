@@ -48,6 +48,10 @@ class BattleAnimationGroup
 		for (spriteAnim in spriteAnims)
 			spriteAnim.parent.play(spriteAnim.name);
 
+		// if there's no sprite animation, then there's no effect to play. Assume it's been played then.
+		if (spriteAnims.length == 0)
+			effectPlayed = true;
+
 		onStartAll();
 		state = ACTIVE;
 	}

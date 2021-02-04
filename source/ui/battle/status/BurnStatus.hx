@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
 import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -20,7 +21,7 @@ class BurnStatus extends DecayingStatus
 	override function onPlayerEndTurn(context:BattleContext)
 	{
 		if (owner.info.type == PLAYER)
-			owner.takeDamage(stacks, {sound: getSound()});
+			owner.takeDamage(stacks, {sound: getSound()}, context);
 
 		super.onPlayerEndTurn(context); // decay the stacks
 	}
@@ -28,7 +29,7 @@ class BurnStatus extends DecayingStatus
 	override function onEnemyEndTurn(context:BattleContext)
 	{
 		if (owner.info.type == ENEMY)
-			owner.takeDamage(stacks, {sound: getSound()});
+			owner.takeDamage(stacks, {sound: getSound()}, context);
 
 		super.onEnemyEndTurn(context); // decay the stacks
 	}

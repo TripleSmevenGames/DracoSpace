@@ -3,9 +3,10 @@ package models.ai;
 import flixel.math.FlxRandom;
 import models.cards.Card;
 import models.skills.Skill.SkillPointCombination;
-import ui.battle.CharacterSprite;
 import ui.battle.DeckSprite;
 import ui.battle.SkillSprite;
+import ui.battle.character.CharacterSprite;
+import utils.battleManagerUtils.BattleContext;
 
 /** Base enemy AI "decider." Has handy functions. 
  *
@@ -18,18 +19,13 @@ class BaseAI
 	// skills among all enemy characters
 	var skillSprites:Array<SkillSprite>;
 
-	// this enemy's deck
-	var deckSprite:DeckSprite;
-
-	// player chars the enemy could target
-	var playerChars:Array<CharacterSprite>;
-
+	var context:BattleContext;
 	var random:FlxRandom;
 
 	function getSkillPointTotal():SkillPointCombination
 	{
 		var cardSkillPoints = new Array<SkillPointCombination>();
-		var cards = deckSprite.getCardsInHand();
+		var cards = context.eDeck.getCardsInHand();
 		for (card in cards)
 			cardSkillPoints.push(card.skillPoints);
 		return SkillPointCombination.sum(cardSkillPoints);
@@ -73,7 +69,7 @@ class BaseAI
 
 	public function pickCardsForSkill(skillSprite:SkillSprite)
 	{
-		var cards = deckSprite.getCardsInHand();
+		var cards = context.eDeck.getCardsInHand();
 		var pickedCards = new Array<Card>();
 		var skillPoints = new SkillPointCombination();
 
@@ -112,23 +108,34 @@ class BaseAI
 		}
 		else if (method == RANDOM_ENEMY || method == SINGLE_ENEMY)
 		{
-			var choice = random.int(0, playerChars.length - 1);
-			targets.push(playerChars[choice]);
+			var tauntedChars = context.getCharsWithStatus(TAUNT, PLAYER);
+			if (tauntedChars.length > 0)
+			{
+				targets.push(tauntedChars[0]);
+			}
+			else
+			{
+				var choice = random.int(0, context.pChars.length - 1);
+				targets.push(context.pChars[choice]);
+			}
+		}
+		else if (method == ALL_ENEMY)
+		{
+			targets = context.pChars;
 		}
 		else
 		{
-			var choice = random.int(0, playerChars.length - 1);
-			targets.push(playerChars[choice]);
+			var choice = random.int(0, context.pChars.length - 1);
+			targets.push(context.pChars[choice]);
 		}
 
 		return targets;
 	}
 
-	public function new(skillSprites:Array<SkillSprite>, deckSprite:DeckSprite, playerChars:Array<CharacterSprite>)
+	public function new(skillSprites:Array<SkillSprite>, context:BattleContext)
 	{
 		this.skillSprites = skillSprites;
-		this.deckSprite = deckSprite;
-		this.playerChars = playerChars;
+		this.context = context;
 		this.random = new FlxRandom();
 	}
 }

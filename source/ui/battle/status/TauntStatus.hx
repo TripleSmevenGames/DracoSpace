@@ -10,11 +10,11 @@ class TauntStatus extends DecayingStatus
 	{
 		type = TAUNT;
 		name = 'Taunt';
-		var desc = 'Enemies will target this character is able. Lose 1 stack at the end of turn.';
+		var desc = 'Enemies will target this character if able. Lose 1 stack at the end of turn.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new BattleIndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

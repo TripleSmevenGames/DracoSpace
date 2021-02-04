@@ -1,4 +1,4 @@
-package ui.battle;
+package ui.battle.character;
 
 import constants.Colors;
 import constants.Fonts;

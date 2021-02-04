@@ -1,17 +1,12 @@
 package ui.battle.status;
 
 import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 
 class AttackStatus extends Status
 {
-	override public function onDealDamage(originalDamage:Int)
-	{
-		super.onDealDamage(originalDamage);
-		return originalDamage + 1;
-	}
-
-	public function new(owner:CharacterSprite)
+	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = ATTACK;
 		name = 'Attack';
@@ -21,6 +16,6 @@ class AttackStatus extends Status
 		};
 		var icon = new BattleIndicatorIcon(AssetPaths.Attack1__png, name, desc, options);
 
-		super(owner, icon);
+		super(owner, icon, initialStacks);
 	}
 }

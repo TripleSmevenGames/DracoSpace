@@ -36,15 +36,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [
-			sf.fusionHammerSkill(),
-			sf.armGuardSkill(),
-			sf.kunaiSkill(),
-			sf.watchSkill(),
-			sf.plasmaTorchSkill(),
-			sf.adrenalineSkill(),
-			sf.mistyChillSkill()
-		];
+		ryder.skills = [];
 		ryder.draw = 2;
 
 		return ryder;

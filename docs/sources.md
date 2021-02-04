@@ -1,6 +1,7 @@
 ## Pixel art sources:
 https://henrysoftware.itch.io/pixel-food
 https://www.kenney.nl/assets/pixel-ui-pack
+https://codemanu.itch.io/particle-fx-designer
 
 ## Sound sources:
 https://simon13666.itch.io/sound-starter-pack

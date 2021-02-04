@@ -38,8 +38,7 @@ class PlayState extends FlxState
 
 		SkillFactory.init();
 
-		Player.chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
-		Player.deck = Deck.sample();
+		Player.init();
 
 		FlxG.camera.minScrollX = 0;
 		// FlxG.camera.maxScrollX = 5000; // arbitrary

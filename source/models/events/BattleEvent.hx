@@ -4,7 +4,7 @@ import haxe.Exception;
 import haxe.macro.Expr.Error;
 import models.events.GameEvent.GameEventType;
 import models.player.CharacterInfo;
-import ui.battle.CharacterSprite;
+import ui.battle.character.CharacterSprite;
 
 class BattleEvent implements GameEvent
 {

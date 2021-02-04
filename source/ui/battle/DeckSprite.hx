@@ -8,6 +8,7 @@ import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
+import ui.battle.character.CharacterSprite;
 import ui.buttons.BasicWhiteButton;
 import utils.BattleManager;
 import utils.GameController;

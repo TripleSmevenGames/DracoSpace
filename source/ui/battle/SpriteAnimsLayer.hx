@@ -3,17 +3,25 @@ package ui.battle;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import models.skills.Skill.Effect;
 import utils.BattleAnimationManager.BattleAnimationGroupOptions;
 import utils.BattleManager;
 import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
+/** This is a sprite "layer" that will hold battle sprite animations. 
+ *
+ * Call createStandardAnim to create your animated sprite.
+ * Then use addOneShotAnim to combine your animated sprite and your game effect.
+ *
+ * See functions in "SkillAnimations" for example usage.
+**/
 class SpriteAnimsLayer extends FlxSpriteGroup
 {
 	public static inline final FRAME_RATE = 30;
 
-	/** Setup a sprite sheet to be added to the BAM**/
+	/** Setup an animated sprite to be added to the BAM**/
 	public function createStandardAnim(assetPath:FlxGraphicAsset, width:Int, height:Int, numFrames:Int, skipFrames:Int = 1)
 	{
 		var sprite = new FlxSprite(0, 0);

@@ -1,8 +1,8 @@
 package utils.battleManagerUtils;
 
 import models.player.CharacterInfo.CharacterType;
-import ui.battle.CharacterSprite;
 import ui.battle.DeckSprite;
+import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusType;
 
 /** Hopefully encapsulates everything you would need to know about the current state of battle.**/

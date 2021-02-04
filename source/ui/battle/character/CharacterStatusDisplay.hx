@@ -1,4 +1,4 @@
-package ui.battle;
+package ui.battle.character;
 
 import flixel.group.FlxSpriteGroup;
 import haxe.Exception;
@@ -130,12 +130,18 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			status.onEnemyEndTurn(context);
 	}
 
-	public function onDealDamage(originalDamage:Int)
+	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext)
 	{
-		var damage = originalDamage;
 		for (status in statuses)
-			damage = status.onDealDamage(damage);
-		return damage;
+			damage = status.onDealDamage(damage, target, context);
+	}
+
+	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
+	{
+		for (status in statuses)
+		{
+			status.onTakeDamage(damage, dealer, context);
+		}
 	}
 
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)

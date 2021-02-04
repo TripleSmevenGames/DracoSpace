@@ -1,4 +1,4 @@
-package ui.battle;
+package ui.battle.character;
 
 import flixel.FlxG;
 import flixel.FlxSprite;
@@ -23,11 +23,6 @@ import utils.BattleManager;
 import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
-
-typedef TakeDamageOptions =
-{
-	?sound:FlxSound,
-}
 
 /** Represents a character's sprite during battle. */
 class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
@@ -137,7 +132,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** Call this function for the character to take damage blocked by block. **/
-	public function takeDamage(val:Int, ?options:TakeDamageOptions)
+	public function takeDamage(val:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		if (dead)
 		{
@@ -145,20 +140,10 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			trace('a dead char took damage. ${this.info.name}');
 		}
 
-		if (options == null)
-			options = {};
-
-		var hurtSound:FlxSound;
-		if (options.sound == null)
-			hurtSound = this.hurtSound;
-		else
-			hurtSound = options.sound;
-
 		currBlock -= val;
 		if (val > currBlock)
 		{
 			playHurtAnimation();
-			hurtSound.play(true);
 			currHp -= (val - currBlock);
 			FlxG.camera.shake(0.01, 0.1);
 		}
@@ -167,14 +152,19 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			blockedSound.play(true);
 		}
 
+		this.onTakeDamage(val, dealer, context);
 		spawnDamageNumber(Std.string(val));
 	}
 
-	/** Call this when one char deals damage to other char.**/
-	public function dealDamageTo(target:CharacterSprite, val:Int)
+	/** Call this when one char deals damage to other char.
+	 *
+	 * Modify the damage before dealing it here.
+	**/
+	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext)
 	{
-		var damage = onDealDamage(val);
-		target.takeDamage(damage);
+		val += this.statusDisplay.hasStatus(ATTACK);
+		onDealDamage(val, target, context);
+		target.takeDamage(val, this, context);
 	}
 
 	function singleFlash()
@@ -274,9 +264,14 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
-	function onDealDamage(originalDamage)
+	function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext)
 	{
-		return statusDisplay.onDealDamage(originalDamage);
+		statusDisplay.onDealDamage(damage, target, context);
+	}
+
+	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
+	{
+		statusDisplay.onTakeDamage(damage, dealer, context);
 	}
 
 	function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)

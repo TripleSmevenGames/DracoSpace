@@ -18,6 +18,7 @@ import models.cards.Card;
 import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
+import ui.battle.character.CharacterSprite;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;

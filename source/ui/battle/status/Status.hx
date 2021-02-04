@@ -1,6 +1,7 @@
 package ui.battle.status;
 
 import flixel.group.FlxSpriteGroup;
+import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 
@@ -11,6 +12,7 @@ enum StatusType
 	COLD;
 	ATTACK;
 	TAUNT;
+	COUNTER;
 }
 
 class Status extends FlxSpriteGroup implements ITurnTriggerable
@@ -54,19 +56,15 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function onEnemyEndTurn(context:BattleContext) {}
 
-	public function onTakeDamage(context:BattleContext) {}
+	// dont modify damage here
+	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	public function onTakeUnblockedDamage() {}
 
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}
 
-	/** Do something when this character deals damage to another.
-		If you want to modify the damage dealt, return a new damage.
-	**/
-	public function onDealDamage(originalDamage:Int)
-	{
-		return originalDamage;
-	}
+	// dont modify damage here
+	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext) {}
 
 	public function onDead(context:BattleContext) {}
 

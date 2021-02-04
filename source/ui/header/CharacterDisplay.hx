@@ -47,12 +47,6 @@ class HpDisplay extends FlxSpriteGroup
 
 		maxText.setPosition(cursor, this.y);
 		maxText.centerY(this.y);
-
-		/*
-			valText.drawFrame(true);
-			slashText.drawFrame(true);
-			maxText.drawFrame(true);
-		 */
 	}
 
 	public function new(val:Int, max:Int)
@@ -60,15 +54,15 @@ class HpDisplay extends FlxSpriteGroup
 		super(0, 0);
 
 		valText = new FlxText(0, 0, 0, 'abcde');
-		valText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE);
+		valText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED);
 		valText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
 
 		slashText = new FlxText(0, 0, 0, '/');
-		slashText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE, FlxColor.BLACK, 'center');
+		slashText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, FlxColor.BLACK, 'center');
 		slashText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
 
 		maxText = new FlxText(0, 0, 0, 'abcde');
-		maxText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE, FlxColor.GREEN, 'center');
+		maxText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, FlxColor.GREEN, 'center');
 		maxText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
 
 		add(valText);
@@ -79,7 +73,7 @@ class HpDisplay extends FlxSpriteGroup
 	}
 }
 
-/** Shows chibi icon and hp. **/
+/** Shows chibi icon and hp. Centered on the chibi icon. **/
 class CharacterDisplay extends FlxSpriteGroup
 {
 	var char:CharacterInfo;
@@ -102,7 +96,7 @@ class CharacterDisplay extends FlxSpriteGroup
 		avatar.centerSprite();
 
 		hpDisplay = new HpDisplay(char.currHp, char.maxHp);
-		hpDisplay.setPosition(avatar.width / 2, 0); // don't center cuz the sprites will be centered.
+		hpDisplay.setPosition(avatar.width / 2, 0); // don't center Y cuz the sprites are already centered.
 
 		add(avatar);
 		add(hpDisplay);
