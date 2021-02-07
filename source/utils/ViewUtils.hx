@@ -41,6 +41,18 @@ class ViewUtils
 		sprite.y = y - (sprite.height / 2);
 	}
 
+	/** move this sprite's bottom center to overlap the other sprite's bottom center. 
+	 *
+	 * Only works if both sprites are added, or if both sprites are un-added. Or if the parent is at 0, 0.
+	**/
+	public static function matchBottomCenter(sprite:FlxSprite, other:FlxSprite)
+	{
+		var otherMidpointX = other.x + (other.width / 2);
+		centerX(sprite, otherMidpointX);
+
+		sprite.y = other.y + (other.height - sprite.height);
+	}
+
 	// quick way to make a tiny white dot, good for marking a spot during debug mode.
 	public static function newAnchor()
 	{

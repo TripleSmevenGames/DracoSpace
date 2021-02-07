@@ -21,16 +21,20 @@ class BurnStatus extends DecayingStatus
 	override function onPlayerEndTurn(context:BattleContext)
 	{
 		if (owner.info.type == PLAYER)
-			owner.takeDamage(stacks, {sound: getSound()}, context);
-
+		{
+			owner.takeDamage(stacks, owner, context);
+			getSound().play();
+		}
 		super.onPlayerEndTurn(context); // decay the stacks
 	}
 
 	override function onEnemyEndTurn(context:BattleContext)
 	{
 		if (owner.info.type == ENEMY)
-			owner.takeDamage(stacks, {sound: getSound()}, context);
-
+		{
+			owner.takeDamage(stacks, owner, context);
+			getSound().play();
+		}
 		super.onEnemyEndTurn(context); // decay the stacks
 	}
 

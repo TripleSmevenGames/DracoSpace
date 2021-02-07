@@ -41,6 +41,10 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return new StaticStatus(owner);
 			case ATTACK:
 				return new AttackStatus(owner);
+			case TAUNT:
+				return new TauntStatus(owner);
+			case COUNTER:
+				return new CounterStatus(owner);
 			default:
 				throw new Exception('Bad status type: ${type.getName()}');
 		}
@@ -133,7 +137,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext)
 	{
 		for (status in statuses)
-			damage = status.onDealDamage(damage, target, context);
+			status.onDealDamage(damage, target, context);
 	}
 
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)

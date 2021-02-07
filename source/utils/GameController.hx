@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import models.player.Player;
+import models.skills.SkillAnimations;
 import ui.TooltipLayer;
 import ui.battle.DamageNumbers;
 import ui.battle.SpriteAnimsLayer;
@@ -61,5 +62,8 @@ class GameController
 		battleTooltipLayer = new TooltipLayer();
 		battleDamageNumbers = new DamageNumbers();
 		battleSpriteAnimsLayer = new SpriteAnimsLayer();
+
+		// ensure the SkillAnimations has access to a non-null bsal.
+		SkillAnimations.refreshBsal();
 	}
 }

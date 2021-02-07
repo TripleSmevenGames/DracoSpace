@@ -6,21 +6,10 @@ import utils.battleManagerUtils.BattleContext;
 
 class CounterStatus extends Status
 {
-	override function onPlayerEndTurn(context:BattleContext)
+	override public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
-		if (owner.info.type == PLAYER)
-			stacks -= 0;
-	}
-
-	override function onEnemyEndTurn(context:BattleContext)
-	{
-		if (owner.info.type == ENEMY)
-			stacks -= 0;
-	}
-
-	override public function onTakeDamage(damage:Int, context:BattleContext, dealer:CharacterSprite)
-	{
-		owner.dealDamageTo(dealer, stacks, {}, context);
+		owner.dealDamageTo(stacks, dealer, context);
+		stacks = 0;
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)

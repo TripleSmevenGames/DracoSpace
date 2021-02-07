@@ -1,6 +1,7 @@
 package ui.battle;
 
 import flixel.FlxSprite;
+import flixel.animation.FlxAnimation;
 import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import models.skills.Skill.Effect;
@@ -9,6 +10,8 @@ import utils.BattleManager;
 import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+
+using utils.ViewUtils;
 
 /** This is a sprite "layer" that will hold battle sprite animations. 
  *
@@ -40,30 +43,59 @@ class SpriteAnimsLayer extends FlxSpriteGroup
 		return sprite;
 	}
 
-	public function addSprite(sprite:FlxSprite, x:Float = 0, y:Float = 0)
-	{
-		ViewUtils.centerSprite(sprite, x, y);
-		add(sprite);
-	}
-
 	/** Add an animated sprite to the BSAL and add its animation to the BAM. 
 	 *
-	 * The sprite you passed in should have been setup by createStandardAnim.
+	 * The sprites you passed in should have been setup by createStandardAnim.
+	 *
+	 * Each animation is mapped ontop of its corresponding "other".
 	**/
-	public function addOneShotAnim(sprite:FlxSprite, x:Float, y:Float, effect:Void->Void, effectFrame:Int = 0)
+	public function addOneShotAnim(sprites:Array<FlxSprite>, others:Array<FlxSprite>, effect:Void->Void, effectFrame:Int = 0, touchBase:Bool = false)
 	{
-		this.addSprite(sprite, x, y);
-		var animation = sprite.animation.getByName('play');
+		var animations = new Array<FlxAnimation>();
+		for (i in 0...sprites.length)
+		{
+			var center = others[i].getMidpoint();
+			sprites[i].centerSprite(center.x, center.y);
+			add(sprites[i]);
+			animations.push(sprites[i].animation.getByName('play'));
+		}
 		var bagOptions:BattleAnimationGroupOptions = {
 			onCompleteAll: () ->
 			{
-				sprite.destroy();
-				this.remove(sprite);
+				for (sprite in sprites)
+				{
+					sprite.destroy();
+					this.remove(sprite);
+				}
 			},
 			effect: effect,
 			effectFrame: effectFrame,
 		}
-		GameController.battleAnimationManager.addAnimations([animation], bagOptions);
+		GameController.battleAnimationManager.addAnimations(animations, bagOptions);
+	}
+
+	public function addOneShotAnimTouchBase(sprites:Array<FlxSprite>, others:Array<FlxSprite>, effect:Void->Void, effectFrame:Int = 0)
+	{
+		var animations = new Array<FlxAnimation>();
+		for (i in 0...sprites.length)
+		{
+			sprites[i].matchBottomCenter(others[i]);
+			add(sprites[i]);
+			animations.push(sprites[i].animation.getByName('play'));
+		}
+		var bagOptions:BattleAnimationGroupOptions = {
+			onCompleteAll: () ->
+			{
+				for (sprite in sprites)
+				{
+					sprite.destroy();
+					this.remove(sprite);
+				}
+			},
+			effect: effect,
+			effectFrame: effectFrame,
+		}
+		GameController.battleAnimationManager.addAnimations(animations, bagOptions);
 	}
 
 	public function new()

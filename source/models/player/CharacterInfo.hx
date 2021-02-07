@@ -36,7 +36,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [];
+		ryder.skills = sf.getAllRyderSkills();
 		ryder.draw = 2;
 
 		return ryder;
@@ -52,7 +52,7 @@ class CharacterInfo
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
-		kiwi.skills = [sf.patienceSkill(), sf.expertiseSkill(), sf.electricSurgeSkill()];
+		kiwi.skills = [sf.genericSkills.get(watch)()];
 		kiwi.draw = 2;
 
 		return kiwi;
@@ -67,7 +67,7 @@ class CharacterInfo
 		slime.spritePath = AssetPaths.gulpin__png;
 		slime.maxHp = 10;
 		slime.currHp = 10;
-		slime.skills = [sf.clawSkill(), sf.toughHideSkill()];
+		slime.skills = [sf.enemySkills.get(tackle)(), sf.enemySkills.get(cower)()];
 		slime.draw = 2;
 
 		return slime;

@@ -39,7 +39,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	// hack for demo
 	public var drone:FlxSprite;
 
-	// the "body" of the character.
+	/*** the "body" of the character. **/
 	public var sprite:FlxSprite;
 
 	// an arrow pointing to the body, which will appear when you are targeting a skill.
@@ -94,9 +94,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (val < 0)
 			val = 0;
 
-		if (val > currBlock)
-			gainBlockSound.play();
-
 		if (hpBarSprite != null)
 			hpBarSprite.updateBlockIndicator(val);
 
@@ -143,6 +140,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		currBlock -= val;
 		if (val > currBlock)
 		{
+			hurtSound.play(true);
 			playHurtAnimation();
 			currHp -= (val - currBlock);
 			FlxG.camera.shake(0.01, 0.1);
@@ -157,8 +155,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** Call this when one char deals damage to other char.
-	 *
-	 * Modify the damage before dealing it here.
 	**/
 	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext)
 	{

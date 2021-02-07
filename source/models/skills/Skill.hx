@@ -21,7 +21,7 @@ enum SkillPointType
 // skill can have multiple costs, any valid cost paid will activate the skill.
 typedef Costs = Array<SkillPointCombination>;
 typedef Play = (Array<CharacterSprite>, CharacterSprite, BattleContext) -> Void;
-typedef Effect = (CharacterSprite, CharacterSprite, BattleContext) -> Void;
+typedef Effect = (CharacterSprite, CharacterSprite, BattleContext) -> Void; // target, owner, battle context
 
 /** Represents a combination of skill points.
  *

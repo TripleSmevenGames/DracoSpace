@@ -212,7 +212,9 @@
 							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
-								{},
+								{
+									"POW": 1
+								},
 								{
 									"ANY": 2
 								}
@@ -229,7 +231,9 @@
 							"desc": "Gain $x Block.",
 							"rarity": 0,
 							"costs": [
-								{},
+								{
+									"CON": 1
+								},
 								{
 									"ANY": 2
 								}
@@ -261,7 +265,7 @@
 						{
 							"id": "aggravate",
 							"name": "Aggravate",
-							"desc": "Deal $x damage and gain 2 Taunt.",
+							"desc": "Deal $x damage and gain $x2 Taunt.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -275,7 +279,8 @@
 							"value": 9,
 							"cooldown": 2,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 2
 						},
 						{
 							"id": "riposte",
@@ -299,11 +304,21 @@
 						{
 							"id": "bladeDance",
 							"name": "Blade Dance",
-							"desc": "Deal $x damage and gain $x Couter.",
+							"desc": "Deal $x damage and gain $x Counter.",
 							"rarity": 1,
-							"costs": [],
+							"costs": [
+								{
+									"POW": 1
+								},
+								{
+									"ANY": 2
+								}
+							],
 							"targetMethod": 0,
-							"value": 9
+							"value": 9,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						},
 						{
 							"id": "adrenaline",
@@ -346,7 +361,9 @@
 							"desc": "Deal $x damage 3 times.",
 							"rarity": 1,
 							"costs": [
-								{},
+								{
+									"POW": 1
+								},
 								{
 									"ANY": 2
 								}
@@ -397,7 +414,14 @@
 							"name": "Protect",
 							"desc": "An ally gains $x Block.",
 							"rarity": 1,
-							"costs": [],
+							"costs": [
+								{
+									"CON": 1
+								},
+								{
+									"ANY": 2
+								}
+							],
 							"targetMethod": 0,
 							"value": 8
 						},
