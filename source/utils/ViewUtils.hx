@@ -59,37 +59,52 @@ class ViewUtils
 		return new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
 	}
 
+	public static final typeColorMap = [
+		POW => Colors.POWER_RED,
+		AGI => Colors.AGILITY_YELLOW,
+		CON => Colors.CONSTITUTION_GREEN,
+		KNO => Colors.KNOWLEDGE_BLUE,
+		WIS => Colors.WISDOM_PURPLE,
+		ANY => FlxColor.GRAY,
+	];
+
 	public static function getColorForType(type:SkillPointType)
+	{
+		return typeColorMap.get(type);
+	}
+
+	public static final statusColorMap = [
+		BURN => Colors.BURN_ORANGE,
+		COLD => Colors.COLD_BLUE,
+		STATIC => Colors.STATIC_YELLOW,
+		TAUNT => Colors.CONSTITUTION_GREEN,
+		COUNTER => Colors.CONSTITUTION_GREEN,
+		ATTACK => Colors.POWER_RED,
+		DODGE => Colors.AGILITY_YELLOW,
+	];
+
+	public static function getColorForStatus(status:StatusType)
+	{
+		var color = statusColorMap.get(status);
+		return color != null ? color : FlxColor.WHITE;
+	}
+
+	public static function getIconForType(type:SkillPointType)
 	{
 		switch (type)
 		{
 			case POW:
-				return Colors.POWER_RED;
+				return new FlxSprite(0, 0, AssetPaths.PowerIcon1__png);
 			case AGI:
-				return Colors.AGILITY_YELLOW;
+				return new FlxSprite(0, 0, AssetPaths.agilityIcon1__png);
 			case CON:
-				return Colors.CONSTITUTION_GREEN;
+				return new FlxSprite(0, 0, AssetPaths.ConIcon1__png);
 			case KNO:
-				return Colors.KNOWLEDGE_BLUE;
+				return new FlxSprite(0, 0, AssetPaths.knowledgeIcon1__png);
 			case WIS:
-				return Colors.WISDOM_PURPLE;
+				return new FlxSprite(0, 0, AssetPaths.wisdomIcon1__png);
 			default:
-				return FlxColor.GRAY;
-		}
-	}
-
-	public static function getColorForStatus(status:StatusType)
-	{
-		switch (status)
-		{
-			case BURN:
-				return Colors.BURN_ORANGE;
-			case COLD:
-				return Colors.COLD_BLUE;
-			case STATIC:
-				return Colors.STATIC_BLUE;
-			default:
-				return FlxColor.WHITE;
+				return new FlxSprite(0, 0, AssetPaths.anyIcon1__png);
 		}
 	}
 

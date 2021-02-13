@@ -3,6 +3,7 @@ package constants;
 class Colors
 {
 	public static inline final BACKGROUND_BLUE = 0xFF001840;
+	public static inline final COOLDOWN_BLUE = 0xFFb3fffd;
 
 	public static inline final KNOWLEDGE_BLUE = 0xFF0070c0;
 	public static inline final POWER_RED = 0xFFDD0000;
@@ -12,6 +13,6 @@ class Colors
 	public static inline final DARK_GRAY = 0xFF454545;
 
 	public static inline final BURN_ORANGE = 0xFFffbb00;
-	public static inline final STATIC_BLUE = 0xFF61ddff;
+	public static inline final STATIC_YELLOW = 0xFFffff00;
 	public static inline final COLD_BLUE = 0xFF7ae4ff;
 }

@@ -63,6 +63,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var hurtSound:FlxSound;
 	var blockedSound:FlxSound;
 	var gainBlockSound:FlxSound;
+	var missSound:FlxSound;
 
 	// target arrow X distance from char sprite.
 	public static inline final TARGET_ARROW_DISTANCE = 48;
@@ -123,6 +124,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return statusDisplay.removeStatusByType(type);
 	}
 
+	public function removeStacksOnStatus(type:StatusType, stacks:Int = 1)
+	{
+		statusDisplay.removeStacks(type, stacks);
+	}
+
 	public function hasStatus(type:StatusType):Int
 	{
 		return statusDisplay.hasStatus(type);
@@ -135,6 +141,21 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			return;
 			trace('a dead char took damage. ${this.info.name}');
+		}
+
+		if (hasStatus(DODGE) > 0)
+		{
+			removeStacksOnStatus(DODGE, 1);
+			missSound.play(true);
+			spawnDamageNumber('MISS');
+			return;
+		}
+
+		if (val == 0)
+		{
+			missSound.play(true);
+			spawnDamageNumber('MISS');
+			return;
 		}
 
 		currBlock -= val;
@@ -429,6 +450,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.hurtSound = FlxG.sound.load(AssetPaths.standardHit2__wav);
 		this.blockedSound = FlxG.sound.load(AssetPaths.blockedHit1__wav);
 		this.gainBlockSound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
+		this.missSound = FlxG.sound.load(AssetPaths.miss1__wav);
 	}
 	/*
 		override public function destroy()

@@ -23,7 +23,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			var status = statuses[i];
 			remove(status); // remove the status so that we can set its local coords.
-			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width, 8);
+			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width, 4);
 			status.y = 0;
 			add(status);
 		}
@@ -45,6 +45,8 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return new TauntStatus(owner);
 			case COUNTER:
 				return new CounterStatus(owner);
+			case DODGE:
+				return new DodgeStatus(owner);
 			default:
 				throw new Exception('Bad status type: ${type.getName()}');
 		}
@@ -108,6 +110,20 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			}
 		}
 		return retVal;
+	}
+
+	public function removeStacks(type:StatusType, val:Int = 1)
+	{
+		for (i in 0...statuses.length)
+		{
+			var status = statuses[i];
+			if (status != null && status.type == type)
+			{
+				status.stacks -= val;
+				return;
+			}
+		}
+		trace('Tried to remove ${val} stacks from non-existant ${type.getName()}');
 	}
 
 	public function onPlayerStartTurn(context:BattleContext)

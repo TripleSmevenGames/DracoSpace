@@ -21,7 +21,7 @@ class CharacterInfo
 	public var type:CharacterType;
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
-	public var skills:Array<Skill>;
+	public var skills:Array<Skill> = [];
 	public var draw:Int = 0;
 
 	static var sf = SkillFactory;
@@ -36,7 +36,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = sf.getAllRyderSkills();
+		ryder.skills = [];
 		ryder.draw = 2;
 
 		return ryder;
@@ -48,11 +48,11 @@ class CharacterInfo
 
 		kiwi.name = 'Kiwi';
 		kiwi.type = PLAYER;
-		kiwi.spritePath = AssetPaths.zangoose__png;
+		kiwi.spritePath = AssetPaths.wack_kiwi__png;
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
-		kiwi.skills = [sf.genericSkills.get(watch)()];
+		kiwi.skills = [];
 		kiwi.draw = 2;
 
 		return kiwi;

@@ -115,16 +115,19 @@ class SkillPointCombination
 
 	public function toString()
 	{
-		var string = '';
+		var stringArray = new Array<String>();
 		for (type in SkillPointCombination.ARRAY)
 		{
 			var name = type.getName();
 			var val = this.get(type);
 			if (val != 0)
-				string += '${name}: ${val}';
+			{
+				for (i in 0...val)
+					stringArray.push(name);
+			}
 		}
 
-		return string;
+		return stringArray.join(' ');
 	}
 
 	public function new(?inputMap:Map<SkillPointType, Int>)
@@ -194,7 +197,7 @@ class Skill
 
 	function getCostString()
 	{
-		return costs.join(' or ');
+		return costs.join(' OR ');
 	}
 
 	/** Used for the skillsprite tool tip. **/

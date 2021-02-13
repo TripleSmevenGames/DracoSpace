@@ -16,8 +16,8 @@ import ui.TooltipLayer;
 import ui.battle.DamageNumbers;
 import ui.battle.DeckSprite;
 import ui.battle.LoseScreen;
-import ui.battle.WinScreen;
 import ui.battle.character.CharacterSprite;
+import ui.battle.win.WinScreen;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;
@@ -170,9 +170,9 @@ class BattleSubState extends FlxSubState
 		}
 	}
 
-	public function showWinScreen()
+	public function showWinScreen(leveledUp:Bool = false)
 	{
-		view.winScreen.play();
+		view.winScreen.play(leveledUp);
 	}
 
 	public function showLoseScreen()

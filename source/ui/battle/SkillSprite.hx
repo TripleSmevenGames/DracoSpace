@@ -1,5 +1,7 @@
 package ui.battle;
 
+import constants.Fonts;
+import constants.UIMeasurements;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
@@ -13,6 +15,8 @@ import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
+using utils.ViewUtils;
+
 /** A sprite representing a skill during battle. This is not the Skill itself, but it should always have a reference to
 	the Skill it represents. This should not exist outside the context of a battle.
 	*
@@ -22,6 +26,7 @@ class SkillSprite extends FlxSpriteGroup
 {
 	public var skill:Skill;
 	public var tile:FlxSprite;
+	public var cooldownCountdownSprite:FlxText;
 	public var priority:Int = 0;
 	public var owner:CharacterSprite;
 
@@ -36,9 +41,6 @@ class SkillSprite extends FlxSpriteGroup
 
 	public function set_cooldownTimer(val:Int)
 	{
-		if (cooldownTimer == 99) // cooldown of 99 means it will never go off cooldown.
-			return cooldownTimer = 99;
-
 		if (val == 0) // refund charges on this skill when cooldown hits 0;
 		{
 			currentCharges += skill.chargesPerCD;
@@ -77,11 +79,14 @@ class SkillSprite extends FlxSpriteGroup
 		{
 			this.tile.color = FlxColor.GRAY;
 			this.tile.alpha = .5;
+			this.cooldownCountdownSprite.visible = true;
+			this.cooldownCountdownSprite.text = Std.string(cooldownTimer);
 		}
 		else
 		{
 			this.tile.color = FlxColor.WHITE;
 			this.tile.alpha = 1;
+			this.cooldownCountdownSprite.visible = false;
 		}
 		return this.disabled = val;
 	}
@@ -129,6 +134,13 @@ class SkillSprite extends FlxSpriteGroup
 		tile.updateHitbox();
 		ViewUtils.centerSprite(tile, 0, 0);
 		add(tile);
+
+		cooldownCountdownSprite = new FlxText(0, 0, 0, '0');
+		cooldownCountdownSprite.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
+		cooldownCountdownSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0, 1);
+		cooldownCountdownSprite.centerSprite();
+		add(cooldownCountdownSprite);
+		cooldownCountdownSprite.visible = false;
 
 		this.cooldownTimer = 0;
 		this.currentCharges = skill.maxCharges;

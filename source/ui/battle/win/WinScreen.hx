@@ -1,4 +1,4 @@
-package ui.battle;
+package ui.battle.win;
 
 import constants.Fonts;
 import flixel.FlxG;
@@ -12,14 +12,19 @@ import utils.GameController;
 import utils.SubStateManager;
 import utils.ViewUtils;
 
+using utils.ViewUtils;
+
 class WinScreen extends FlxSpriteGroup
 {
 	var ssm:SubStateManager;
 	var text:FlxText;
 	var continueBtn:BasicWhiteButton;
 
-	/** Play the animation of this screen.**/
-	public function play()
+	/** Play the animation of this screen.
+	 *
+	 * If we leveled up, show the rewards!
+	**/
+	public function play(leveledUp:Bool = false)
 	{
 		this.revive();
 
@@ -50,7 +55,11 @@ class WinScreen extends FlxSpriteGroup
 		this.text = new FlxText(0, 0, 0, 'VICTORY');
 		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE);
 		add(text);
-		ViewUtils.centerSprite(text, FlxG.width / 2, 300);
+		ViewUtils.centerSprite(text, FlxG.width / 2, 200);
+
+		var anchor = ViewUtils.newAnchor();
+		anchor.setPosition(FlxG.width / 2, 200);
+		add(anchor);
 
 		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
 		ViewUtils.centerSprite(continueBtn, FlxG.width / 2, FlxG.height / 2 + 100);

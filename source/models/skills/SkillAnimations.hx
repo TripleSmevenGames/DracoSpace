@@ -40,7 +40,10 @@ class SkillAnimations
 		return bsal.createStandardAnim(AssetPaths.powerUpAnim2_50x50x36__png, 50, 50, 36);
 	}
 
-	/** Create a play that will run ONE bam animation group with 1 effect. **/
+	/** Create a play that will run ONE bam animation group with 1 effect. 
+	 *
+	 * You can combine multiple "play" calls in a single skill's play to create complicated and chaining effects.
+	**/
 	public static function getCustomPlay(animSprite:FlxSprite, effect:Effect, effectFrame:Int = 0, ?sound:FlxSound, touchBase = false)
 	{
 		var play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
@@ -74,14 +77,14 @@ class SkillAnimations
 	}
 
 	/** Create a generic attack play. */
-	public static function genericAttackPlay(damage:Int)
+	public static function genericAttackPlay(damage:Int, ?customAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound)
 	{
-		var animSprite = getHitAnim();
+		var animSprite:FlxSprite = customAnimSprite != null ? customAnimSprite : getHitAnim();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
 			owner.dealDamageTo(damage, target, context);
-		}
-		return getCustomPlay(animSprite, effect);
+		};
+		return getCustomPlay(animSprite, effect, effectFrame, sound);
 	}
 
 	/** Create a generic block play. **/
@@ -98,10 +101,10 @@ class SkillAnimations
 	}
 
 	/** This assumes the targets are getting the buff. Don't use if the target and the character getting the buff (e.g. owner) are different! */
-	public static function genericBuffPlay(effect:Effect)
+	public static function genericBuffPlay(effect:Effect, ?customAnimSprite:FlxSprite, ?sound:FlxSound)
 	{
-		var animSprite = getPowerUpAnim();
-		var sound = FlxG.sound.load(AssetPaths.powerup1__wav);
-		return getCustomPlay(animSprite, effect, 0, sound, true);
+		var animSprite = customAnimSprite != null ? customAnimSprite : getPowerUpAnim();
+		var soundToPlay = sound != null ? sound : FlxG.sound.load(AssetPaths.powerup1__wav);
+		return getCustomPlay(animSprite, effect, 0, soundToPlay, true);
 	}
 }

@@ -369,7 +369,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 4,
+							"value": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
@@ -516,7 +516,7 @@
 						{
 							"id": "lunge",
 							"name": "Lunge",
-							"desc": "Deal %x damage and gain 2 Attack.",
+							"desc": "Deal $x damage and gain $x2 Attack.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -530,7 +530,8 @@
 							"value": 17,
 							"cooldown": 3,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 2
 						},
 						{
 							"id": "matchDefence",
@@ -569,7 +570,7 @@
 						{
 							"id": "discipline",
 							"name": "Discipline",
-							"desc": "Gain Status: At the start of turn, double your Counter.",
+							"desc": "Gain Status: At the start of turn, double this character's Counter.",
 							"rarity": 3,
 							"costs": [
 								{
@@ -589,11 +590,43 @@
 							"rarity": 3,
 							"costs": [
 								{
-									"POW": 2
+									"POW": 3
 								}
 							],
 							"targetMethod": 8,
 							"cooldown": 5,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "conductive",
+							"name": "Conductive",
+							"desc": "Gain Status: Whenever this character takes damage, gain $x Static.",
+							"rarity": 3,
+							"costs": [
+								{
+									"AGI": 2,
+									"CON": 2
+								}
+							],
+							"targetMethod": 7,
+							"value": 5,
+							"cooldown": 99,
+							"maxCharges": 1,
+							"chargesPerCD": 0
+						},
+						{
+							"id": "revenge",
+							"name": "Revenge",
+							"desc": "Deal damage equal to Ryder's missing health.",
+							"rarity": 3,
+							"costs": [
+								{
+									"POW": 3
+								}
+							],
+							"targetMethod": 0,
+							"cooldown": 4,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						}
@@ -658,7 +691,7 @@
 						{
 							"id": "electricSurge",
 							"name": "Electric Surge",
-							"desc": "Deal %x damage and gain 1 Static.",
+							"desc": "Deal $x damage and gain 1 Static.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -694,8 +727,8 @@
 							"value": 3
 						},
 						{
-							"id": "advantage",
-							"name": "Advantage",
+							"id": "surpriseAttack",
+							"name": "Surprise Attack",
 							"desc": "If the target has no Block, deal $x damage.",
 							"rarity": 1,
 							"costs": [
@@ -712,7 +745,7 @@
 						{
 							"id": "disarm",
 							"name": "Disarm",
-							"desc": "If the target has no Block, the enemy discards 2 random cards.",
+							"desc": "If the target has no Block, deal $x damage and enemy discards 1 random cards.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -722,7 +755,9 @@
 							"targetMethod": 0,
 							"cooldown": 2,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value": 3,
+							"value2": 1
 						},
 						{
 							"id": "sabatoge",
@@ -771,7 +806,7 @@
 									"ANY": 2
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 1,
 							"value": 11,
 							"cooldown": 1,
 							"maxCharges": 1,
@@ -793,7 +828,7 @@
 							"targetMethod": 0,
 							"value": 5,
 							"cooldown": 1,
-							"maxCharges": 4,
+							"maxCharges": 2,
 							"chargesPerCD": 2
 						},
 						{
@@ -809,7 +844,7 @@
 									"ANY": 4
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 2,
 							"value": 5,
 							"cooldown": 1,
 							"maxCharges": 1,
@@ -964,6 +999,38 @@
 							"cooldown": 99,
 							"maxCharges": 1,
 							"chargesPerCD": 0
+						},
+						{
+							"id": "rewind",
+							"name": "Rewind",
+							"desc": "Set the cooldown of all allies skills to 0.",
+							"rarity": 3,
+							"costs": [
+								{
+									"AGI": 2
+								}
+							],
+							"targetMethod": 6,
+							"cooldown": 4,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "fullyPrepared",
+							"name": "Fully Prepared",
+							"desc": "If Kiwi has Dodge, gain $x Block.",
+							"rarity": 3,
+							"costs": [
+								{
+									"CON": 1,
+									"AGI": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 30,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						}
 					]
 				},

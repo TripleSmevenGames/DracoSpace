@@ -1,5 +1,7 @@
 package models.player;
 
+import models.skills.Skill;
+
 /** Represents the player itself outside of battle. Characters, inventory, skills, money, etc. **/
 class Player
 {
@@ -24,6 +26,17 @@ class Player
 	{
 		toNextLevel = val;
 		return level = val;
+	}
+
+	/** Get a list of all the skills the player has. **/
+	public static function getSkills()
+	{
+		var skills = new Array<Skill>();
+		for (char in chars)
+		{
+			skills = char.skills.concat(skills);
+		}
+		return skills;
 	}
 
 	public static function init()

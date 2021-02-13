@@ -27,6 +27,7 @@ class Card extends FlxSpriteGroup
 
 	var body:FlxSprite;
 	var cover:CardCover;
+	var icon:FlxSprite;
 	var bodyText:FlxText;
 	var anchor:FlxSprite;
 
@@ -82,6 +83,7 @@ class Card extends FlxSpriteGroup
 	public function resetLook()
 	{
 		this.scale.set(1, 1);
+		this.icon.scale.set(3, 3);
 		this.alpha = 1;
 		this.color = FlxColor.WHITE;
 		// because of weirdness with sprite groups, their children, and alpha values, we do this check here to ensure the "hidden-ness" of the card.
@@ -137,9 +139,9 @@ class Card extends FlxSpriteGroup
 		ViewUtils.centerSprite(body);
 		add(body);
 
-		var color:FlxColor = ViewUtils.getColorForType(type);
-		var icon = new FlxSprite(0, 0);
-		icon.makeGraphic(50, 50, color);
+		this.icon = ViewUtils.getIconForType(type);
+		icon.scale.set(3, 3);
+		icon.updateHitbox();
 		ViewUtils.centerSprite(icon, 0, -30);
 		add(icon);
 

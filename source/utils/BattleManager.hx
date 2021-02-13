@@ -195,7 +195,7 @@ class BattleManager extends FlxBasic
 	{
 		if (getState() == PLAYER_TARGET)
 		{
-			playerIdleState.start();
+			// playerIdleState.start();
 		}
 	}
 
@@ -600,9 +600,16 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				this.state = winState;
-				bss.showWinScreen();
+				var level = Player.level;
+				var leveledUp = false;
 				Player.exp += 1;
 				Player.money += 7;
+				if (level != Player.level)
+				{
+					trace('leveled up!');
+					leveledUp = true;
+				}
+				bss.showWinScreen(leveledUp);
 			},
 			update: (elapsed:Float) -> {}
 		};
@@ -613,7 +620,7 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				this.state = loseState;
-				bss.showLoseScreen(); // change this to lose screen
+				bss.showLoseScreen();
 			},
 			update: (elapsed:Float) -> {}
 		};

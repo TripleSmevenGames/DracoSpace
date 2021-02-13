@@ -5,18 +5,18 @@ import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
 
-// taunts usage is defined in BattleManager's target state.
-class TauntStatus extends DecayingStatus
+// Dodge usage is defined in CharacterSPrite's takeDamage.
+class DodgeStatus extends DecayingStatus
 {
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = TAUNT;
-		name = 'Taunt';
-		var desc = 'Enemies will target this character if able. Lose 1 stack at the end of turn.';
+		type = DODGE;
+		name = 'Dodge';
+		var desc = 'When this character would take damage, instead dodge it and lose 1 stack. Lose 1 stack at the end of turn.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
+		var icon = new BattleIndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

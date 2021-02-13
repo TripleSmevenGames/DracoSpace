@@ -1,5 +1,7 @@
 package utils.battleManagerUtils;
 
+import flixel.math.FlxRandom;
+import haxe.Exception;
 import models.player.CharacterInfo.CharacterType;
 import ui.battle.DeckSprite;
 import ui.battle.character.CharacterSprite;
@@ -61,15 +63,47 @@ class BattleContext
 		return charsWithStatus;
 	}
 
-	public function getAliveEnemies()
+	public function getAlive(type:CharacterType)
 	{
-		var aliveEnemies:Array<CharacterSprite> = [];
-		for (char in eChars)
+		var alive:Array<CharacterSprite> = [];
+		var chars = getChars(type);
+		for (char in chars)
 		{
 			if (!char.dead)
-				aliveEnemies.push(char);
+				alive.push(char);
 		}
-		return aliveEnemies;
+		return alive;
+	}
+
+	public function getAliveEnemies()
+	{
+		return getAlive(ENEMY);
+	}
+
+	public function getAlivePlayers()
+	{
+		return getAlive(PLAYER);
+	}
+
+	public function getRandomTarget(type:CharacterType)
+	{
+		var chars = getAlive(type);
+		if (chars.length == 0)
+		{
+			throw new Exception('tried to get random target, but chars.length was 0');
+		}
+		return chars[new FlxRandom().int(0, chars.length - 1)];
+	}
+
+	/** Remove all Static from all characters and return the total amount expended. **/
+	public function expendStatic():Int
+	{
+		var total = 0;
+		for (char in pChars)
+		{
+			total = char.removeStatus(STATIC);
+		}
+		return total;
 	}
 
 	public function new(pDeck:DeckSprite, eDeck:DeckSprite, pChars:Array<CharacterSprite>, eChars:Array<CharacterSprite>)
