@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.FlxState;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
+import ui.FlxTextWithReplacements;
 import ui.buttons.MenuButton;
 import ui.debug.MemIndicator;
 import utils.GameController;
@@ -54,6 +55,10 @@ class MenuState extends FlxState
 		exitButton.screenCenter();
 		exitButton.y += 160;
 		add(exitButton);
+
+		var text = new FlxTextWithReplacements(200, 24, 'this is a really long text and it should probably wrap');
+		text.setPosition(100, 100);
+		add(text);
 	}
 
 	override public function create()

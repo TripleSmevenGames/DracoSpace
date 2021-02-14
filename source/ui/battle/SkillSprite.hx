@@ -51,6 +51,7 @@ class SkillSprite extends FlxSpriteGroup
 		if (val < 0)
 			val = 0;
 
+		this.cooldownCountdownSprite.text = Std.string(val);
 		return cooldownTimer = val;
 	}
 
@@ -166,11 +167,7 @@ class SkillSprite extends FlxSpriteGroup
 		addHoverCallback(darken, undarken);
 
 		// setup the tooltip (which is also a hover effect)
-		var desc = skill.desc + '\n\n' + skill.getInfoString();
-		if (skill.flavor != '')
-			desc += '\n\n' + '"${skill.flavor}"';
-		var tooltip = new Tooltip(skill.name, desc);
-		GameController.battleTooltipLayer.registerTooltipForSkill(tooltip, this);
+		GameController.battleTooltipLayer.createTooltipForSkill(this);
 
 		disabled = false;
 	}

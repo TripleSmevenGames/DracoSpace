@@ -36,7 +36,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [];
+		ryder.skills = [sf.ryderSkillsCommon.get(riposte)()];
 		ryder.draw = 2;
 
 		return ryder;

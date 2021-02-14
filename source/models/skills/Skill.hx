@@ -195,7 +195,7 @@ class Skill
 		return false;
 	}
 
-	function getCostString()
+	public function getCostString()
 	{
 		return costs.join(' OR ');
 	}

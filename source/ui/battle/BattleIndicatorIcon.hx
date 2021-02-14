@@ -77,7 +77,7 @@ class BattleIndicatorIcon extends FlxSpriteGroup
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
 		FlxMouseEventManager.add(icon, null, null, null, null, false, true, false);
 
-		tooltip = new Tooltip(name, desc, options.tooltipPos);
+		tooltip = Tooltip.genericTooltip(name, desc, options.tooltipPos);
 		GameController.battleTooltipLayer.registerTooltip(tooltip, icon);
 	}
 }

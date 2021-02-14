@@ -13,10 +13,12 @@ import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import models.player.CharacterInfo;
 import models.skills.Skill;
+import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
 import ui.battle.DamageNumbers;
 import ui.battle.ITurnTriggerable;
 import ui.battle.status.Status;
+import ui.battle.win.SkillRewardCard;
 import utils.BattleAnimationManager;
 import utils.BattleManager.BattleManagerStateNames;
 import utils.BattleManager;
@@ -418,7 +420,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		// killing the cancel button here causes uber weird behavior, so don't do it!!
 
 		FlxMouseEventManager.add(cancelSkillBtn);
-		var tooltip = new Tooltip('Cancel', null);
+		var tooltip = Tooltip.genericTooltip('Cancel', null);
 		GameController.battleTooltipLayer.registerTooltip(tooltip, cancelSkillBtn);
 	}
 
