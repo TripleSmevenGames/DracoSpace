@@ -44,6 +44,12 @@ class RewardHelper
 		return chosenSkill;
 	}
 
+	/** Get the 3 skill rewards for levelling up in battle.
+		* 
+		* The first is for your first char. The 2nd is for your second char.
+		*
+		* The third one could be for either. Also could be a generic skill.
+	**/
 	public static function getSkillRewards()
 	{
 		var rewards = new Array<Skill>();

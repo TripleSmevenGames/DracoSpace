@@ -5,6 +5,7 @@ import constants.Fonts;
 import constants.UIMeasurements.*;
 import flixel.FlxG;
 import flixel.FlxSprite;
+import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
@@ -458,7 +459,7 @@ class Hand extends FlxSpriteGroup
 		this.cards = [];
 		this.type = type;
 
-		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 7, CARD_HEIGHT + 10, Colors.BACKGROUND_BLUE);
+		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 7, CARD_HEIGHT + 10, FlxColor.TRANSPARENT);
 		ViewUtils.centerSprite(body);
 		add(body);
 

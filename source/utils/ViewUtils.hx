@@ -108,7 +108,7 @@ class ViewUtils
 		}
 	}
 
-	/* Get the x coord for a sprite in a list of sprites, if you are trying to center them all from left to right at 0, 0**/
+	/* Get the x coord for a centered group in a list, if you are trying to center them all from left to right at 0, 0**/
 	public static function getXCoordForCenteringLR(i:Int, total:Int, width:Float, padding:Int = 0)
 	{
 		var finalWidth = width + padding;

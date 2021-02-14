@@ -88,7 +88,7 @@ class BattleView extends FlxSpriteGroup
 		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, enemyDeck, ENEMY, enemyChars, 1);
 		add(enemyDeckSprite);
 
-		winScreen = new WinScreen(this.exitBattle);
+		winScreen = new WinScreen();
 		add(winScreen);
 
 		loseScreen = new LoseScreen(() -> FlxG.switchState(new MenuState()));
@@ -100,7 +100,6 @@ class BattleView extends FlxSpriteGroup
 	public function exitBattle()
 	{
 		ssm.returnToMap();
-		cleanup();
 	}
 
 	public function cleanup()

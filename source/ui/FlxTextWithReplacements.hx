@@ -33,7 +33,8 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		try
 		{
 			var status = StatusType.createByName(word.toUpperCase());
-			var textSprite = new FlxText(0, 0, 0, word, fontSize);
+			var textSprite = new FlxText(0, 0, 0, word);
+			textSprite.setFormat(Fonts.STANDARD_FONT, fontSize);
 			textSprite.color = ViewUtils.getColorForStatus(status);
 			return textSprite;
 		}

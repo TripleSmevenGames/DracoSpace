@@ -36,7 +36,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [sf.ryderSkillsCommon.get(riposte)()];
+		ryder.skills = [sf.ryderSkillsCommon.get(riposte)(), sf.ryderSkillsCommon.get(aggravate)(), sf.ryderSkillsCommon.get(recklessSwing)()];
 		ryder.draw = 2;
 
 		return ryder;
@@ -52,7 +52,7 @@ class CharacterInfo
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
-		kiwi.skills = [];
+		kiwi.skills = [sf.kiwiSkillsBasic.get(dodgeRoll)(), sf.kiwiSkillsCommon.get(surpriseAttack)()];
 		kiwi.draw = 2;
 
 		return kiwi;

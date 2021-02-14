@@ -20,6 +20,8 @@ class WinScreen extends FlxSpriteGroup
 	var text:FlxText;
 	var continueBtn:BasicWhiteButton;
 
+	var canContinue:Bool = false;
+
 	/** Play the animation of this screen.
 	 *
 	 * If we leveled up, show the rewards!
@@ -34,16 +36,19 @@ class WinScreen extends FlxSpriteGroup
 			alpha: 1,
 			'scale.x': 1,
 			'scale.y': 1,
-			x: text.x - 50,
 		}, .5);
 
-		continueBtn.alpha = 0;
-		FlxTween.tween(continueBtn, {
-			alpha: 1,
-		}, .5);
+		canContinue = false;
+		continueBtn.disabled = true;
+
+		if (leveledUp) {
+			var rewardsSprite = new RewardsSprite();
+			rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2 + 100);
+			add(rewardsSprite);
+		}
 	}
 
-	public function new(onContinueClick:Void->Void)
+	public function new()
 	{
 		super(0, 0);
 		this.ssm = GameController.subStateManager;
@@ -53,16 +58,22 @@ class WinScreen extends FlxSpriteGroup
 		add(screen);
 
 		this.text = new FlxText(0, 0, 0, 'VICTORY');
-		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE);
-		add(text);
+		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.GRAY);
 		ViewUtils.centerSprite(text, FlxG.width / 2, 200);
+		add(text);
 
 		var anchor = ViewUtils.newAnchor();
-		anchor.setPosition(FlxG.width / 2, 200);
+		anchor.centerSprite(FlxG.width / 2, 200);
 		add(anchor);
 
+		var onContinueClick = () -> {
+			if (canContinue)
+				ssm.returnToMap();
+		}
+
 		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
-		ViewUtils.centerSprite(continueBtn, FlxG.width / 2, FlxG.height / 2 + 100);
+		ViewUtils.centerSprite(continueBtn, FlxG.width - 200, FlxG.height - 200);
+		continueBtn.disabled = true;
 		add(continueBtn);
 
 		this.kill();
