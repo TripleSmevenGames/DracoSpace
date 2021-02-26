@@ -22,6 +22,7 @@ import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;
 import utils.SubStateManager;
+import utils.battleManagerUtils.BattleContext;
 
 class BattleView extends FlxSpriteGroup
 {
@@ -154,8 +155,8 @@ class BattleSubState extends FlxSubState
 		view.initBattle(event);
 
 		bam.reset();
-
-		bm.reset(view.playerDeckSprite, view.enemyDeckSprite, view.playerChars, view.enemyChars);
+		var context = new BattleContext(view.playerDeckSprite, view.enemyDeckSprite, view.playerChars, view.enemyChars);
+		bm.reset(context, null, event.type);
 	}
 
 	public function cleanup()
@@ -169,9 +170,9 @@ class BattleSubState extends FlxSubState
 		}
 	}
 
-	public function showWinScreen(leveledUp:Bool = false)
+	public function showWinScreen(leveledUp:Bool = false, expReward:Int, moneyReward:Int)
 	{
-		view.winScreen.play(leveledUp);
+		view.winScreen.play(leveledUp, expReward, moneyReward);
 	}
 
 	public function showLoseScreen()
@@ -183,34 +184,36 @@ class BattleSubState extends FlxSubState
 	{
 		super.create();
 
-		FlxG.camera.fade(FlxColor.BLACK, 0.33, true);
+		// do only once when you first switch to the battle state (that's when create() is called);
+		if (view == null)
+		{
+			view = new BattleView();
+			view.scrollFactor.set(0, 0);
+			add(view);
 
-		view = new BattleView();
-		view.scrollFactor.set(0, 0);
-		add(view);
+			this.bm = GameController.battleManager;
+			this.bam = GameController.battleAnimationManager;
 
-		this.bm = GameController.battleManager;
-		this.bam = GameController.battleAnimationManager;
+			add(bam);
+			bam.kill();
+			add(bm);
+			bm.kill();
 
-		add(bam);
-		bam.kill();
-		add(bm);
-		bm.kill();
+			// set up the physics for the damager numbers and other physics based sprites.
+			// refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape
+			FlxNapeSpace.init();
+			FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
 
-		// set up the physics for the damager numbers and other physics based sprites.
-		// refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape
-		FlxNapeSpace.init();
-		FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
+			// layer to draw the sprite animations
+			add(GameController.battleSpriteAnimsLayer);
 
-		// layer to draw the sprite animations
-		add(GameController.battleSpriteAnimsLayer);
+			// layer to draw the damage numbers, which are shot out of characters when they get damaged.
+			add(GameController.battleDamageNumbers);
 
-		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
-		add(GameController.battleDamageNumbers);
-
-		// create the tooltip layer, which is where all tooltips will be added to.
-		// this lets them be rendered on top of the battle view.
-		add(GameController.battleTooltipLayer);
+			// create the tooltip layer, which is where all tooltips will be added to.
+			// this lets them be rendered on top of the battle view.
+			add(GameController.battleTooltipLayer);
+		}
 	}
 
 	override public function destroy()

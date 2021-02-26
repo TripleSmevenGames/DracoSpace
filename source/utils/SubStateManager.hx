@@ -1,9 +1,13 @@
 package utils;
 
+import flixel.FlxG;
+import flixel.FlxSubState;
+import flixel.util.FlxColor;
 import models.events.BattleEvent;
 import models.events.GameEvent;
 import substates.BattleSubState;
 import substates.EventSubState;
+import substates.InventorySubState;
 import substates.MapSubState;
 
 // handles sub state swaps in playState
@@ -16,41 +20,90 @@ class SubStateManager
 	var mss:MapSubState;
 	var ess:EventSubState;
 	var bss:BattleSubState;
+	var iss:InventorySubState;
 
-	public function initEvent(event:GameEvent)
+	var returnHereFromInv:FlxSubState;
+
+	/** if you pass in null, we "return" to the ess, instead of init'ing a new event.**/
+	public function initEvent(?event:GameEvent)
 	{
-		cleanupAll();
-		ess.revive();
-		playState.openSubState(ess);
-		// the substate's sprites are not ready yet until the its opened.
-		// so whatever want to happen once the state is ready, put in its openCallback.
-		ess.openCallback = function()
+		var onFadeComplete = () ->
 		{
-			ess.showEvent(event);
+			cleanupAll();
+			ess.revive();
+			// the substate's sprites are not ready yet until the its opened.
+			// so whatever want to happen once the state is ready, put in its openCallback.
+			ess.openCallback = function()
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+				if (event != null)
+					ess.showEvent(event);
+			}
+			playState.openSubState(ess);
 		}
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
 	public function initBattle(event:BattleEvent)
 	{
-		cleanupAll();
-		bss.revive();
-		playState.openSubState(bss);
-		bss.openCallback = function()
+		var onFadeComplete = () ->
 		{
-			bss.initBattle(event);
-		}
+			cleanupAll();
+			bss.revive();
+			bss.openCallback = function()
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+				bss.initBattle(event);
+			};
+			playState.openSubState(bss);
+		};
+
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
+	}
+
+	public function openInventory()
+	{
+		if (playState.subState == bss)
+			throw new haxe.Exception('Tried to open inventory from bss');
+
+		returnHereFromInv = playState.subState;
+
+		var onFadeComplete = () ->
+		{
+			cleanupAll();
+			iss.revive();
+			iss.openCallback = () -> FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+			playState.openSubState(iss);
+		};
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
 	public function returnToMap()
 	{
-		cleanupAll();
-		mss.revive();
-		playState.openSubState(mss);
-		mss.openCallback = function()
+		var onFadeComplete = () ->
 		{
-			mss.onSwitch();
-		}
-		GameController.battleAnimationManager.reset();
+			cleanupAll();
+			mss.revive();
+			mss.openCallback = function()
+			{
+				mss.onSwitch();
+				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+			}
+			GameController.battleAnimationManager.reset();
+			playState.openSubState(mss);
+		};
+
+		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
+	}
+
+	public function returnToPreviousFromInv()
+	{
+		if (returnHereFromInv == mss)
+			returnToMap();
+		else if (returnHereFromInv == ess)
+			initEvent(null);
+		else
+			throw new haxe.Exception('tried to return to previous from inv, but returnHere was wack');
 	}
 
 	// paranoid function to free up memory. Might be un-needed.
@@ -68,7 +121,9 @@ class SubStateManager
 		mss.kill();
 		ess.kill();
 		bss.kill();
+		iss.kill();
 		bss.cleanup();
+		iss.cleanup();
 	}
 
 	public function new(playState:PlayState)
@@ -77,5 +132,6 @@ class SubStateManager
 		mss = new MapSubState();
 		ess = new EventSubState();
 		bss = new BattleSubState();
+		iss = new InventorySubState();
 	}
 }

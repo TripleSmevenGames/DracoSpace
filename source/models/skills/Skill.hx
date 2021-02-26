@@ -122,8 +122,16 @@ class SkillPointCombination
 			var val = this.get(type);
 			if (val != 0)
 			{
-				for (i in 0...val)
+				if (val < 3)
+				{
+					for (i in 0...val)
+						stringArray.push(name);
+				}
+				else
+				{
+					stringArray.push(Std.string(val));
 					stringArray.push(name);
+				}
 			}
 		}
 
@@ -161,6 +169,7 @@ class Skill
 	public var maxCharges(default, null):Int = 1;
 	public var chargesPerCD(default, null):Int = 1;
 	public var spritePath(default, null):FlxGraphicAsset; // not in DB
+	public var category(default, null):SkillDataKind; // not in DB, need to translate
 
 	static function paysCost(pay:SkillPointCombination, cost:SkillPointCombination, overpay:Bool = false)
 	{
@@ -198,6 +207,11 @@ class Skill
 	public function getCostString()
 	{
 		return costs.join(' OR ');
+	}
+
+	public function getCostStringCompact()
+	{
+		return costs.join(' / ');
 	}
 
 	/** Used for the skillsprite tool tip. **/
@@ -254,5 +268,6 @@ class Skill
 
 		// defaults
 		this.spritePath = AssetPaths.emptySkill__png;
+		this.category = generic;
 	}
 }

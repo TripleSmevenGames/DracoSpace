@@ -3,6 +3,7 @@ package utils;
 import flixel.FlxBasic;
 import haxe.Exception;
 import models.ai.BaseAI;
+import models.events.GameEvent;
 import models.player.CharacterInfo.CharacterType;
 import models.player.Player;
 import models.skills.Skill.SkillPointCombination;
@@ -15,6 +16,7 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleSounds;
+import utils.battleManagerUtils.RewardHelper;
 
 enum BattleManagerStateNames
 {
@@ -69,6 +71,7 @@ class BattleManager extends FlxBasic
 	public var enemyDiscardCards:Int = 0;
 
 	public var context:BattleContext;
+	public var battleType:GameEventType;
 
 	/** something is "turnable" if it has something to trigger at the start or end of player or enemy turns. **/
 	var turnables:Array<ITurnTriggerable>;
@@ -219,17 +222,17 @@ class BattleManager extends FlxBasic
 	}
 
 	/** Reset the manager for a new battle. Make sure you add() this to the state after the battle view has been setup. **/
-	public function reset(playerDeckSprite:DeckSprite, enemyDeckSprite:DeckSprite, playerChars:Array<CharacterSprite>, enemyChars:Array<CharacterSprite>,
-			?enemyAI:BaseAI)
+	public function reset(context:BattleContext, ?enemyAI:BaseAI, ?battleType:GameEventType = BATTLE)
 	{
 		this.revive();
 
-		this.context = new BattleContext(playerDeckSprite, enemyDeckSprite, playerChars, enemyChars);
+		this.context = context;
+		this.battleType = battleType;
 		this.playerSkillSprites = [];
 		this.enemySkillSprites = [];
 		this.turnables = [];
 
-		for (char in playerChars)
+		for (char in context.pChars)
 		{
 			turnables.push(char); // add all player chars to the list of turnables.
 			char.setOnClickCancelSkill(cancelSkillTargeting);
@@ -240,7 +243,7 @@ class BattleManager extends FlxBasic
 			}
 		}
 
-		for (char in enemyChars)
+		for (char in context.eChars)
 		{
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
@@ -251,8 +254,8 @@ class BattleManager extends FlxBasic
 			}
 		}
 
-		turnables.push(playerDeckSprite);
-		turnables.push(enemyDeckSprite);
+		turnables.push(context.pDeck);
+		turnables.push(context.eDeck);
 
 		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, context);
 
@@ -600,16 +603,24 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				this.state = winState;
+
+				// get exp reward
 				var level = Player.level;
 				var leveledUp = false;
-				Player.exp += 1;
-				Player.money += 7;
+				var expReward = RewardHelper.getExpReward(battleType);
+				Player.exp += expReward;
 				if (level != Player.level)
 				{
 					trace('leveled up!');
 					leveledUp = true;
 				}
-				bss.showWinScreen(leveledUp);
+
+				// get money reward
+				var moneyReward = RewardHelper.getMoneyReward(battleType);
+				Player.money += moneyReward;
+
+				// show the win screen, which contains the rewards screen.
+				bss.showWinScreen(leveledUp, expReward, moneyReward);
 			},
 			update: (elapsed:Float) -> {}
 		};

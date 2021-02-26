@@ -214,9 +214,6 @@
 							"costs": [
 								{
 									"POW": 1
-								},
-								{
-									"ANY": 2
 								}
 							],
 							"targetMethod": 0,
@@ -233,9 +230,6 @@
 							"costs": [
 								{
 									"CON": 1
-								},
-								{
-									"ANY": 2
 								}
 							],
 							"targetMethod": 7,
@@ -643,9 +637,6 @@
 							"costs": [
 								{
 									"AGI": 1
-								},
-								{
-									"ANY": 2
 								}
 							],
 							"targetMethod": 0,

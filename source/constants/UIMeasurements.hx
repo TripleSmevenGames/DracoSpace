@@ -12,4 +12,6 @@ class UIMeasurements
 
 	public static inline final MAP_UI_FONT_SIZE_MED = 24;
 	public static inline final MAP_UI_FONT_SIZE_LG = 36;
+
+	public static inline final MENU_FONT_SIZE_TITLE = 36;
 }

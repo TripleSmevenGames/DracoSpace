@@ -1,19 +1,19 @@
 package substates;
 
+import constants.Colors;
 import constants.Fonts;
-import flash.geom.Rectangle;
 import flixel.FlxG;
-import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
-import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
-import flixel.ui.FlxButton;
 import flixel.util.FlxColor;
+import flixel.util.FlxGradient;
 import models.events.BattleEvent;
 import models.events.GameEvent;
+import openfl.geom.Rectangle;
 import ui.buttons.EventButton;
+import ui.header.Header;
 import utils.GameController;
 import utils.SubStateManager;
 import utils.ViewUtils;
@@ -90,7 +90,16 @@ class EventView extends FlxSpriteGroup
 
 		this.ssm = GameController.subStateManager;
 
-		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.space__png, new Rectangle(0, 0, 1000, 600), [8, 8, 40, 40]);
+		var backgroundGradient = [Colors.BACKGROUND_BLUE, Colors.BACKGROUND_LIGHT_BLUE];
+		var background = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, backgroundGradient, 8);
+		add(background);
+
+		var header = new Header();
+		add(header);
+
+		var windowWidth = FlxG.width * (3 / 5);
+		var windowHeight = FlxG.height / 2;
+		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.eventBackground__png, new Rectangle(0, 0, windowWidth, windowHeight), [8, 8, 40, 40]);
 		add(windowSprite);
 
 		titleSprite = new FlxText(0, 0, 0, 'title');
@@ -133,6 +142,6 @@ class EventSubState extends FlxSubState
 	{
 		super.destroy();
 		if (view != null)
-			this.view.destroy();
+			this.view.destroy(); // possibly unneeded
 	}
 }

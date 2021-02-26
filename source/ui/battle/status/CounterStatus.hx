@@ -8,8 +8,12 @@ class CounterStatus extends Status
 {
 	override public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
-		owner.dealDamageTo(stacks, dealer, context);
-		stacks = 0;
+		// prevent countering self damage.
+		if (dealer != owner)
+		{
+			owner.dealDamageTo(stacks, dealer, context);
+			stacks = 0;
+		}
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)

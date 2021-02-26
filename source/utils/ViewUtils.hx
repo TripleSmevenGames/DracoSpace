@@ -3,6 +3,7 @@ package utils;
 import constants.Colors;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxNestedSprite;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -51,6 +52,12 @@ class ViewUtils
 		centerX(sprite, otherMidpointX);
 
 		sprite.y = other.y + (other.height - sprite.height);
+	}
+
+	public static function scale3x(sprite:FlxSprite)
+	{
+		sprite.scale.set(3, 3);
+		sprite.updateHitbox();
 	}
 
 	// quick way to make a tiny white dot, good for marking a spot during debug mode.
@@ -121,5 +128,10 @@ class ViewUtils
 		if (ease == null)
 			ease = FlxEase.quadOut;
 		FlxTween.tween(sprite, {y: sprite.y + distance}, duration, {type: PINGPONG, ease: ease});
+	}
+
+	public static function addScaledToMouseManager(sprite:FlxSprite)
+	{
+		FlxMouseEventManager.add(sprite, null, null, null, null, false, true, false);
 	}
 }

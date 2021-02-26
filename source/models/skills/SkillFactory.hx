@@ -23,7 +23,8 @@ typedef CharSkillList = Map<SkillData_skills_rarity, SkillList>;
 @:access(models.skills.Skill)
 class SkillFactory
 {
-	public static var placeHolderPath = AssetPaths.emptySkill__png;
+	public static final ryderPlaceholder = AssetPaths.ryderSkill__png;
+	public static final kiwiPlaceholder = AssetPaths.kiwiSkill__png;
 
 	public static function init()
 	{
@@ -45,7 +46,9 @@ class SkillFactory
 
 	static function skillFromData(category:SkillDataKind, skillId:SkillData_skillsKind):Skill
 	{
-		return new Skill(get(category, skillId));
+		var skill = new Skill(get(category, skillId));
+		skill.category = category;
+		return skill;
 	}
 
 	public static var genericSkills:SkillList = [
@@ -128,14 +131,14 @@ class SkillFactory
 		{
 			var skill = skillFromData(ryder, bash);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		guard => () ->
 		{
 			var skill = skillFromData(ryder, guard);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 	];
@@ -150,7 +153,7 @@ class SkillFactory
 				context.pDeck.drawCards(1);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		aggravate => () ->
@@ -165,7 +168,7 @@ class SkillFactory
 				}
 				SkillAnimations.genericBuffPlay(effect)([owner], owner, context);
 			};
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		riposte => () ->
@@ -180,7 +183,7 @@ class SkillFactory
 				}
 				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
 			};
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		bladeDance => () ->
@@ -195,7 +198,7 @@ class SkillFactory
 				}
 				SkillAnimations.genericBuffPlay(effect)([owner], owner, context);
 			};
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		adrenaline => () ->
@@ -206,14 +209,14 @@ class SkillFactory
 				target.addStatus(ATTACK, 1);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		wideSwing => () ->
 		{
 			var skill = skillFromData(ryder, wideSwing);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		flurry => () ->
@@ -227,7 +230,7 @@ class SkillFactory
 					SkillAnimations.genericAttackPlay(skill.value, animSprite)(targets, owner, context);
 				}
 			}
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		crush => () ->
@@ -242,7 +245,7 @@ class SkillFactory
 					SkillAnimations.genericAttackPlay(skill.value, animSprite)(targets, owner, context);
 				}
 			}
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		recklessSwing => () ->
@@ -258,14 +261,14 @@ class SkillFactory
 				};
 				SkillAnimations.getCustomPlay(animSprite, effect)(targets, owner, context);
 			}
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 		protect => () ->
 		{
 			var skill = skillFromData(ryder, protect);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 	];
@@ -283,7 +286,7 @@ class SkillFactory
 				}
 				SkillAnimations.genericBuffPlay(effect)([], owner, context);
 			};
-			skill.spritePath = placeHolderPath;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 	];
@@ -297,7 +300,7 @@ class SkillFactory
 				var damage = owner.maxHp - owner.currHp;
 				SkillAnimations.genericAttackPlay(damage)(targets, owner, context);
 			}
-			skill.spritePath = placeHolderPath;
+			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
 	];
@@ -307,7 +310,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(kiwi, kick);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		dodgeRoll => () ->
@@ -318,7 +321,7 @@ class SkillFactory
 				target.addStatus(DODGE, skill.value);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 	];
@@ -350,7 +353,7 @@ class SkillFactory
 				SkillAnimations.genericAttackPlay(skill.value)(targets, owner, context);
 				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
 			}
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		shockShield => () ->
@@ -364,7 +367,7 @@ class SkillFactory
 			var effectFrame = 10;
 			var sound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
 			skill.play = SkillAnimations.getCustomPlay(animSprite, effect, effectFrame, sound);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		surpriseAttack => () ->
@@ -379,7 +382,7 @@ class SkillFactory
 					owner.dealDamageTo(0, target, context);
 			};
 			skill.play = SkillAnimations.getCustomPlay(animSprite, effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		disarm => () ->
@@ -399,7 +402,7 @@ class SkillFactory
 				}
 			};
 			skill.play = SkillAnimations.getCustomPlay(animSprite, effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		// sabatoge => () -> {},
@@ -412,21 +415,21 @@ class SkillFactory
 				context.pDeck.drawCards(1);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		blindThrow => () ->
 		{
 			var skill = skillFromData(kiwi, blindThrow);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		endlessShuriken => () ->
 		{
 			var skill = skillFromData(kiwi, endlessShuriken);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		}
 	];
@@ -446,7 +449,7 @@ class SkillFactory
 					SkillAnimations.genericAttackPlay(skill.value, fastHitAnim)([target], owner, context);
 				}
 			}
-			skill.spritePath = placeHolderPath;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		}
 	];
@@ -460,7 +463,7 @@ class SkillFactory
 				if (owner.hasStatus(DODGE) > 0)
 					SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
 			}
-			skill.spritePath = placeHolderPath;
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 	];

@@ -136,6 +136,7 @@ class SkillSprite extends FlxSpriteGroup
 		ViewUtils.centerSprite(tile, 0, 0);
 		add(tile);
 
+		// setup the cooldown counter, which will appear on the tile when its on cooldown.
 		cooldownCountdownSprite = new FlxText(0, 0, 0, '0');
 		cooldownCountdownSprite.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
 		cooldownCountdownSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0, 1);
@@ -146,6 +147,11 @@ class SkillSprite extends FlxSpriteGroup
 		this.cooldownTimer = 0;
 		this.currentCharges = skill.maxCharges;
 		this.owner = owner;
+
+		// setup the cost indicator under the tile.
+		var costTextSprite = new FlxTextWithReplacements(80, 12, skill.getCostStringCompact());
+		costTextSprite.centerSprite(0, tile.height / 2 + 8);
+		add(costTextSprite);
 
 		// setup the mouse events
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.

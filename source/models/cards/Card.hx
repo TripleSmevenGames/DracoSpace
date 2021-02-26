@@ -4,17 +4,21 @@ import constants.Colors;
 import constants.Fonts;
 import constants.UIMeasurements.*;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.skills.Skill.SkillPointCombination;
 import models.skills.Skill.SkillPointType;
+import ui.CardHighlight;
 import ui.battle.character.CharacterSprite;
 import utils.GameController;
 import utils.ViewUtils;
 
 using flixel.util.FlxSpriteUtil;
+using utils.ViewUtils;
 
 /** Represents a card sprite during battle. **/
 class Card extends FlxSpriteGroup
@@ -30,6 +34,8 @@ class Card extends FlxSpriteGroup
 	var icon:FlxSprite;
 	var bodyText:FlxText;
 	var anchor:FlxSprite;
+
+	public var highlight:FlxSprite;
 
 	/** Set this to hide or unhide a card's contents from ther player's view. **/
 	public var hidden(default, set):Bool = false;
@@ -86,6 +92,7 @@ class Card extends FlxSpriteGroup
 		this.icon.scale.set(3, 3);
 		this.alpha = 1;
 		this.color = FlxColor.WHITE;
+		this.highlight.visible = false;
 		// because of weirdness with sprite groups, their children, and alpha values, we do this check here to ensure the "hidden-ness" of the card.
 		// TLDR alpha values don't work as you'd expect in terms of parent -> children relationship, so do this check.
 		// https://github.com/HaxeFlixel/flixel/pull/2157
@@ -137,6 +144,14 @@ class Card extends FlxSpriteGroup
 
 		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH, CARD_HEIGHT, FlxColor.BLACK);
 		ViewUtils.centerSprite(body);
+
+		// setup hover effect
+		this.highlight = new CardHighlight(body);
+		highlight.centerSprite();
+		add(highlight);
+		highlight.visible = false;
+
+		// add body over the highlight effect
 		add(body);
 
 		this.icon = ViewUtils.getIconForType(type);

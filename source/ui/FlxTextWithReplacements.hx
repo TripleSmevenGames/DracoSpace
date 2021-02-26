@@ -16,7 +16,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 	var x2Replacement:Null<String> = null;
 
 	// turn the word into flxText or sprite depending on what it is.
-	function processWord(word:String, fontSize:Int = 16):FlxSprite
+	function processWord(word:String, fontSize:Int = 16, border:Bool = false):FlxSprite
 	{
 		if (word == 'POW' || word == 'AGI' || word == 'CON' || word == 'KNO' || word == 'WIS' || word == 'ANY')
 		{
@@ -50,11 +50,16 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		else
 			textSprite.text = word;
 
+		if (border)
+		{
+			textSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE);
+		}
+
 		return textSprite;
 	}
 
-	/** Create a sprite group from string, which will replace certain things with custom sprites. **/
-	public function new(width:Float = 100, fontSize:Int = 16, input:String, ?xReplacement:String, ?x2Replacement:String)
+	/** Create a sprite group from string, which will replace certain things with custom sprites. NOT CENTERED. **/
+	public function new(width:Float = 100, fontSize:Int = 16, input:String, ?xReplacement:String, ?x2Replacement:String, ?border:Bool = false)
 	{
 		super();
 		this.fontSize = fontSize;
@@ -68,7 +73,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		for (word in text)
 		{
 			// turn the word into its correct replacement if needed.
-			var spriteToPlace = processWord(word, fontSize);
+			var spriteToPlace = processWord(word, fontSize, border);
 			// then, check if this sprite can fit at the current cursor (not centered).
 			var canFit = cursor.x + spriteToPlace.width < width;
 			if (!canFit)

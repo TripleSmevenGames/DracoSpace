@@ -26,7 +26,7 @@ class WinScreen extends FlxSpriteGroup
 	 *
 	 * If we leveled up, show the rewards!
 	**/
-	public function play(leveledUp:Bool = false)
+	public function play(leveledUp:Bool = false, expReward:Int, moneyReward:Int)
 	{
 		this.revive();
 
@@ -41,11 +41,9 @@ class WinScreen extends FlxSpriteGroup
 		canContinue = false;
 		continueBtn.disabled = true;
 
-		if (leveledUp) {
-			var rewardsSprite = new RewardsSprite();
-			rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2 + 100);
-			add(rewardsSprite);
-		}
+		var rewardsSprite = new RewardsSprite(leveledUp, expReward, moneyReward);
+		rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2 + 100);
+		add(rewardsSprite);
 	}
 
 	public function new()
@@ -62,15 +60,11 @@ class WinScreen extends FlxSpriteGroup
 		ViewUtils.centerSprite(text, FlxG.width / 2, 200);
 		add(text);
 
-		var anchor = ViewUtils.newAnchor();
-		anchor.centerSprite(FlxG.width / 2, 200);
-		add(anchor);
-
-		var onContinueClick = () -> {
+		var onContinueClick = () ->
+		{
 			if (canContinue)
 				ssm.returnToMap();
 		}
-
 		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
 		ViewUtils.centerSprite(continueBtn, FlxG.width - 200, FlxG.height - 200);
 		continueBtn.disabled = true;

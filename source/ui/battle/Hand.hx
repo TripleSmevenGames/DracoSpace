@@ -5,7 +5,6 @@ import constants.Fonts;
 import constants.UIMeasurements.*;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.util.FlxColor;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
@@ -13,6 +12,7 @@ import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
+import flixel.util.FlxColor;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
 import models.cards.Card;
@@ -280,6 +280,7 @@ class Hand extends FlxSpriteGroup
 		wipeVisual();
 
 		// if this is a player's hand, add the click handler to the card to pick it.
+		// and also add the highlight effect on hover.
 		if (type == PLAYER)
 		{
 			FlxMouseEventManager.add(card);
@@ -288,6 +289,9 @@ class Hand extends FlxSpriteGroup
 				if (bm.getTurn() == PLAYER)
 					pick(card);
 			});
+
+			FlxMouseEventManager.setMouseOverCallback(card, (_) -> card.highlight.visible = true);
+			FlxMouseEventManager.setMouseOutCallback(card, (_) -> card.highlight.visible = false);
 		}
 		cards.push(card);
 		renderVisual();

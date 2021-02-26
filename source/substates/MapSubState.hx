@@ -144,6 +144,7 @@ class GameMapView extends FlxSpriteGroup
 		}
 
 		drawConnectingLines();
+
 		this.header = new Header();
 		header.scrollFactor.set(0, 0);
 		add(header);

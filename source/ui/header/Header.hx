@@ -4,8 +4,10 @@ import constants.Colors;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
 import models.player.Player;
+import utils.GameController;
 
 using utils.ViewUtils;
 
@@ -55,6 +57,9 @@ class Header extends FlxSpriteGroup
 
 		this.moneyDisplay = new MoneyDisplay();
 		addToView(moneyDisplay);
+
+		var inventoryIcon = new InventoryIcon();
+		addToView(inventoryIcon);
 
 		displays.push(charDisplay1);
 		displays.push(charDisplay2);
