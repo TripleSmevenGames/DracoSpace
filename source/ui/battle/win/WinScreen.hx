@@ -38,10 +38,10 @@ class WinScreen extends FlxSpriteGroup
 			'scale.y': 1,
 		}, .5);
 
-		canContinue = false;
 		continueBtn.disabled = true;
 
-		var rewardsSprite = new RewardsSprite(leveledUp, expReward, moneyReward);
+		var onClaim = () -> continueBtn.disabled = false;
+		var rewardsSprite = new RewardsSprite(leveledUp, expReward, moneyReward, onClaim);
 		rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2 + 100);
 		add(rewardsSprite);
 	}
@@ -56,15 +56,11 @@ class WinScreen extends FlxSpriteGroup
 		add(screen);
 
 		this.text = new FlxText(0, 0, 0, 'VICTORY');
-		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.GRAY);
+		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE);
 		ViewUtils.centerSprite(text, FlxG.width / 2, 200);
 		add(text);
 
-		var onContinueClick = () ->
-		{
-			if (canContinue)
-				ssm.returnToMap();
-		}
+		var onContinueClick = () -> ssm.returnToMap();
 		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
 		ViewUtils.centerSprite(continueBtn, FlxG.width - 200, FlxG.height - 200);
 		continueBtn.disabled = true;

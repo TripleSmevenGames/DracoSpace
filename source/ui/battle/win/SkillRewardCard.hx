@@ -30,7 +30,6 @@ class SkillRewardCard extends FlxSpriteGroup
 		var body = new FlxSprite();
 		body.makeGraphic(200, 280, FlxColor.BLACK);
 		body.centerSprite();
-		add(body);
 
 		// set up the highlight effect, which appears around the card on hover.
 		// we want this for the skill rewards screen, but not the hover effect on SkillSprites during battle.
@@ -45,6 +44,8 @@ class SkillRewardCard extends FlxSpriteGroup
 			FlxMouseEventManager.setMouseOverCallback(body, (_) -> highlight.visible = true);
 			FlxMouseEventManager.setMouseOutCallback(body, (_) -> highlight.visible = false);
 		}
+
+		add(body);
 
 		var frame = new FlxUI9SliceSprite(0, 0, AssetPaths.cardFrameGeneric__png, new Rectangle(0, 0, body.width, body.height), [5, 5, 15, 15]);
 		frame.centerSprite();

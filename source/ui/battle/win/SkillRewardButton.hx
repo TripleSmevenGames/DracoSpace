@@ -27,12 +27,12 @@ class SkillRewardButton extends FlxSpriteGroup
 	var clicked:Bool;
 	var subscreen:FlxSprite;
 
-	function new(width:Int = 100, height:Int = 32, ?onFinish:Void->Void)
+	function new(width:Int = 100, height:Int = 32, onClaim:Void->Void)
 	{
 		super();
 		clicked = false;
 		// make sure to add the subscreen after the button, so it is over top it.
-		this.subscreen = new SkillRewardsSubScreen();
+		this.subscreen = new SkillRewardsSubScreen(onClaim);
 
 		var onClick = () ->
 		{
@@ -41,13 +41,14 @@ class SkillRewardButton extends FlxSpriteGroup
 
 			subscreen.revive();
 			this.button.label.text = claimedString;
-			this.button.alive = false; // prevent the hover/click effects?
+			this.button.statusAnimations = ['normal'];
 			clicked = true;
 		};
 
 		this.button = new FlxUIButton(0, 0, initialString, onClick);
 		var upSprite = AssetPaths.rewardItemButton__png;
-		var hoverSprite = AssetPaths.rewardItemButton_hover__png;
+		//	var hoverSprite = AssetPaths.rewardItemButton_hover__png;
+		var hoverSprite = AssetPaths.rewardItemButton__png;
 		var downSprite = AssetPaths.rewardItemButton_pressed__png;
 		var graphicArray:Array<FlxGraphicAsset> = [upSprite, hoverSprite, downSprite];
 
@@ -69,7 +70,7 @@ class SkillRewardButton extends FlxSpriteGroup
 /** a subscreen showing 3 skills. The user clicks one to claim it. It's centered. **/
 class SkillRewardsSubScreen extends FlxSpriteGroup
 {
-	public function new()
+	public function new(onClaim:Void->Void)
 	{
 		super();
 
@@ -91,6 +92,7 @@ class SkillRewardsSubScreen extends FlxSpriteGroup
 			var onClick = (_) ->
 			{
 				Player.gainSkill(skillCard.skill);
+				onClaim();
 				this.kill(); // possible memory leak?
 			};
 			FlxMouseEventManager.setMouseClickCallback(skillCard, onClick);

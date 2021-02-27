@@ -38,7 +38,7 @@ class RewardsSprite extends FlxSpriteGroup
 {
 	static inline final titleFontSize = 36;
 
-	public function new(leveledUp:Bool = false, expReward:Int, moneyReward:Int)
+	public function new(leveledUp:Bool = false, expReward:Int, moneyReward:Int, onClaim:Void->Void)
 	{
 		super();
 
@@ -75,8 +75,7 @@ class RewardsSprite extends FlxSpriteGroup
 		// When they choose a skill, close the subscreen.
 		if (leveledUp)
 		{
-			var onFinish = () -> {};
-			var skillRewardButton = new SkillRewardButton(itemWidth, itemHeight, onFinish);
+			var skillRewardButton = new SkillRewardButton(itemWidth, itemHeight, onClaim);
 			items.push(skillRewardButton);
 		}
 

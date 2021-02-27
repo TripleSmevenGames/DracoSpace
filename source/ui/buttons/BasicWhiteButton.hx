@@ -23,7 +23,12 @@ class BasicWhiteButton extends FlxUIButton
 
 	public function new(text:String, ?onClick:Void->Void)
 	{
-		super(0, 0, text, onClick);
+		var actualOnClick = () ->
+		{
+			if (!this.disabled)
+				onClick();
+		};
+		super(0, 0, text, actualOnClick);
 
 		var upSprite = AssetPaths.white__png;
 		var hoverSprite = AssetPaths.white__png;

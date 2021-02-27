@@ -89,7 +89,7 @@ class InventoryMenu extends FlxSpriteGroup
 			var char = Player.chars[i];
 			var profile = new CharacterProfile(char);
 			var xPos = ViewUtils.getXCoordForCenteringLR(i, Player.chars.length, profile.width, PADDING);
-			profile.setPosition(xPos, 0);
+			profile.setPosition(xPos, -FlxG.height / 6);
 			add(profile);
 			profiles.push(profile);
 
@@ -97,7 +97,7 @@ class InventoryMenu extends FlxSpriteGroup
 		}
 
 		unequippedSkillsList = new UnequippedSkillsList();
-		unequippedSkillsList.setPosition(0, profileHeight + unequippedSkillsList.height);
+		unequippedSkillsList.setPosition(0, FlxG.height / 6);
 		add(unequippedSkillsList);
 
 		setupSkillTileHandlers();

@@ -35,6 +35,8 @@ class GameController
 
 	public static var player:Player;
 
+	public static var latestException:haxe.Exception;
+
 	public static function initSave()
 	{
 		save = new FlxSave();

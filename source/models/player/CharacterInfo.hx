@@ -23,7 +23,7 @@ class CharacterInfo
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
-	public var numSkillSlots:Int = 2;
+	public var numSkillSlots:Int = 3;
 	public var draw:Int = 0;
 
 	static var sf = SkillFactory;
@@ -36,15 +36,16 @@ class CharacterInfo
 			return;
 		}
 
-		if (Player.inventory.unequippedSkills.contains(skill))
-		{
-			Player.inventory.unequippedSkills.remove(skill);
-			this.skills.push(skill);
-		}
-		else
+		if (!Player.inventory.unequippedSkills.contains(skill))
 		{
 			trace('Warning: $name tried to equip ${skill.name}, which the Player does not own');
 			return;
+		}
+
+		if (this.skills.length < numSkillSlots)
+		{
+			Player.inventory.unequippedSkills.remove(skill);
+			this.skills.push(skill);
 		}
 	}
 

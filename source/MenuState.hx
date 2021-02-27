@@ -59,6 +59,7 @@ class MenuState extends FlxState
 
 	override public function create()
 	{
+		super.create();
 		#if debug
 		trace('debug activated');
 		#else

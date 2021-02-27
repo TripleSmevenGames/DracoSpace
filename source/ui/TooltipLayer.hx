@@ -3,6 +3,7 @@ package ui;
 import constants.Colors;
 import constants.Fonts;
 import constants.UIMeasurements;
+import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -13,7 +14,6 @@ import models.skills.Skill;
 import ui.battle.SkillSprite;
 import ui.battle.win.SkillRewardCard;
 import utils.ViewUtils;
-import flixel.FlxG;
 
 // if all these tooltips cause a performance issue, make this one tooltip that "teleports" around instead.
 
@@ -50,12 +50,12 @@ class Tooltip extends FlxSpriteGroup
 
 	function putAboveParent()
 	{
-		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y - this.height / 2 - 8);
+		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y - this.height / 2 - parent.height / 2 - 8);
 	}
 
 	function putBelowParent()
 	{
-		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y + this.height / 2 + 8);
+		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y + this.height / 2 + parent.height / 2 + 8);
 	}
 
 	/** Uses the mouseEventManager to set mouse in/out callbacks on the parent. Assumes you added the parent to the manager already. **/
@@ -78,20 +78,22 @@ class Tooltip extends FlxSpriteGroup
 		this.parent = skillSprite.tile;
 		var over = (_) ->
 		{
-			if (pos == TOP) {
+			if (pos == TOP)
+			{
 				var canFit = parent.y > this.height + 16; // padding;
 				if (canFit)
 					putAboveParent();
-				else 
+				else
 					putBelowParent();
 			}
-			else if (pos == BOTTOM) {
+			else if (pos == BOTTOM)
+			{
 				var canFit = FlxG.height - parent.y > this.height + 16;
-				if (canFit) 
+				if (canFit)
 					putBelowParent();
-				else 
+				else
 					putAboveParent();
-		}
+			}
 			this.visible = true;
 		};
 		var out = (_) -> this.visible = false;
