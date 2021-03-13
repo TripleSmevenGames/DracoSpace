@@ -9,6 +9,7 @@ typedef Cards = Array<Card>;
 class Deck
 {
 	public var cardList(get, null):Cards;
+	public var hiddenCards:Int = 0;
 
 	public function get_cardList()
 	{
@@ -17,16 +18,16 @@ class Deck
 
 	public static function sample()
 	{
-		return newDeckFromList([POW => 2, AGI => 2, CON => 2, KNO => 2, WIS => 2]);
+		return fromMap([POW => 2, AGI => 2, CON => 2, KNO => 2, WIS => 2]);
 	}
 
 	public static function enemySample()
 	{
-		return newDeckFromList([POW => 4, CON => 4]);
+		return fromMap([POW => 4, CON => 4]);
 	}
 
 	/** Generate a deck of basic cards with the passed in map. **/
-	public static function newDeckFromList(list:Map<SkillPointType, Int>)
+	public static function fromMap(list:Map<SkillPointType, Int>, ?hiddenCards:Int = 0)
 	{
 		var cards = new Cards();
 		for (type in SkillPointCombination.ARRAY)
@@ -39,11 +40,12 @@ class Deck
 			}
 		}
 
-		return new Deck(cards);
+		return new Deck(cards, hiddenCards);
 	}
 
-	public function new(cards:Cards)
+	public function new(cards:Cards, ?hiddenCards:Int = 0)
 	{
 		this.cardList = cards;
+		this.hiddenCards = hiddenCards;
 	}
 }

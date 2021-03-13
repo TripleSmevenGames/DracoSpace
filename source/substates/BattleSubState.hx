@@ -81,12 +81,10 @@ class BattleView extends FlxSpriteGroup
 			cursor += char.height + 24;
 		}
 
-		var playerDeck = Deck.sample();
-		playerDeckSprite = new DeckSprite(0, FlxG.height - 200, playerDeck, PLAYER, playerChars);
+		playerDeckSprite = new DeckSprite(0, FlxG.height - 200, Player.deck, PLAYER, playerChars);
 		add(playerDeckSprite);
 
-		var enemyDeck = Deck.sample();
-		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, enemyDeck, ENEMY, enemyChars, 1);
+		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, event.eDeck, ENEMY, enemyChars);
 		add(enemyDeckSprite);
 
 		winScreen = new WinScreen();

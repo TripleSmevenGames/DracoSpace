@@ -162,14 +162,19 @@ class Skill
 	public var value2(default, null):Int;
 	public var flavor(default, null):String;
 	public var rarity(default, null):SkillData_skills_rarity;
-	public var costs(default, null):Costs = new Costs(); // need to translate from DB
+	public var costs(default, null):Costs = new Costs(); // need to translate from DB in code
+	public var type(default, null):SkillPointType; // need to translate from cost
 	public var targetMethod(default, null):SkillData_skills_targetMethod;
 	public var play(default, null):Play; // not in DB
 	public var cooldown(default, null):Int = 1;
 	public var maxCharges(default, null):Int = 1;
 	public var chargesPerCD(default, null):Int = 1;
+
+	/** Borderless skill art. Border is added later accoring to its type.**/
 	public var spritePath(default, null):FlxGraphicAsset; // not in DB
-	public var category(default, null):SkillDataKind; // not in DB, need to translate
+
+	public var category(default, null):SkillDataKind; // not in DB, need to translate in code
+	public var priority(default, null):Int = 0; // not in DB, set in code. Used for enemy skills only.
 
 	static function paysCost(pay:SkillPointCombination, cost:SkillPointCombination, overpay:Bool = false)
 	{
@@ -252,6 +257,20 @@ class Skill
 		return SkillPointCombination.newCosts(costs);
 	}
 
+	/** Return the first type we run into in the first cost**/
+	function getTypeFromCost(costs:Costs)
+	{
+		if (costs.length != 0)
+		{
+			for (type in SkillPointCombination.ARRAY)
+			{
+				if (costs[0].get(type) != 0)
+					return type;
+			}
+		}
+		return ANY;
+	}
+
 	function new(skillData:SkillData_skills)
 	{
 		this.name = skillData.name;
@@ -261,6 +280,7 @@ class Skill
 		this.flavor = skillData.flavor != null ? skillData.flavor : '';
 		this.rarity = skillData.rarity;
 		this.costs = parseCostsFromSkillData(skillData.costs);
+		this.type = getTypeFromCost(this.costs);
 		this.targetMethod = skillData.targetMethod;
 		this.cooldown = skillData.cooldown != null ? skillData.cooldown : 1;
 		this.maxCharges = skillData.maxCharges != null ? skillData.maxCharges : 1;

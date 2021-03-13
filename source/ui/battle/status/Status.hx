@@ -14,6 +14,9 @@ enum StatusType
 	TAUNT;
 	COUNTER;
 	DODGE;
+	STUN;
+	EXHAUST;
+	EXPOSED;
 }
 
 class Status extends FlxSpriteGroup implements ITurnTriggerable

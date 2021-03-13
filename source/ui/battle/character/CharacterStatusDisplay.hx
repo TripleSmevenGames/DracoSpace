@@ -47,6 +47,8 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return new CounterStatus(owner);
 			case DODGE:
 				return new DodgeStatus(owner);
+			case STUN:
+				return new StunStatus(owner);
 			default:
 				throw new Exception('Bad status type: ${type.getName()}');
 		}
@@ -124,6 +126,11 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			}
 		}
 		trace('Tried to remove ${val} stacks from non-existant ${type.getName()}');
+	}
+
+	public function removeAllStatuses()
+	{
+		this.statuses = [];
 	}
 
 	public function onPlayerStartTurn(context:BattleContext)

@@ -122,7 +122,8 @@ class SkillSprite extends FlxSpriteGroup
 
 	public function onNewRound()
 	{
-		this.cooldownTimer -= 1;
+		if (owner.hasStatus(STUN) == 0)
+			this.cooldownTimer -= 1;
 	}
 
 	public function new(skill:Skill, owner:CharacterSprite)

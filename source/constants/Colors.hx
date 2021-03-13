@@ -17,6 +17,6 @@ class Colors
 	public static inline final STATIC_YELLOW = 0xFFffff00;
 	public static inline final COLD_BLUE = 0xFF7ae4ff;
 
-	public static inline final INVENTORY_GRADIENT_BOT = 0xFFb55a14; // light brown
-	public static inline final INVENTORY_GRADIENT_TOP = 0xFF894c1c; // dark brown
+	public static inline final INVENTORY_GRADIENT_BOT = 0xFF914810; // light brown
+	public static inline final INVENTORY_GRADIENT_TOP = 0xFF753d10; // dark brown
 }

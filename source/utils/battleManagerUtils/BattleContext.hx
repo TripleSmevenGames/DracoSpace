@@ -57,7 +57,7 @@ class BattleContext
 		var charsWithStatus:Array<CharacterSprite> = [];
 		for (char in chars)
 		{
-			if (char.hasStatus(status) > 0)
+			if (char.hasStatus(status) > 0 && !char.dead)
 				charsWithStatus.push(char);
 		}
 		return charsWithStatus;

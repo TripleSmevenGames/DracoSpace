@@ -15,9 +15,9 @@ class StaticStatus extends Status
 		else if (skillSprite.owner.info.type == ENEMY)
 			allies = context.eChars;
 
-		for (ally in allies)
+		if (skillSprite.owner.skillsPlayedThisTurn == 1)
 		{
-			if (ally.skillsPlayedThisTurn == 1)
+			for (ally in allies)
 				ally.addStatus(STATIC, 1);
 		}
 	}
@@ -27,7 +27,7 @@ class StaticStatus extends Status
 		type = STATIC;
 		name = 'Static';
 
-		var desc = 'The first time this character plays a skill this turn, they and their allies gain 1 Static.';
+		var desc = 'The first time this character plays a skill each turn, each party member gains 1 Static.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};

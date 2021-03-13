@@ -217,7 +217,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 1,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 7
@@ -406,7 +406,7 @@
 						{
 							"id": "protect",
 							"name": "Protect",
-							"desc": "An ally gains $x Block.",
+							"desc": "A party member gains $x Block.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -417,7 +417,26 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 8
+							"value": 8,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "riskyManeuver",
+							"name": "Risky Maneuver",
+							"desc": "Take $x damage and draw 2 cards.",
+							"rarity": 1,
+							"costs": [
+								{
+									"ANY": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 2,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						},
 						{
 							"id": "expose",
@@ -449,7 +468,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 15,
+							"value": 14,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -508,8 +527,8 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "lunge",
-							"name": "Lunge",
+							"id": "blitzkreig",
+							"name": "Blitzkrieg",
 							"desc": "Deal $x damage and gain $x2 Attack.",
 							"rarity": 2,
 							"costs": [
@@ -537,7 +556,7 @@
 									"CON": 2
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 7,
 							"value": 12,
 							"value2": 6,
 							"cooldown": 2,
@@ -622,7 +641,8 @@
 							"targetMethod": 0,
 							"cooldown": 4,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"flavor": "Also best served cold."
 						}
 					]
 				},
@@ -630,8 +650,8 @@
 					"charName": "kiwi",
 					"skills": [
 						{
-							"id": "kick",
-							"name": "Kick",
+							"id": "shuriken",
+							"name": "Shuriken",
 							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
@@ -640,7 +660,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 6,
+							"value": 5,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -817,7 +837,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 5,
+							"value": 6,
 							"cooldown": 1,
 							"maxCharges": 2,
 							"chargesPerCD": 2
@@ -864,8 +884,7 @@
 							"rarity": 2,
 							"costs": [
 								{
-									"POW": 1,
-									"AGI": 1
+									"AGI": 2
 								}
 							],
 							"targetMethod": 7,
@@ -896,7 +915,7 @@
 						{
 							"id": "followUp",
 							"name": "Follow Up",
-							"desc": "Deal $x damage. Reduce the cooldown of a random skill by 1.",
+							"desc": "Deal $x damage. Reduce the cooldown of the left-most skill by 1.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -939,7 +958,6 @@
 							],
 							"targetMethod": 1,
 							"value": 8,
-							"flavor": "A classic move.",
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1055,14 +1073,30 @@
 								}
 							],
 							"targetMethod": 7,
-							"cooldown": 1,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 4
 						},
 						{
-							"id": "magicBolt",
-							"name": "Magic Bolt",
+							"id": "bite",
+							"name": "Bite",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 6,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "laserBolt",
+							"name": "Laser Bolt",
 							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
@@ -1071,14 +1105,14 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 8,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						},
 						{
-							"id": "magicBlast",
-							"name": "Magic Blast",
+							"id": "laserBlast",
+							"name": "laserBlast",
 							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
@@ -1090,8 +1124,23 @@
 							"value": 15,
 							"cooldown": 2,
 							"maxCharges": 1,
-							"chargesPerCD": 1,
-							"flavor": "No, not Magic Claw."
+							"chargesPerCD": 1
+						},
+						{
+							"id": "holoBarrier",
+							"name": "Holo Barrier",
+							"desc": "All allies gain $x block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1,
+									"KNO": 1
+								}
+							],
+							"targetMethod": 6,
+							"value": 8,
+							"cooldown": 3,
+							"maxCharges": 1
 						},
 						{
 							"id": "howl",
@@ -1107,7 +1156,57 @@
 							"value": 1,
 							"cooldown": 3,
 							"maxCharges": 1,
+							"chargesPerCD": 1,
+							"flavor": "Gary, quit it!"
+						},
+						{
+							"id": "hardenSkin",
+							"name": "Harden Skin",
+							"desc": "Gain $x block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 2
+								}
+							],
+							"targetMethod": 7,
+							"value": 12,
+							"cooldown": 2,
+							"maxCharges": 1,
 							"chargesPerCD": 1
+						},
+						{
+							"id": "selfDestruct",
+							"name": "Self Destruct",
+							"desc": "Deal $x damage and take $x2 damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 20,
+							"value2": 100,
+							"cooldown": 10,
+							"maxCharges": 1,
+							"chargesPerCD": 0
+						},
+						{
+							"id": "blindFire",
+							"name": "Blind Fire",
+							"desc": "Deal $x damage",
+							"rarity": 0,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 1,
+							"value": 4,
+							"cooldown": 1,
+							"maxCharges": 4,
+							"chargesPerCD": 4
 						}
 					]
 				},
@@ -1164,6 +1263,58 @@
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 2
+						}
+					]
+				},
+				{
+					"charName": "rattle",
+					"skills": [
+						{
+							"id": "piercingGaze",
+							"name": "Piercing Gaze",
+							"desc": "Stun all enemies.",
+							"rarity": 0,
+							"costs": [
+								{
+									"WIS": 3
+								}
+							],
+							"targetMethod": 2,
+							"cooldown": 3,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "snakeBite",
+							"name": "Snake Bite",
+							"desc": "If the target has no block, draw 2 cards. Then, deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 11,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "snakeWhip",
+							"name": "Snake Whip",
+							"desc": "Deal $x damage to all enemies.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 2,
+							"value": 7,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						}
 					]
 				}

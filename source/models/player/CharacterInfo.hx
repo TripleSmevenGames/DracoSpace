@@ -19,7 +19,7 @@ class CharacterInfo
 
 	public var name:String;
 	public var type:CharacterType;
-	public var category:Castle.SkillDataKind; // used by a Skill to know what character can equip it.
+	public var category:Castle.SkillDataKind; // used by a Skill to know what player character can equip it.
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
@@ -111,5 +111,18 @@ class CharacterInfo
 		return slime;
 	}
 
-	function new() {}
+	public static function createEnemy(name:String, spritePath:FlxGraphicAsset, hp:Int, skills:Array<Skill>, draw:Int = 1)
+	{
+		var enemy = new CharacterInfo();
+		enemy.name = name;
+		enemy.type = ENEMY;
+		enemy.spritePath = spritePath;
+		enemy.maxHp = hp;
+		enemy.currHp = hp;
+		enemy.skills = skills;
+		enemy.draw = draw;
+		return enemy;
+	}
+
+	public function new() {}
 }

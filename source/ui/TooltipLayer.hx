@@ -12,7 +12,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
 import ui.battle.SkillSprite;
-import ui.battle.win.SkillRewardCard;
+import ui.battle.win.SkillCard;
 import utils.ViewUtils;
 
 // if all these tooltips cause a performance issue, make this one tooltip that "teleports" around instead.
@@ -139,7 +139,7 @@ class Tooltip extends FlxSpriteGroup
 
 	public static function skillTooltip(skill:Skill)
 	{
-		var sprite = new SkillRewardCard(skill);
+		var sprite = new SkillCard(skill);
 		return new Tooltip(sprite);
 	}
 

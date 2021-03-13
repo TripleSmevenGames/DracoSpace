@@ -8,6 +8,7 @@ import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
+/** A decaying status loses 1 stack at the end of the owner's turn.**/
 class DecayingStatus extends Status
 {
 	override function onPlayerEndTurn(context:BattleContext)

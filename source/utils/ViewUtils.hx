@@ -20,7 +20,7 @@ class ViewUtils
 	}
 
 	/**
-	 * Best used to center sprites inside sprite groups. Don't center a group in a group, if the group's sprites are centered.
+	 * Best used to center sprites inside sprite groups. Don't center a group in a group, if the child group's sprites are centered already.
 	 * Make sure you know if you are using local or global coordinates.
 	 *
 	 * Best used before you add the sprite to its group. If done like this, the x and y coords should be local coords.
@@ -42,6 +42,9 @@ class ViewUtils
 		sprite.y = y - (sprite.height / 2);
 	}
 
+	/** Center all children sprites in group **/
+	public static function centerEverythingX(group:FlxSpriteGroup) {}
+
 	/** move this sprite's bottom center to overlap the other sprite's bottom center. 
 	 *
 	 * Only works if both sprites are added, or if both sprites are un-added. Or if the parent is at 0, 0.
@@ -61,9 +64,12 @@ class ViewUtils
 	}
 
 	// quick way to make a tiny white dot, good for marking a spot during debug mode.
-	public static function newAnchor()
+	public static function newAnchor(?parent:FlxSprite)
 	{
-		return new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
+		if (parent == null)
+			return new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
+		else
+			return new FlxSprite(parent.width, parent.height).makeGraphic(4, 4, FlxColor.WHITE);
 	}
 
 	public static final typeColorMap = [
@@ -80,7 +86,7 @@ class ViewUtils
 		return typeColorMap.get(type);
 	}
 
-	public static final statusColorMap = [
+	static final statusColorMap = [
 		BURN => Colors.BURN_ORANGE,
 		COLD => Colors.COLD_BLUE,
 		STATIC => Colors.STATIC_YELLOW,
@@ -96,22 +102,44 @@ class ViewUtils
 		return color != null ? color : FlxColor.WHITE;
 	}
 
+	static final typeIconMap = [
+		POW => AssetPaths.PowerIcon1__png,
+		AGI => AssetPaths.agilityIcon1__png,
+		CON => AssetPaths.ConIcon1__png,
+		KNO => AssetPaths.knowledgeIcon1__png,
+		WIS => AssetPaths.wisdomIcon1__png,
+		ANY => AssetPaths.anyIcon1__png,
+	];
+
 	public static function getIconForType(type:SkillPointType)
 	{
-		switch (type)
+		return new FlxSprite(0, 0, typeIconMap.get(type));
+	}
+
+	static final typeBorderMap = [
+		POW => AssetPaths.powerBorder__png,
+		AGI => AssetPaths.agilityBorder__png,
+		CON => AssetPaths.conBorder__png,
+		KNO => AssetPaths.knowledgeBorder__png,
+		WIS => AssetPaths.wisdomBorder__png,
+		ANY => AssetPaths.anyBorder__png,
+	];
+
+	public static function getBorderForType(type:SkillPointType)
+	{
+		return new FlxSprite(0, 0, typeBorderMap.get(type));
+	}
+
+	public static function getIconForChar(char:Castle.SkillDataKind)
+	{
+		switch (char)
 		{
-			case POW:
-				return new FlxSprite(0, 0, AssetPaths.PowerIcon1__png);
-			case AGI:
-				return new FlxSprite(0, 0, AssetPaths.agilityIcon1__png);
-			case CON:
-				return new FlxSprite(0, 0, AssetPaths.ConIcon1__png);
-			case KNO:
-				return new FlxSprite(0, 0, AssetPaths.knowledgeIcon1__png);
-			case WIS:
-				return new FlxSprite(0, 0, AssetPaths.wisdomIcon1__png);
+			case ryder:
+				return new FlxSprite(0, 0, AssetPaths.RyderAvatar__png);
+			case kiwi:
+				return new FlxSprite(0, 0, AssetPaths.KiwiAvatar__png);
 			default:
-				return new FlxSprite(0, 0, AssetPaths.anyIcon1__png);
+				return new FlxSprite();
 		}
 	}
 

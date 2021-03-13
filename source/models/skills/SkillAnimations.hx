@@ -40,6 +40,11 @@ class SkillAnimations
 		return bsal.createStandardAnim(AssetPaths.powerUpAnim2_50x50x36__png, 50, 50, 36);
 	}
 
+	public static function getSmallBlueExplosionAnim()
+	{
+		return bsal.createStandardAnim(AssetPaths.blueSmallExplosion100x100x70__png, 100, 100, 70);
+	}
+
 	/** Create a play that will run ONE bam animation group with 1 effect. 
 	 *
 	 * You can combine multiple "play" calls in a single skill's play to create complicated and chaining effects.

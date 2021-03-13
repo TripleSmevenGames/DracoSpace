@@ -9,7 +9,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import openfl.geom.Rectangle;
-import ui.battle.win.SkillRewardCard;
+import ui.battle.win.SkillCard;
 
 using utils.ViewUtils;
 
@@ -52,7 +52,7 @@ class RewardsSprite extends FlxSpriteGroup
 		titleSprite.setFormat(Fonts.STANDARD_FONT2, titleFontSize);
 		titleSprite.setBorderStyle(FlxTextBorderStyle.SHADOW, 0, 3);
 		// first, align the title with the body's top left corner, and move it down a bit.
-		titleSprite.y = body.y + 16;
+		titleSprite.y = body.y + 8;
 		// then, center it horizontally
 		titleSprite.centerX();
 		add(titleSprite);

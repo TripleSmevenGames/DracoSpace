@@ -68,7 +68,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 
 		var text = input.split(' ');
 		var cursor = new FlxPoint();
-		var lineheight = fontSize * 1.5;
+		var lineheight = fontSize * 1.2;
 
 		for (word in text)
 		{

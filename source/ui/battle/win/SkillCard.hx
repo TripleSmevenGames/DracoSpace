@@ -15,10 +15,22 @@ import ui.FlxTextWithReplacements;
 
 using utils.ViewUtils;
 
-class SkillRewardCard extends FlxSpriteGroup
+/** Informational card describing a skill. Centered. Added to MouseManager.**/
+class SkillCard extends FlxSpriteGroup
 {
 	public var skill:Skill;
 	public var highlight:FlxSprite;
+
+	public static var bodyWidth = 200;
+	public static var bodyHeight = 270;
+
+	var body:FlxSprite;
+
+	static final colorMap = [
+		Castle.SkillDataKind.ryder => 0xFFc46d16,
+		Castle.SkillDataKind.kiwi => 0xFF36294d,
+		Castle.SkillDataKind.generic => 0xFF333333,
+	];
 
 	public function new(skill:Skill, withHighlight:Bool = false)
 	{
@@ -26,24 +38,14 @@ class SkillRewardCard extends FlxSpriteGroup
 		this.skill = skill;
 
 		var padding = 8;
+		this.addScaledToMouseManager();
 
-		var body = new FlxSprite();
-		body.makeGraphic(200, 280, FlxColor.BLACK);
+		this.body = new FlxSprite();
+		var color = colorMap.get(skill.category);
+		if (color == null)
+			color = colorMap.get(Castle.SkillDataKind.generic);
+		body.makeGraphic(bodyWidth, bodyHeight, color);
 		body.centerSprite();
-
-		// set up the highlight effect, which appears around the card on hover.
-		// we want this for the skill rewards screen, but not the hover effect on SkillSprites during battle.
-		if (withHighlight)
-		{
-			this.highlight = new CardHighlight(body);
-			highlight.centerSprite();
-			add(highlight);
-			highlight.visible = false;
-
-			FlxMouseEventManager.add(body);
-			FlxMouseEventManager.setMouseOverCallback(body, (_) -> highlight.visible = true);
-			FlxMouseEventManager.setMouseOutCallback(body, (_) -> highlight.visible = false);
-		}
 
 		add(body);
 
@@ -81,5 +83,18 @@ class SkillRewardCard extends FlxSpriteGroup
 		// put the skill desc in the middle of the remaining space.
 		descTextSprite.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2));
 		add(descTextSprite);
+
+		// set up the highlight effect, which appears around the card on hover.
+		// we want this for the skill rewards screen, but not the hover effect on SkillSprites during battle.
+		if (withHighlight)
+		{
+			this.highlight = new CardHighlight(body);
+			highlight.centerSprite();
+			add(highlight);
+			highlight.visible = false;
+
+			FlxMouseEventManager.setMouseOverCallback(this, (_) -> highlight.visible = true);
+			FlxMouseEventManager.setMouseOutCallback(this, (_) -> highlight.visible = false);
+		}
 	}
 }

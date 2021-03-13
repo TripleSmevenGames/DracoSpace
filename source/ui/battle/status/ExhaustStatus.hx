@@ -2,20 +2,19 @@ package ui.battle.status;
 
 import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
 
-/** usage is defined in characterSprite's dealDamage**/
-class AttackStatus extends Status
+// Exhaust usage is defined in onDraw somewhere
+class ExhaustStatus extends DecayingStatus
 {
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = ATTACK;
-		name = 'Attack';
-		var desc = 'This character\'s skills deal X more damage.';
+		type = EXHAUST;
+		name = 'Exhaust';
+		var desc = 'Lose 1 Draw for each stack. Lose 1 stack at the end of turn.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Attack1__png, name, desc, options);
+		var icon = new BattleIndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

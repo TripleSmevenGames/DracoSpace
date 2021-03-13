@@ -79,6 +79,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			return;
 	}
 
+	/** Queue an animation to draw x cards. **/
 	public function drawCards(num:Int, ?only:CharacterSprite)
 	{
 		var hiddenCount = hiddenCards;
@@ -217,7 +218,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		if (type == ENEMY)
 		{
-			this.hiddenCards = hiddenCards;
+			this.hiddenCards = deck.hiddenCards;
 		}
 
 		var width = type == PLAYER ? FlxG.width : ENEMY_DECK_WIDTH;

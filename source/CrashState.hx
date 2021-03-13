@@ -25,7 +25,7 @@ class CrashState extends FlxState
 			add(stack);
 
 			var exit = () -> Sys.exit(0);
-			var exitButton = new FlxButton(FlxG.width - 50, FlxG.height - 50, 'EXIT', exit);
+			var exitButton = new FlxButton(FlxG.width - 200, FlxG.height - 100, 'EXIT', exit);
 			add(exitButton);
 		}
 	}

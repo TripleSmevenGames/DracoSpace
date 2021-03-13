@@ -18,7 +18,7 @@ import ui.TooltipLayer.Tooltip;
 import ui.battle.DamageNumbers;
 import ui.battle.ITurnTriggerable;
 import ui.battle.status.Status;
-import ui.battle.win.SkillRewardCard;
+import ui.battle.win.SkillCard;
 import utils.BattleAnimationManager;
 import utils.BattleManager.BattleManagerStateNames;
 import utils.BattleManager;
@@ -84,6 +84,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			if (!dead)
 			{
 				dead = true;
+				this.statusDisplay.removeAllStatuses();
 				playDeadAnimation();
 			}
 		}
@@ -299,6 +300,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		statusDisplay.onPlaySkill(skillSprite, context);
 	}
 
+	/** The skill is counted as a played skill before it's play() is called.**/
 	public function playSkill(skillSprite:SkillSprite, targets:Array<CharacterSprite>, context:BattleContext)
 	{
 		onPlaySkill(skillSprite, context);
