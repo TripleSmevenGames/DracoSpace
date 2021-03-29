@@ -6,21 +6,28 @@ import models.skills.SkillFactory as SF;
 
 class BattleEventFactory
 {
+	static function createDog()
+	{
+		var skills = [SF.enemySkills.get(howl)(1), SF.enemySkills.get(bite)()];
+		var dog = CharacterInfo.createEnemy('Dog', AssetPaths.poochyena__png, 15, skills);
+		return dog;
+	}
+
 	public static function dogs()
 	{
-		var createDog = () ->
-		{
-			var skills = [SF.enemySkills.get(howl)(1), SF.enemySkills.get(bite)()];
-			var dog = CharacterInfo.createEnemy('Dog', AssetPaths.poochyena__png, 15, skills);
-			return dog;
-		}
-
 		var name = 'Pack of Animals';
 		var desc = 'Your party stumbles upon a group of some sort of Dogs. They don\'t look friendly...';
-		var enemies = [createDog(), createDog(), createDog()];
+		var enemies = [createDog(), createDog()];
 		var hiddenCards = 1;
 		var deck = Deck.fromMap([POW => 5, AGI => 5], hiddenCards);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	static function createDrone()
+	{
+		var skills = [SF.enemySkills.get(laserBolt)(1), SF.enemySkills.get(selfDestruct)()];
+		var drone = CharacterInfo.createEnemy('Drone', AssetPaths.magnemite__png, 12, skills);
+		return drone;
 	}
 
 	public static function drones()

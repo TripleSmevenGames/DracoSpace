@@ -154,6 +154,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		bm.endTurnFlag = true;
 	}
 
+	/** Get a shallow copy of cards in hand**/
 	public function getCardsInHand()
 	{
 		return this.hand.getCards();

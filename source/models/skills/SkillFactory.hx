@@ -93,6 +93,13 @@ class SkillFactory
 			skill.spritePath = AssetPaths.emptySkill__png;
 			return skill;
 		},
+		bite => (?priority:Int) ->
+		{
+			var skill = skillFromData(enemy, bite, priority);
+			skill.play = SkillAnimations.genericAttackPlay(skill.value);
+			skill.spritePath = AssetPaths.emptySkill__png;
+			return skill;
+		},
 		cower => (?priority:Int) ->
 		{
 			var skill = skillFromData(enemy, cower, priority);
@@ -310,7 +317,9 @@ class SkillFactory
 			{
 				SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
 				context.pDeck.drawCards(1);
-			}
+			};
+			skill.spritePath = ryderPlaceholder;
+			return skill;
 		}
 	];
 
@@ -487,11 +496,11 @@ class SkillFactory
 				// don't count this skill
 				for (i in 0...owner.skillsPlayedThisTurn - 1)
 				{
-					SkillAnimations.genericAttackPlay(skill.value, fastHitAnim)(targets, owner, context);
 					var fastHitAnim = SkillAnimations.getFastHitAnim();
+					SkillAnimations.genericAttackPlay(skill.value, fastHitAnim)(targets, owner, context);
 					SkillAnimations.genericBuffPlay(getDodgeEffect)([owner], owner, context);
 				}
-			}
+			};
 			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
@@ -514,6 +523,8 @@ class SkillFactory
 				};
 				SkillAnimations.genericBuffPlay(followUpEffect)([owner], owner, context);
 			};
+			skill.spritePath = kiwiPlaceholder;
+			return skill;
 		}
 	];
 

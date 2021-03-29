@@ -18,10 +18,10 @@ class CrashState extends FlxState
 			add(sorry);
 
 			var e = GameController.latestException;
-			var message = new FlxText(0, sorry.height, 0, e.message, 16);
+			var message = new FlxText(0, sorry.height + 16, 0, e.message, 16);
 			add(message);
 
-			var stack = new FlxText(0, message.y + message.height, 0, e.stack.toString(), 12);
+			var stack = new FlxText(0, message.y + message.height, 0, e.details(), 12);
 			add(stack);
 
 			var exit = () -> Sys.exit(0);

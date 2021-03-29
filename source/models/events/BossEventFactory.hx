@@ -4,7 +4,7 @@ import models.player.CharacterInfo;
 import models.player.Deck;
 import models.skills.SkillFactory as SF;
 
-class BattleEventFactory
+class BossEventFactory
 {
 	public static function rattle()
 	{

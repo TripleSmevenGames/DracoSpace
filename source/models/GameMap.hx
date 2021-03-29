@@ -68,7 +68,7 @@ class GameMap
 		for (i in 0...MapGenConsts.MIN_BATTLES)
 		{
 			if (eventPool.length < length)
-				eventPool.push(BattleEvent.sampleBattle());
+				eventPool.push(BattleEventFactory.dogs());
 		}
 		for (i in 0...MapGenConsts.MIN_CHOICES)
 		{
@@ -84,7 +84,7 @@ class GameMap
 			switch (type)
 			{
 				case 'BATTLE':
-					event = BattleEvent.sampleBattle();
+					event = BattleEventFactory.dogs();
 				case 'TREASURE':
 					event = TreasureEvent.sample();
 				case 'CHOICE':
@@ -125,7 +125,7 @@ class GameMap
 		for (i in 0...MapGenConsts.ELITES_IN_SECOND_HALF)
 		{
 			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-			variableNodes[nodeInd].event = BattleEvent.sampleElite();
+			variableNodes[nodeInd].event = BattleEventFactory.drones();
 			variableNodes.splice(nodeInd, 1);
 		}
 
@@ -238,7 +238,7 @@ class GameMap
 			// create the boss node in the last column
 			else if (i == numColumns - 1)
 			{
-				var node = new Node(++idCounter, BattleEvent.sampleBoss());
+				var node = new Node(++idCounter, BossEventFactory.rattle());
 				column.push(node);
 			}
 			// for all the nodes in between, create empty ones to be filled in later.

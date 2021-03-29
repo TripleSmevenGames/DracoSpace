@@ -69,7 +69,7 @@ class SkillSprite extends FlxSpriteGroup
 	}
 
 	/** Disable this skill, greying it out and stopping all click handlers. 
-		Happens if it goes on cooldown, or is disabled by an affect.
+		Happens if it goes on cooldown, is disabled by an affect, or owner dies
 	**/
 	public function set_disabled(val:Bool)
 	{
@@ -131,10 +131,7 @@ class SkillSprite extends FlxSpriteGroup
 		super(0, 0);
 		this.skill = skill;
 
-		tile = new FlxSprite(0, 0, skill.spritePath);
-		tile.scale.set(3, 3);
-		tile.updateHitbox();
-		ViewUtils.centerSprite(tile, 0, 0);
+		tile = new SkillTile(skill);
 		add(tile);
 
 		// setup the cooldown counter, which will appear on the tile when its on cooldown.
@@ -148,6 +145,7 @@ class SkillSprite extends FlxSpriteGroup
 		this.cooldownTimer = 0;
 		this.currentCharges = skill.maxCharges;
 		this.owner = owner;
+		this.priority = skill.priority;
 
 		// setup the cost indicator under the tile.
 		var costTextSprite = new FlxTextWithReplacements(80, 12, skill.getCostStringCompact());

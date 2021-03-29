@@ -6,6 +6,7 @@ import flixel.system.FlxSound;
 import models.skills.Skill.Effect;
 import ui.battle.character.CharacterSprite;
 import utils.GameController;
+import utils.GameUtils;
 import utils.battleManagerUtils.BattleContext;
 
 using utils.ViewUtils;

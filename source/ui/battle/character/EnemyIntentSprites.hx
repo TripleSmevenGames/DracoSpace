@@ -2,10 +2,55 @@ package ui.battle.character;
 
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-import models.ai.BaseAI.Intent;
+import models.ai.EnemyIntentMaker.Intent;
 
 using utils.ViewUtils;
 
+/** Centered around middle intent sprite (this is a group of them)**/
+class EnemyIntentSprites extends FlxSpriteGroup
+{
+	var intentSprites:Array<EnemyIntentSprite>;
+
+	public function addIntent(intent:Intent)
+	{
+		intentSprites.push(new EnemyIntentSprite(intent));
+		rerender();
+	}
+
+	public function resetIntents()
+	{
+		for (sprite in intentSprites)
+		{
+			remove(sprite);
+			sprite.destroy();
+		}
+
+		intentSprites = [];
+		rerender();
+	}
+
+	function rerender()
+	{
+		for (sprite in intentSprites)
+			remove(sprite);
+
+		for (i in 0...intentSprites.length)
+		{
+			var sprite = intentSprites[i];
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, intentSprites.length, sprite.height, 8);
+			sprite.setPosition(0, yPos);
+			add(sprite);
+		}
+	}
+
+	public function new()
+	{
+		super();
+		intentSprites = [];
+	}
+}
+
+/** Centered around the pointing arrow **/
 class EnemyIntentSprite extends FlxSpriteGroup
 {
 	public function new(intent:Intent)

@@ -11,6 +11,7 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import models.ai.EnemyIntentMaker.Intent;
 import models.player.CharacterInfo;
 import models.skills.Skill;
 import models.skills.SkillFactory;
@@ -23,6 +24,7 @@ import utils.BattleAnimationManager;
 import utils.BattleManager.BattleManagerStateNames;
 import utils.BattleManager;
 import utils.GameController;
+import utils.GameUtils;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -51,6 +53,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var hpBarSprite:CharacterHpBar;
 
 	var statusDisplay:CharacterStatusDisplay;
+
+	// enemy only.
+	var enemyIntentSprites:EnemyIntentSprites;
 
 	// the BM will set this btn's click handler to cancel a skill
 	public var cancelSkillBtn:FlxSprite;
@@ -167,7 +172,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			hurtSound.play(true);
 			playHurtAnimation();
 			currHp -= (val - currBlock);
-			FlxG.camera.shake(0.01, 0.1);
 		}
 		else
 		{
@@ -230,6 +234,34 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		GameController.battleDamageNumbers.spawnDamageNumber(spawnX, spawnY, val, color, usePhysics);
 	}
 
+	function rerenderEnemyIntentSprites()
+	{
+		if (enemyIntentSprites != null)
+		{
+			var xPos = sprite.x + sprite.width / 2;
+			var yPos = sprite.y - enemyIntentSprites.height / 2;
+			enemyIntentSprites.setPosition(xPos, yPos);
+		}
+	}
+
+	public function addIntent(intent:Intent)
+	{
+		if (enemyIntentSprites != null)
+		{
+			enemyIntentSprites.addIntent(intent);
+			rerenderEnemyIntentSprites();
+		}
+	}
+
+	public function resetIntents()
+	{
+		if (enemyIntentSprites != null)
+		{
+			enemyIntentSprites.resetIntents();
+			rerenderEnemyIntentSprites();
+		}
+	}
+
 	function disableAllSkills()
 	{
 		for (skillSprite in skillSprites)
@@ -272,6 +304,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			currBlock = 0;
 			statusDisplay.onEnemyStartTurn(context);
+			resetIntents();
 		}
 	}
 
@@ -292,6 +325,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		statusDisplay.onTakeDamage(damage, dealer, context);
+		if (damage > 0 && damage < 10)
+			GameUtils.smallCameraShake();
+		else if (damage < 20)
+			GameUtils.mediumCameraShake();
+		else
+			GameUtils.bigCameraShake();
 	}
 
 	function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)
@@ -360,15 +399,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.add(targetArrow);
 		targetArrow.visible = false;
 
-		if (info.name == 'Ryder')
+		// if this is an enemy, render the intent container (should be empty rn).
+		if (this.info.type == ENEMY)
 		{
-			drone = new FlxSprite(100, 0);
-			drone.loadGraphic(AssetPaths.ryderDrone1Sheet__png, true, 32, 32);
-			drone.scale.set(4, 4);
-			drone.updateHitbox();
-			drone.animation.add('idle', [0, 1], 24, true);
-			drone.animation.play('idle');
-			add(drone);
+			this.enemyIntentSprites = new EnemyIntentSprites();
+			add(enemyIntentSprites);
 		}
 	}
 

@@ -3,6 +3,7 @@ package utils;
 import flixel.FlxBasic;
 import haxe.Exception;
 import models.ai.BaseAI;
+import models.ai.EnemyIntentMaker;
 import models.events.GameEvent;
 import models.player.CharacterInfo.CharacterType;
 import models.player.Player;
@@ -61,7 +62,9 @@ class BattleManager extends FlxBasic
 	var playerSkillSprites:Array<SkillSprite>;
 	var enemySkillSprites:Array<SkillSprite>;
 
+	/** The skill soon to be played, both during enemy and player turns.**/
 	var activeSkillSprite:SkillSprite;
+
 	var activeTargets:Array<CharacterSprite>;
 
 	/** The end turn button will flip this flag true when pressed. **/
@@ -77,6 +80,8 @@ class BattleManager extends FlxBasic
 	var turnables:Array<ITurnTriggerable>;
 
 	var enemyAI:BaseAI;
+	var currentIntents:Array<Intent>;
+	var activeIntent:Intent;
 
 	var playerStartState:BattleManagerState;
 	var playerIdleState:BattleManagerState;
@@ -199,6 +204,7 @@ class BattleManager extends FlxBasic
 		if (getState() == PLAYER_TARGET)
 		{
 			// playerIdleState.start();
+			// return your spent cards
 		}
 	}
 
@@ -315,6 +321,17 @@ class BattleManager extends FlxBasic
 				activeTargets = null;
 				setTargetArrowsVisible(false, PLAYER);
 				setTargetArrowsVisible(false, ENEMY);
+
+				// redecide moves here and render the intent sprites
+				// this part MIGHT be slow, there's a lot of rerendering inside the same frame.
+				this.currentIntents = enemyAI.decideIntents();
+				for (char in context.eChars)
+					char.resetIntents();
+				for (intent in currentIntents)
+				{
+					if (intent.skill != null)
+						intent.skill.owner.addIntent(intent);
+				}
 
 				// check if we've won or lost
 				if (context.areAllCharsDead(ENEMY))
@@ -513,14 +530,14 @@ class BattleManager extends FlxBasic
 				}
 				else
 				{
-					var decidedSkill = enemyAI.decideSkill();
-					if (decidedSkill == null) // no skills left for the enemy to play. End turn.
+					if (currentIntents.length == 0) // no skills left for the enemy to play. End turn.
 					{
 						enemyEndState.start();
 					}
 					else
 					{
-						activeSkillSprite = decidedSkill;
+						activeIntent = enemyAI.getNextIntent();
+						activeSkillSprite = activeIntent.skill;
 						enemyAnimatingPlayState.start();
 					}
 				}
@@ -537,7 +554,7 @@ class BattleManager extends FlxBasic
 					throw new Exception('entered animating play state, but no skill was active');
 				}
 				state = enemyAnimatingPlayState;
-				var cards = enemyAI.pickCardsForSkill(activeSkillSprite);
+				var cards = activeIntent.cardsToPlay;
 				context.eDeck.playCards(cards, activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
@@ -553,7 +570,7 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				state = enemyTargetState;
-				activeTargets = enemyAI.decideTargetsForSkill(activeSkillSprite);
+				activeTargets = activeIntent.targets;
 			},
 			update: (elapsed:Float) ->
 			{
