@@ -1,6 +1,7 @@
 package utils;
 
 import flixel.FlxG;
+import flixel.math.FlxRandom;
 import haxe.Exception;
 import models.cards.Card;
 import models.skills.Skill.SkillPointCombination;
@@ -8,6 +9,8 @@ import models.skills.Skill.SkillPointCombination;
 // utility functions and globals for game logic.
 class GameUtils
 {
+	public static var random:FlxRandom = new FlxRandom();
+
 	public static function weightedPick<T>(items:Array<T>, weights:Array<Float>)
 	{
 		if (items.length != weights.length)
@@ -28,6 +31,12 @@ class GameUtils
 		return SkillPointCombination.sum(cardSkillPoints);
 	}
 
+	public static function getRandomChoice<T>(array:Array<T>)
+	{
+		var choice = random.int(0, array.length - 1);
+		return array[choice];
+	}
+
 	public static function smallCameraShake()
 	{
 		FlxG.camera.shake(0.01, 0.05);
@@ -40,6 +49,6 @@ class GameUtils
 
 	public static function bigCameraShake()
 	{
-		FlxG.camera.shake(1, 0.3);
+		FlxG.camera.shake(.3, 0.5);
 	}
 }

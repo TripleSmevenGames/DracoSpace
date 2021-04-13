@@ -74,6 +74,7 @@ class InventoryMenu2 extends FlxSpriteGroup
 		}
 	}
 
+	// maybe slow
 	public function refresh()
 	{
 		forEach((sprite:FlxSprite) ->
@@ -93,17 +94,19 @@ class InventoryMenu2 extends FlxSpriteGroup
 		unequippedSkillsList = new UnequippedSkillsList2();
 
 		// put the unequipped list at the bottom.
-		unequippedSkillsList.setPosition(FlxG.width / 2, FlxG.height - (unequippedSkillsList.bodyHeight / 2) - 8);
+		unequippedSkillsList.setPosition(FlxG.width / 2, FlxG.height - (unequippedSkillsList.bodyHeight / 2) - 4);
 		add(unequippedSkillsList);
 
 		// then place the 2 profiles under the header
-		var cursor = headerHeight + profiles[0].height / 2 + 4;
-		profiles[0].centerSprite(FlxG.width / 2, cursor);
+		// the profile height is funky, not sure why. Use the skill card's hardcoded height instead. It's pretty close.
+		var cursor = headerHeight + 8;
+		profiles[0].centerX(FlxG.width / 2);
+		profiles[0].y = cursor;
 		add(profiles[0]);
 
-		// the profile height is funky, not sure why. Use the skill card's hardcoded height instead. It's pretty close.
 		cursor += SkillCard.bodyHeight + 8;
-		profiles[1].centerSprite(FlxG.width / 2, cursor);
+		profiles[1].centerX(FlxG.width / 2);
+		profiles[1].y = cursor;
 		add(profiles[1]);
 
 		setupSkillCardHandlers();

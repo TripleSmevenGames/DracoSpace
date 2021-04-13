@@ -28,7 +28,7 @@ import utils.GameUtils;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-/** Represents a character's sprite during battle. */
+/** Represents a character's sprite during battle. Centered on the body sprite */
 class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 {
 	public var info:CharacterInfo;
@@ -64,6 +64,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var bm:BattleManager;
 	var bam:BattleAnimationManager;
 
+	/** The battle context that this character is in. Should only be set by the BM. **/
+	public var context:BattleContext;
+
 	// internal timer used for some animations.
 	var timer:FlxTimer;
 
@@ -71,6 +74,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var blockedSound:FlxSound;
 	var gainBlockSound:FlxSound;
 	var missSound:FlxSound;
+	var healSound:FlxSound;
 
 	// target arrow X distance from char sprite.
 	public static inline final TARGET_ARROW_DISTANCE = 48;
@@ -89,8 +93,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			if (!dead)
 			{
 				dead = true;
+				queueDeadAnimation();
+				this.statusDisplay.onDead(this.context);
 				this.statusDisplay.removeAllStatuses();
-				playDeadAnimation();
 			}
 		}
 		this.info.currHp = val; // set the hp on the char info too.
@@ -137,9 +142,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		statusDisplay.removeStacks(type, stacks);
 	}
 
-	public function hasStatus(type:StatusType):Int
+	public function getStatus(type:StatusType)
 	{
-		return statusDisplay.hasStatus(type);
+		if (statusDisplay != null)
+			return statusDisplay.getStatus(type);
+		return null;
 	}
 
 	/** Call this function for the character to take damage blocked by block. **/
@@ -151,7 +158,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			trace('a dead char took damage. ${this.info.name}');
 		}
 
-		if (hasStatus(DODGE) > 0)
+		if (getStatus(DODGE) > 0)
 		{
 			removeStacksOnStatus(DODGE, 1);
 			missSound.play(true);
@@ -186,9 +193,21 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	**/
 	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext)
 	{
-		val += this.statusDisplay.hasStatus(ATTACK);
+		val += this.statusDisplay.getStatus(ATTACK);
 		onDealDamage(val, target, context);
 		target.takeDamage(val, this, context);
+	}
+
+	public function healHp(val:Int)
+	{
+		if (dead)
+		{
+			return;
+			trace('tried to heal a dead char: ${this.info.name}');
+		}
+
+		currHp += val;
+		spawnDamageNumber(Std.string(val), FlxColor.GREEN, false);
 	}
 
 	function singleFlash()
@@ -213,7 +232,8 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return !timer.finished;
 	}
 
-	function playDeadAnimation()
+	/** Add the "fading out" animation to the bam. **/
+	function queueDeadAnimation()
 	{
 		var onComplete = (_) ->
 		{
@@ -278,6 +298,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
+	/** Check to see if any skills should be disabled. This happens when this char gets stunned. **/
+	public function checkDisabled()
+	{
+		for (skillSprite in skillSprites)
+			skillSprite.checkDisabled();
+	}
+
 	public function onPlayerStartTurn(context:BattleContext)
 	{
 		if (this.info.type == PLAYER)
@@ -339,6 +366,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		statusDisplay.onPlaySkill(skillSprite, context);
 	}
 
+	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext)
+	{
+		statusDisplay.onAnyPlaySkill(skillSprite, context);
+	}
+
 	/** The skill is counted as a played skill before it's play() is called.**/
 	public function playSkill(skillSprite:SkillSprite, targets:Array<CharacterSprite>, context:BattleContext)
 	{
@@ -360,11 +392,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public function setOnClickCancelSkill(onClick:Void->Void)
 	{
 		FlxMouseEventManager.setMouseClickCallback(cancelSkillBtn, (_) -> onClick());
-	}
-
-	public static function sampleSlime(lvl:Int = 1)
-	{
-		return new CharacterSprite(CharacterInfo.sampleSlime());
 	}
 
 	public static function sampleRyder()
@@ -461,6 +488,15 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		GameController.battleTooltipLayer.registerTooltip(tooltip, cancelSkillBtn);
 	}
 
+	/** Call this after status display is setup**/
+	function setupInitialStatuses()
+	{
+		for (status in this.info.initialStatuses)
+		{
+			statusDisplay.addStatusByType(status);
+		}
+	}
+
 	public function new(info:CharacterInfo)
 	{
 		super(0, 0);
@@ -474,11 +510,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		setupSprite(info.spritePath);
 
-		setupSkills(info.skills);
-
 		setupHpBar();
 
 		setupStatusDisplay();
+
+		setupSkills(info.skills);
+
+		setupInitialStatuses();
 
 		if (info.type == PLAYER)
 			setupCancelSkillButton();
@@ -490,6 +528,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.blockedSound = FlxG.sound.load(AssetPaths.blockedHit1__wav);
 		this.gainBlockSound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
 		this.missSound = FlxG.sound.load(AssetPaths.miss1__wav);
+		this.healSound = FlxG.sound.load(AssetPaths.heal1__wav);
 	}
 	/*
 		override public function destroy()

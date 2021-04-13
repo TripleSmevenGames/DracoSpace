@@ -3,6 +3,7 @@ package models.player;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import models.skills.Skill;
 import models.skills.SkillFactory;
+import ui.battle.status.Status;
 
 enum CharacterType
 {
@@ -23,8 +24,10 @@ class CharacterInfo
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
-	public var numSkillSlots:Int = 3;
+	public var numSkillSlots:Int = 2;
 	public var draw:Int = 0;
+
+	public var initialStatuses:Array<StatusType> = [];
 
 	static var sf = SkillFactory;
 
@@ -69,11 +72,7 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [
-			sf.ryderSkillsCommon.get(riposte)(),
-			sf.ryderSkillsCommon.get(aggravate)(),
-			sf.ryderSkillsCommon.get(recklessSwing)()
-		];
+		ryder.skills = [sf.ryderSkillsBasic.get(bash)(), sf.ryderSkillsCommon.get(adrenaline)()];
 		ryder.draw = 2;
 
 		return ryder;
@@ -90,25 +89,10 @@ class CharacterInfo
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
-		kiwi.skills = [sf.kiwiSkillsBasic.get(dodgeRoll)(), sf.kiwiSkillsCommon.get(surpriseAttack)()];
+		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)(), sf.kiwiSkillsCommon.get(surpriseAttack)()];
 		kiwi.draw = 2;
 
 		return kiwi;
-	}
-
-	public static function sampleSlime()
-	{
-		var slime = new CharacterInfo();
-
-		slime.name = 'Slime';
-		slime.type = ENEMY;
-		slime.spritePath = AssetPaths.gulpin__png;
-		slime.maxHp = 10;
-		slime.currHp = 10;
-		slime.skills = [sf.enemySkills.get(tackle)(), sf.enemySkills.get(cower)()];
-		slime.draw = 2;
-
-		return slime;
 	}
 
 	public static function createEnemy(name:String, spritePath:FlxGraphicAsset, hp:Int, skills:Array<Skill>, draw:Int = 1)

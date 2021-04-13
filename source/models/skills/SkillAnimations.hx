@@ -46,8 +46,9 @@ class SkillAnimations
 		return bsal.createStandardAnim(AssetPaths.blueSmallExplosion100x100x70__png, 100, 100, 70);
 	}
 
-	/** Create a play that will run ONE bam animation group with 1 effect. 
-	 *
+	/** Create a play that will run ONE bam animation group with 1 effect.
+	 * The play is a function that, when run, adds an animation to the BAM and a sprite to the BSAL.
+	 * To actually call the play, pass in the targets, owner and context.
 	 * You can combine multiple "play" calls in a single skill's play to create complicated and chaining effects.
 	**/
 	public static function getCustomPlay(animSprite:FlxSprite, effect:Effect, effectFrame:Int = 0, ?sound:FlxSound, touchBase = false)
@@ -64,6 +65,7 @@ class SkillAnimations
 
 			var animSprites = new Array<FlxSprite>();
 			var others = new Array<FlxSprite>();
+			// playing all these anims on the targets at once counts as a single BAM animation group
 			for (target in targets)
 			{
 				// clone doesn't copy scale, so we have to re scale it :(

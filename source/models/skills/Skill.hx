@@ -2,8 +2,8 @@ package models.skills;
 
 import Castle;
 import flixel.system.FlxAssets.FlxGraphicAsset;
-import ui.battle.DeckSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import utils.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 

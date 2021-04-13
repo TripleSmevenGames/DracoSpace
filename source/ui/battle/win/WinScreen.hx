@@ -7,6 +7,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import models.events.GameEvent.GameEventType;
 import ui.buttons.BasicWhiteButton;
 import utils.GameController;
 import utils.SubStateManager;
@@ -23,10 +24,8 @@ class WinScreen extends FlxSpriteGroup
 	var canContinue:Bool = false;
 
 	/** Play the animation of this screen.
-	 *
-	 * If we leveled up, show the rewards!
 	**/
-	public function play(leveledUp:Bool = false, expReward:Int, moneyReward:Int)
+	public function play(expReward:Int, moneyReward:Int, battleType:GameEventType)
 	{
 		this.revive();
 
@@ -41,7 +40,7 @@ class WinScreen extends FlxSpriteGroup
 		continueBtn.disabled = true;
 
 		var onClaim = () -> continueBtn.disabled = false;
-		var rewardsSprite = new RewardsSprite(leveledUp, expReward, moneyReward, onClaim);
+		var rewardsSprite = new RewardsSprite(expReward, moneyReward, battleType, onClaim);
 		rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2 + 100);
 		add(rewardsSprite);
 	}

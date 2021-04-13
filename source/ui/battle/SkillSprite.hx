@@ -63,7 +63,7 @@ class SkillSprite extends FlxSpriteGroup
 		if (val < 0)
 			val = 0;
 
-		this.disabled = (val == 0);
+		checkDisabled();
 
 		return currentCharges = val;
 	}
@@ -81,7 +81,10 @@ class SkillSprite extends FlxSpriteGroup
 			this.tile.color = FlxColor.GRAY;
 			this.tile.alpha = .5;
 			this.cooldownCountdownSprite.visible = true;
-			this.cooldownCountdownSprite.text = Std.string(cooldownTimer);
+			if (owner != null && owner.getStatus(STUN) > 0)
+				this.cooldownCountdownSprite.text = '/';
+			else
+				this.cooldownCountdownSprite.text = Std.string(cooldownTimer);
 		}
 		else
 		{
@@ -90,6 +93,11 @@ class SkillSprite extends FlxSpriteGroup
 			this.cooldownCountdownSprite.visible = false;
 		}
 		return this.disabled = val;
+	}
+
+	public function checkDisabled()
+	{
+		disabled = (currentCharges == 0) || owner.getStatus(STUN) != 0;
 	}
 
 	/** Sets the click callback, which will fire when clicked if the skill is not disabled. **/
@@ -122,14 +130,15 @@ class SkillSprite extends FlxSpriteGroup
 
 	public function onNewRound()
 	{
-		if (owner.hasStatus(STUN) == 0)
-			this.cooldownTimer -= 1;
+		this.cooldownTimer -= 1;
+		checkDisabled();
 	}
 
 	public function new(skill:Skill, owner:CharacterSprite)
 	{
 		super(0, 0);
 		this.skill = skill;
+		this.owner = owner;
 
 		tile = new SkillTile(skill);
 		add(tile);
@@ -144,7 +153,6 @@ class SkillSprite extends FlxSpriteGroup
 
 		this.cooldownTimer = 0;
 		this.currentCharges = skill.maxCharges;
-		this.owner = owner;
 		this.priority = skill.priority;
 
 		// setup the cost indicator under the tile.

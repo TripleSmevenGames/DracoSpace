@@ -61,7 +61,7 @@ class SubStateManager
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
-	public function openInventory()
+	function openInventory()
 	{
 		if (playState.subState == bss)
 			throw new haxe.Exception('Tried to open inventory from bss');
@@ -72,10 +72,32 @@ class SubStateManager
 		{
 			cleanupAll();
 			iss.revive();
-			iss.openCallback = () -> FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+			iss.openCallback = () ->
+			{
+				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
+				iss.initMenu();
+			}
 			playState.openSubState(iss);
 		};
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
+	}
+
+	function closeInventory()
+	{
+		if (returnHereFromInv == mss)
+			returnToMap();
+		else if (returnHereFromInv == ess)
+			initEvent(null);
+		else
+			throw new haxe.Exception('tried to return to previous from inv, but returnHere was wack');
+	}
+
+	public function toggleInventory()
+	{
+		if (playState.subState == iss)
+			closeInventory();
+		else
+			openInventory();
 	}
 
 	public function returnToMap()
@@ -94,16 +116,6 @@ class SubStateManager
 		};
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
-	}
-
-	public function returnToPreviousFromInv()
-	{
-		if (returnHereFromInv == mss)
-			returnToMap();
-		else if (returnHereFromInv == ess)
-			initEvent(null);
-		else
-			throw new haxe.Exception('tried to return to previous from inv, but returnHere was wack');
 	}
 
 	// paranoid function to free up memory. Might be un-needed.

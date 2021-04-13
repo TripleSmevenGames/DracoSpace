@@ -17,6 +17,9 @@ enum StatusType
 	STUN;
 	EXHAUST;
 	EXPOSED;
+	LASTBREATH;
+	CUNNING;
+	OBSERVATION;
 }
 
 class Status extends FlxSpriteGroup implements ITurnTriggerable
@@ -66,6 +69,8 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 	public function onTakeUnblockedDamage() {}
 
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}
+
+	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}
 
 	// dont modify damage here
 	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext) {}

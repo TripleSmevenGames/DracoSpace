@@ -5,6 +5,7 @@ import haxe.Exception;
 import ui.battle.ITurnTriggerable;
 import ui.battle.status.*;
 import ui.battle.status.Status;
+import ui.battle.status.enemyPassives.*;
 import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
@@ -13,6 +14,8 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 {
 	var statuses:Array<Status> = [];
 	var owner:CharacterSprite;
+
+	static var map:Map<StatusType, Void->Status> = [];
 
 	/** Position the status icons correctly based on how many there are. Assumes they are all added.
 		Centered on the display's 0, 0;
@@ -29,31 +32,6 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
-	function getStatusByType(type:StatusType):Status
-	{
-		switch (type)
-		{
-			case BURN:
-				return new BurnStatus(owner);
-			case COLD:
-				return new ColdStatus(owner);
-			case STATIC:
-				return new StaticStatus(owner);
-			case ATTACK:
-				return new AttackStatus(owner);
-			case TAUNT:
-				return new TauntStatus(owner);
-			case COUNTER:
-				return new CounterStatus(owner);
-			case DODGE:
-				return new DodgeStatus(owner);
-			case STUN:
-				return new StunStatus(owner);
-			default:
-				throw new Exception('Bad status type: ${type.getName()}');
-		}
-	}
-
 	function removeStatusByIndex(index:Int)
 	{
 		var status = statuses[index];
@@ -65,7 +43,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** Returns the number of stacks of the status, or 0 if it doesn't have the status. **/
-	public function hasStatus(type:StatusType):Int
+	public function getStatus(type:StatusType):Int
 	{
 		for (status in statuses)
 		{
@@ -73,7 +51,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			{
 				if (status.stacks == 0)
 				{
-					trace('hasStatus returned a status with 0 stacks');
+					trace('getStatus returned a status with 0 stacks');
 				}
 				return status.stacks;
 			}
@@ -91,9 +69,18 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return;
 			}
 		}
-		var status = getStatusByType(type);
-		status.stacks = stacks;
-		statuses.push(status);
+		var status = map.get(type)();
+		if (status != null)
+		{
+			status.stacks = stacks;
+			statuses.push(status);
+
+			// if this character was just stunned, recheck the disabled of the char's skill sprites
+			if (type == STUN)
+			{
+				owner.checkDisabled();
+			}
+		}
 
 		renderStatuses();
 	}
@@ -111,6 +98,9 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				removeStatusByIndex(i);
 			}
 		}
+		if (retVal == 0)
+			trace('something wrong, getting ${type.getName()} returned 0 stacks');
+
 		return retVal;
 	}
 
@@ -177,9 +167,37 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			status.onPlaySkill(skillSprite, context);
 	}
 
+	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext)
+	{
+		for (status in statuses)
+			status.onAnyPlaySkill(skillSprite, context);
+	}
+
+	public function onDead(context:BattleContext)
+	{
+		for (status in statuses)
+			status.onDead(context);
+	}
+
 	public function new(owner:CharacterSprite)
 	{
 		super(0, 0);
 		this.owner = owner;
+
+		map = [
+			BURN => () -> new BurnStatus(owner),
+			STATIC => () -> new StaticStatus(owner),
+			COLD => () -> new ColdStatus(owner),
+			ATTACK => () -> new AttackStatus(owner),
+			TAUNT => () -> new TauntStatus(owner),
+			COUNTER => () -> new CounterStatus(owner),
+			DODGE => () -> new DodgeStatus(owner),
+			STUN => () -> new StunStatus(owner),
+			EXHAUST => () -> new ExhaustStatus(owner),
+			// EXPOSED => () -> new TauntStatus(owner),
+			LASTBREATH => () -> new LastBreathPassive(owner),
+			CUNNING => () -> new CunningPassive(owner),
+			OBSERVATION => () -> new ObservationPassive(owner)
+		];
 	}
 }

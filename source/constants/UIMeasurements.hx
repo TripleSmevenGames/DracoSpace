@@ -6,6 +6,9 @@ class UIMeasurements
 	public static inline final CARD_HEIGHT = 140;
 	public static inline final CARD_FONT_SIZE = 14;
 
+	public static inline final SKILL_CARD_WIDTH = 200;
+	public static inline final SKILL_CARD_HEIGHT = 270;
+
 	public static inline final BATTLE_UI_FONT_SIZE_SM = 14;
 	public static inline final BATTLE_UI_FONT_SIZE_MED = 18;
 	public static inline final BATTLE_UI_FONT_SIZE_LG = 24;

@@ -43,7 +43,7 @@ class SpriteAnimsLayer extends FlxSpriteGroup
 		return sprite;
 	}
 
-	/** Add an animated sprite to the BSAL and add its animation to the BAM. 
+	/** Add an animated sprite to the BSAL and add its animation to the BAM. The animation will play when its turn comes.
 	 *
 	 * The sprites you passed in should have been setup by createStandardAnim.
 	 *

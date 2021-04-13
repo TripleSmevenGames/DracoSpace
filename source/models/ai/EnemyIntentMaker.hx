@@ -168,9 +168,16 @@ class EnemyIntentMaker
 				targets.push(context.pChars[choice]);
 			}
 		}
+		else if (method == SINGLE_ALLY)
+		{
+			var aliveEnemies = context.getAliveEnemies();
+			var choice = random.int(0, aliveEnemies.length - 1);
+			targets.push(aliveEnemies[choice]);
+		}
 		else if (method == SINGLE_OTHER_ALLY)
 		{
 			var aliveEnemies = context.getAliveEnemies();
+			aliveEnemies.remove(skillSprite.owner);
 			var choice = random.int(0, aliveEnemies.length - 1);
 			targets.push(aliveEnemies[choice]);
 		}
@@ -226,7 +233,7 @@ class EnemyIntentMaker
 		return decidedIntents;
 	}
 
-	public function new(context:BattleContext)
+	public function new(context:BattleContext, seed:Int)
 	{
 		this.context = context;
 		ghostHand = context.eDeck.getCardsInHand();
@@ -239,6 +246,6 @@ class EnemyIntentMaker
 					ghostSkills.push(new GhostSkill(skillSprite));
 			}
 		}
-		this.random = new FlxRandom();
+		this.random = new FlxRandom(seed);
 	}
 }

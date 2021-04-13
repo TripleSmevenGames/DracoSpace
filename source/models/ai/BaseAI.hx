@@ -4,9 +4,9 @@ import flixel.math.FlxRandom;
 import models.ai.EnemyIntentMaker.Intent;
 import models.cards.Card;
 import models.skills.Skill.SkillPointCombination;
-import ui.battle.DeckSprite;
 import ui.battle.SkillSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import utils.battleManagerUtils.BattleContext;
 
 /** Base enemy AI "decider." Has handy functions. 
@@ -19,14 +19,25 @@ class BaseAI
 {
 	var context:BattleContext;
 
+	/** The AI will generate a new seed to use for its intents every turn.**/
+	var currentSeed:Int;
+
+	var random:FlxRandom;
+
 	public var currentDecidedIntents:Array<Intent>;
+
+	/** call this ONCE per round, like at the start of the player's turn. **/
+	public function generateNewSeedForTurn()
+	{
+		currentSeed = random.int();
+	}
 
 	/** Decide the enemy's intents. Re call this every time we transition to the player idle state, because we may need to
 	 * recalculate the enemy's moves.
 	**/
 	public function decideIntents()
 	{
-		var intentMaker = new EnemyIntentMaker(context);
+		var intentMaker = new EnemyIntentMaker(context, currentSeed);
 		currentDecidedIntents = intentMaker.decideIntents();
 		return currentDecidedIntents;
 	}
@@ -45,5 +56,7 @@ class BaseAI
 	{
 		this.context = context;
 		this.currentDecidedIntents = [];
+		this.currentSeed = 0;
+		this.random = new FlxRandom();
 	}
 }

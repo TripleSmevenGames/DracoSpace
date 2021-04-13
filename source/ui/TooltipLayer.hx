@@ -26,11 +26,12 @@ enum TooltipPos
 /** The tooltip you see when you hover over something. **/
 class Tooltip extends FlxSpriteGroup
 {
-	static inline final WIDTH = 200;
-
 	var sprite:FlxSprite;
 	var parent:FlxObject;
 	var pos:TooltipPos;
+
+	public var descText:FlxText;
+	public var body:FlxSprite;
 
 	// functions below are very dirty.
 	// If we are creating the tooltip with genericTooltip, its not centered so we have to center it onHover.
@@ -100,7 +101,14 @@ class Tooltip extends FlxSpriteGroup
 		skillSprite.addHoverCallback(over, out);
 	}
 
-	public static function genericTooltip(name:Null<String>, desc:Null<String>, pos:TooltipPos = TOP)
+	/** Don't change the desc so much that we'd have to recalculate the body's height. I dont want to do that. **/
+	public function updateDesc(val:String)
+	{
+		descText.text = val;
+	}
+
+	/** default width is 200. **/
+	public static function genericTooltip(name:Null<String>, desc:Null<String>, pos:TooltipPos = TOP, ?width = 200)
 	{
 		var group = new FlxSpriteGroup();
 		var fontSize = UIMeasurements.BATTLE_UI_FONT_SIZE_MED;
@@ -113,9 +121,10 @@ class Tooltip extends FlxSpriteGroup
 		var bodyHeight:Float = 0;
 		group.add(body);
 
+		var descText = new FlxText();
 		if (name != null)
 		{
-			var nameText = new FlxText(paddingSide, paddingVertical, WIDTH, name);
+			var nameText = new FlxText(paddingSide, paddingVertical, width, name);
 
 			nameText.setFormat(font, UIMeasurements.BATTLE_UI_FONT_SIZE_MED, FlxColor.WHITE, 'center');
 			bodyHeight += nameText.height;
@@ -123,18 +132,21 @@ class Tooltip extends FlxSpriteGroup
 		}
 		if (desc != null)
 		{
-			var descText = new FlxText(paddingSide, bodyHeight + spaceBetweenNameAndDesc, WIDTH, desc);
+			descText = new FlxText(paddingSide, bodyHeight + spaceBetweenNameAndDesc, width, desc);
 
 			descText.setFormat(font, fontSize);
 			bodyHeight += descText.height + spaceBetweenNameAndDesc;
 			group.add(descText);
 		}
 		// adjust the body based on the height its content
-		body.makeGraphic(WIDTH + paddingSide * 2, Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
+		body.makeGraphic(width + paddingSide * 2, Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
 		// then make it slightly see-through
 		body.alpha = .5;
 
-		return new Tooltip(group);
+		var tooltip = new Tooltip(group);
+		tooltip.body = body;
+		tooltip.descText = descText;
+		return tooltip;
 	}
 
 	public static function skillTooltip(skill:Skill)

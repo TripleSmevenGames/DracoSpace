@@ -8,6 +8,7 @@ import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import models.events.GameEvent.GameEventType;
 import openfl.geom.Rectangle;
 import ui.battle.win.SkillCard;
 
@@ -38,7 +39,7 @@ class RewardsSprite extends FlxSpriteGroup
 {
 	static inline final titleFontSize = 36;
 
-	public function new(leveledUp:Bool = false, expReward:Int, moneyReward:Int, onClaim:Void->Void)
+	public function new(expReward:Int, moneyReward:Int, battleType:GameEventType, onClaim:Void->Void)
 	{
 		super();
 
@@ -70,12 +71,12 @@ class RewardsSprite extends FlxSpriteGroup
 		var moneyItem = new RewardItemSprite(itemWidth, itemHeight, '+$moneyReward Dracocoins');
 		items.push(moneyItem);
 
-		// if you leveled up, show a button letting them claim a new skill.
+		// if we should have a skill reward, show a button letting them claim a new skill.
 		// clicking it will open a sub screen showing a choice of 3 skills to choose.
 		// When they choose a skill, close the subscreen.
-		if (leveledUp)
+		if (battleType == ELITE || battleType == BOSS)
 		{
-			var skillRewardButton = new SkillRewardButton(itemWidth, itemHeight, onClaim);
+			var skillRewardButton = new SkillRewardButton(itemWidth, itemHeight, onClaim, battleType);
 			items.push(skillRewardButton);
 		}
 

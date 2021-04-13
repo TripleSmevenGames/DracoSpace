@@ -7,10 +7,10 @@ import utils.ViewUtils;
 
 using utils.ViewUtils;
 
-/** Combines the skill art and its border. Centered. **/
+/** Combines the skill art and its border. Centered by default **/
 class SkillTile extends FlxSpriteGroup
 {
-	public function new(skill:Null<Skill>)
+	public function new(skill:Null<Skill>, centered = true)
 	{
 		super();
 
@@ -20,11 +20,16 @@ class SkillTile extends FlxSpriteGroup
 			var border = ViewUtils.getBorderForType(skill.type);
 
 			art.scale3x();
-			art.centerSprite();
+			if (centered)
+				art.centerSprite();
+			else
+				art.setPosition(6, 6); // shift 2 pixels times the 3x scaleing
+
 			add(art);
 
 			border.scale3x();
-			border.centerSprite();
+			if (centered)
+				border.centerSprite();
 			add(border);
 		}
 		else

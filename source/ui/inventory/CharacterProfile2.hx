@@ -8,11 +8,12 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.CharacterInfo;
 import ui.battle.win.SkillCard;
-import ui.battle.win.SkillCardBlank;
+import ui.inventory.SkillCardBlank;
+import ui.inventory.SkillCardLocked;
 
 using utils.ViewUtils;
 
-/** Not centered.**/
+/** Not centered. Starts at left top of profile sprite. **/
 class CharacterProfile2 extends FlxSpriteGroup
 {
 	public var char:CharacterInfo;
@@ -38,7 +39,7 @@ class CharacterProfile2 extends FlxSpriteGroup
 		charName.centerSprite(characterSprite.width / 2, 0);
 		add(charName);
 
-		var cursor = background.width * 1.5 + 8;
+		var cursor = background.width * 1.5 + 16;
 		var yPos = background.height / 2;
 
 		// place skills after the character's image
@@ -54,7 +55,7 @@ class CharacterProfile2 extends FlxSpriteGroup
 		}
 
 		// then place the blanks
-		for (i in 0...6 - char.skills.length)
+		for (i in 0...char.numSkillSlots - char.skills.length)
 		{
 			var blank = new SkillCardBlank();
 			blank.setPosition(cursor, yPos);
@@ -62,5 +63,17 @@ class CharacterProfile2 extends FlxSpriteGroup
 
 			cursor += blank.width + 8;
 		}
+
+		// then place the locked slots
+		for (i in 0...5 - char.numSkillSlots)
+		{
+			var locked = new SkillCardLocked();
+			locked.setPosition(cursor, yPos);
+			add(locked);
+
+			cursor += locked.width + 8;
+		}
+
+		add(ViewUtils.newAnchor());
 	}
 }

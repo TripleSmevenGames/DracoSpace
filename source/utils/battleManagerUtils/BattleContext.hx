@@ -3,8 +3,8 @@ package utils.battleManagerUtils;
 import flixel.math.FlxRandom;
 import haxe.Exception;
 import models.player.CharacterInfo.CharacterType;
-import ui.battle.DeckSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status.StatusType;
 
 /** Hopefully encapsulates everything you would need to know about the current state of battle.**/
@@ -57,7 +57,7 @@ class BattleContext
 		var charsWithStatus:Array<CharacterSprite> = [];
 		for (char in chars)
 		{
-			if (char.hasStatus(status) > 0 && !char.dead)
+			if (char.getStatus(status) > 0 && !char.dead)
 				charsWithStatus.push(char);
 		}
 		return charsWithStatus;
@@ -93,6 +93,39 @@ class BattleContext
 			throw new Exception('tried to get random target, but chars.length was 0');
 		}
 		return chars[new FlxRandom().int(0, chars.length - 1)];
+	}
+
+	/** Get a living enemy with the lowest hp. Returns null if there are no more enemies. **/
+	public function getLowestHealthEnemy():Null<CharacterSprite>
+	{
+		var aliveEnemies = getAliveEnemies();
+		var lowestEnemy = null;
+		var lowestHp = 99999;
+		for (enemy in aliveEnemies)
+		{
+			if (enemy.currHp < lowestHp)
+			{
+				lowestEnemy = enemy;
+				lowestHp = enemy.currHp;
+			}
+		}
+		return lowestEnemy;
+	}
+
+	public function getHighestHealthPlayer():Null<CharacterSprite>
+	{
+		var alivePlayers = getAlivePlayers();
+		var highestPlayer = null;
+		var highestHp = 0;
+		for (player in alivePlayers)
+		{
+			if (player.currHp > highestHp)
+			{
+				highestPlayer = player;
+				highestHp = player.currHp;
+			}
+		}
+		return highestPlayer;
 	}
 
 	/** Remove all Static from all characters and return the total amount expended. **/

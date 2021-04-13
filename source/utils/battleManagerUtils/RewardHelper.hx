@@ -15,22 +15,27 @@ class RewardHelper
 	static final SKILL_RARITY_WEIGHTS_ELITE:Array<Float> = [45, 45, 5];
 	static final SKILL_RARITY_WEIGHTS_BOSS:Array<Float> = [0, 0, 1];
 
+	static final BATTLE_TYPE_TO_WEIGHTS = [
+		BATTLE => SKILL_RARITY_WEIGHTS_NORMAL,
+		ELITE => SKILL_RARITY_WEIGHTS_ELITE,
+		BOSS => SKILL_RARITY_WEIGHTS_BOSS
+	];
 	static final REWARD_MULTIPLIER:Map<GameEventType, Int> = [BATTLE => 1, ELITE => 2, BOSS => 3];
 
 	static final random = new FlxRandom();
 
-	static function getSkillRewardForChar(charName:String = 'Ryder')
+	static function getSkillRewardForChar(charName:String = 'Ryder', battleType:GameEventType)
 	{
-		var rarity = GameUtils.weightedPick(SKILL_RARITY_ITEMS, SKILL_RARITY_WEIGHTS_NORMAL);
+		var rarity = GameUtils.weightedPick(SKILL_RARITY_ITEMS, BATTLE_TYPE_TO_WEIGHTS.get(battleType));
 		var pool = SkillFactory.getSkillBlueprints(charName, rarity);
 		var chosenSkill = pool[random.int(0, pool.length - 1)]();
 		return chosenSkill;
 	}
 
 	/** Gets a skill from a larger pool: Both characters and the generic skills. But dont choose the same ones as before. **/
-	static function getThirdSkillReward(excludes:Array<Skill>):Skill
+	static function getThirdSkillReward(excludes:Array<Skill>, battleType:GameEventType):Skill
 	{
-		var rarity = GameUtils.weightedPick(SKILL_RARITY_ITEMS, SKILL_RARITY_WEIGHTS_NORMAL);
+		var rarity = GameUtils.weightedPick(SKILL_RARITY_ITEMS, BATTLE_TYPE_TO_WEIGHTS.get(battleType));
 		var pool = new Array<SkillBlueprint>();
 
 		for (charInfo in Player.chars)
@@ -45,7 +50,7 @@ class RewardHelper
 
 		var checkDuplicate = true;
 		var chosenSkill:Skill = pool[random.int(0, pool.length - 1)]();
-		while (checkDuplicate)
+		while (checkDuplicate && rarity == COMMON)
 		{
 			checkDuplicate = false;
 			for (exclude in excludes)
@@ -67,22 +72,26 @@ class RewardHelper
 	 *
 	 * The third one could be for either. Also could be a generic skill.
 	**/
-	public static function getSkillRewards()
+	public static function getSkillRewards(?battleType:GameEventType)
 	{
 		var rewards = new Array<Skill>();
-		rewards.push(getSkillRewardForChar(Player.chars[0].name));
-		rewards.push(getSkillRewardForChar(Player.chars[1].name));
-		rewards.push(getThirdSkillReward(rewards));
+		if (battleType == null)
+			battleType = BATTLE;
+
+		rewards.push(getSkillRewardForChar(Player.chars[0].name, battleType));
+		rewards.push(getSkillRewardForChar(Player.chars[1].name, battleType));
+		rewards.push(getThirdSkillReward(rewards, battleType));
 		return rewards;
 	}
 
 	public static function getExpReward(battleType:GameEventType)
 	{
-		return REWARD_MULTIPLIER.get(battleType) * 1;
+		return REWARD_MULTIPLIER.get(battleType) * 10;
 	}
 
 	public static function getMoneyReward(battleType:GameEventType)
 	{
-		return REWARD_MULTIPLIER.get(battleType) * 10;
+		var baseMoney = random.int(4, 7);
+		return REWARD_MULTIPLIER.get(battleType) * baseMoney;
 	}
 }

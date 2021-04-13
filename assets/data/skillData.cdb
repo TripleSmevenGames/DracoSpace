@@ -756,7 +756,7 @@
 						{
 							"id": "disarm",
 							"name": "Disarm",
-							"desc": "If the target has no Block, deal $x damage and enemy discards 1 random cards.",
+							"desc": "If the target has no Block, deal $x damage and enemy discards their leftmost card.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -767,7 +767,7 @@
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 3,
+							"value": 6,
 							"value2": 1
 						},
 						{
@@ -1047,6 +1047,23 @@
 					"charName": "enemy",
 					"skills": [
 						{
+							"id": "dummy",
+							"name": "Dummy",
+							"desc": "Gain 1 block",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 1,
+							"flavor": "The dummy blows gently in the wind.",
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
 							"id": "tackle",
 							"name": "Tackle",
 							"desc": "Deal $x damage.",
@@ -1193,6 +1210,38 @@
 							"chargesPerCD": 0
 						},
 						{
+							"id": "spook",
+							"name": "Spook",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"KNO": 1
+								}
+							],
+							"targetMethod": 0,
+							"flavor": "There's something strange...",
+							"value": 4,
+							"cooldown": 1,
+							"maxCharges": 1
+						},
+						{
+							"id": "giveLife",
+							"name": "Give Life",
+							"desc": "Take $x damage. Another ally gains 1 Attack.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 2
+								}
+							],
+							"targetMethod": 4,
+							"value": 3,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
 							"id": "blindFire",
 							"name": "Blind Fire",
 							"desc": "Deal $x damage",
@@ -1270,8 +1319,8 @@
 					"charName": "rattle",
 					"skills": [
 						{
-							"id": "piercingGaze",
-							"name": "Piercing Gaze",
+							"id": "rattlesGaze",
+							"name": "Rattle's Gaze",
 							"desc": "Stun all enemies.",
 							"rarity": 0,
 							"costs": [
@@ -1285,9 +1334,9 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "snakeBite",
-							"name": "Snake Bite",
-							"desc": "If the target has no block, draw 2 cards. Then, deal $x damage.",
+							"id": "snakeFangs",
+							"name": "snakeFangs",
+							"desc": "Deal $x damage. Then, if the target took damage, draw $x2 cards.",
 							"rarity": 0,
 							"costs": [
 								{
@@ -1298,11 +1347,12 @@
 							"value": 11,
 							"cooldown": 1,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 5
 						},
 						{
-							"id": "snakeWhip",
-							"name": "Snake Whip",
+							"id": "crossCutter",
+							"name": "Cross Cutter",
 							"desc": "Deal $x damage to all enemies.",
 							"rarity": 0,
 							"costs": [
@@ -1315,6 +1365,55 @@
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
+						}
+					]
+				},
+				{
+					"charName": "pin",
+					"skills": [
+						{
+							"id": "summonK9",
+							"name": "Summon K9",
+							"desc": "Summon a K9 ally.",
+							"rarity": 0,
+							"costs": [
+								{
+									"KNO": 1
+								}
+							],
+							"targetMethod": 7,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "commandGuard",
+							"name": "Command: Guard",
+							"desc": "Gain $x block for each K9 ally.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 10,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "commandAttack",
+							"name": "Command: Attack",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 8
 						}
 					]
 				}

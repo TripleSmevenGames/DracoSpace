@@ -29,6 +29,9 @@ class GameController
 	/** global manager for tooltips during battle. **/
 	public static var battleTooltipLayer:TooltipLayer;
 
+	/** global manager for tooltips during inv menu. **/
+	public static var invTooltipLayer:TooltipLayer;
+
 	public static var battleDamageNumbers:DamageNumbers;
 
 	public static var battleSpriteAnimsLayer:SpriteAnimsLayer;
@@ -64,6 +67,8 @@ class GameController
 		battleTooltipLayer = new TooltipLayer();
 		battleDamageNumbers = new DamageNumbers();
 		battleSpriteAnimsLayer = new SpriteAnimsLayer();
+
+		invTooltipLayer = new TooltipLayer();
 
 		// ensure the SkillAnimations has access to a non-null bsal.
 		SkillAnimations.refreshBsal();

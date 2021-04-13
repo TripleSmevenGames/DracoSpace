@@ -79,10 +79,10 @@ class Card extends FlxSpriteGroup
 		if (only == null)
 			bodyText.text = ''
 		else
-			bodyText.text = '${only.info.name} only';
+			bodyText.text = '${only.info.name} only\n';
 
 		if (carryOver)
-			bodyText.text += '\nCarry Over';
+			bodyText.text += 'Carry Over\n';
 	}
 
 	/** Reset look after getting modified by tween. */

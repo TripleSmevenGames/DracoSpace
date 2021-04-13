@@ -9,11 +9,10 @@ import models.player.CharacterInfo.CharacterType;
 import models.player.Player;
 import models.skills.Skill.SkillPointCombination;
 import substates.BattleSubState;
-import ui.battle.DeckSprite;
-import ui.battle.Hand;
 import ui.battle.ITurnTriggerable;
 import ui.battle.SkillSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleSounds;
@@ -65,7 +64,11 @@ class BattleManager extends FlxBasic
 	/** The skill soon to be played, both during enemy and player turns.**/
 	var activeSkillSprite:SkillSprite;
 
+	/** The targets that the active skill will target (for both enemy and player turns)**/
 	var activeTargets:Array<CharacterSprite>;
+
+	/** The available targets for the current active skill, when the player is choosing their target.**/
+	var availableTargets:Array<CharacterSprite>;
 
 	/** The end turn button will flip this flag true when pressed. **/
 	public var endTurnFlag(null, set):Bool = false;
@@ -208,23 +211,37 @@ class BattleManager extends FlxBasic
 		}
 	}
 
+	function isCharacterTargetable(char:CharacterSprite)
+	{
+		return availableTargets.contains(char) && !char.dead;
+	}
+
 	// called during target state, player is selecting a target for the current skill.
 	function onCharacterClick(char:CharacterSprite)
 	{
-		if (getState() == PLAYER_TARGET)
+		if (getState() == PLAYER_TARGET && isCharacterTargetable(char))
 			activeTargets = [char];
 	}
 
 	function onCharacterOver(char:CharacterSprite)
 	{
-		if (getState() == PLAYER_TARGET)
+		if (getState() == PLAYER_TARGET && isCharacterTargetable(char))
 			char.targetArrow.alpha = 1;
 	}
 
 	function onCharacterOut(char:CharacterSprite)
 	{
-		if (getState() == PLAYER_TARGET)
+		if (getState() == PLAYER_TARGET && isCharacterTargetable(char))
 			char.targetArrow.alpha = .5;
+	}
+
+	function onAnyPlaySkill(skillSprite:SkillSprite)
+	{
+		for (enemy in context.eChars)
+			enemy.onAnyPlaySkill(skillSprite, context);
+
+		for (player in context.pChars)
+			player.onAnyPlaySkill(skillSprite, context);
 	}
 
 	/** Reset the manager for a new battle. Make sure you add() this to the state after the battle view has been setup. **/
@@ -240,6 +257,9 @@ class BattleManager extends FlxBasic
 
 		for (char in context.pChars)
 		{
+			char.context = context;
+			char.setOnClick(onCharacterClick);
+			char.setOnHover(onCharacterOver, onCharacterOut);
 			turnables.push(char); // add all player chars to the list of turnables.
 			char.setOnClickCancelSkill(cancelSkillTargeting);
 			for (skillSprite in char.skillSprites)
@@ -251,6 +271,7 @@ class BattleManager extends FlxBasic
 
 		for (char in context.eChars)
 		{
+			char.context = context;
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
 			turnables.push(char); // add all enemy chars to the list of turnables.
@@ -260,6 +281,7 @@ class BattleManager extends FlxBasic
 			}
 		}
 
+		// the decks must be after the characters in the turnables array.
 		turnables.push(context.pDeck);
 		turnables.push(context.eDeck);
 
@@ -296,6 +318,8 @@ class BattleManager extends FlxBasic
 
 				for (turnable in this.turnables)
 					turnable.onPlayerStartTurn(context);
+
+				enemyAI.generateNewSeedForTurn();
 			},
 			update: (elapsed:Float) ->
 			{
@@ -319,10 +343,12 @@ class BattleManager extends FlxBasic
 				// reset this stuff
 				activeSkillSprite = null;
 				activeTargets = null;
+				availableTargets = [];
 				setTargetArrowsVisible(false, PLAYER);
 				setTargetArrowsVisible(false, ENEMY);
 
-				// redecide moves here and render the intent sprites
+				// redecide moves here and render the intent sprites.
+				// it uses the same seed for its RNG, so if all conditions are the same, it should decide on the same moves every time.
 				// this part MIGHT be slow, there's a lot of rerendering inside the same frame.
 				this.currentIntents = enemyAI.decideIntents();
 				for (char in context.eChars)
@@ -411,6 +437,7 @@ class BattleManager extends FlxBasic
 						else
 						{
 							setTargetArrowsVisible(true, ENEMY);
+							availableTargets = context.getAliveEnemies();
 							hideAllSkillSprites();
 							activeSkillSprite.owner.cancelSkillBtn.revive();
 							return; // wait for user selection.
@@ -421,6 +448,7 @@ class BattleManager extends FlxBasic
 					case SINGLE_ALLY:
 						setTargetArrowsVisible(true, PLAYER);
 						hideAllSkillSprites();
+						availableTargets = context.getAlivePlayers();
 						activeSkillSprite.owner.cancelSkillBtn.revive();
 						return; // wait for user selection.
 					case ALL_ALLY:
@@ -454,6 +482,8 @@ class BattleManager extends FlxBasic
 
 				// play the skill
 				activeSkillSprite.owner.playSkill(activeSkillSprite, activeTargets, context);
+				// trigger any characters' onAnyPlaySkill
+				onAnyPlaySkill(activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
@@ -491,7 +521,7 @@ class BattleManager extends FlxBasic
 				for (turnable in this.turnables)
 					turnable.onEnemyStartTurn(context);
 
-				// call all the enemy's things' onStartTurn
+				this.currentIntents = enemyAI.decideIntents(); // decide the intents again
 			},
 			update: (elapsed:Float) ->
 			{
@@ -530,15 +560,23 @@ class BattleManager extends FlxBasic
 				}
 				else
 				{
-					if (currentIntents.length == 0) // no skills left for the enemy to play. End turn.
-					{
-						enemyEndState.start();
-					}
-					else
+					if (currentIntents.length != 0) // there are still intents left in the decided intents. Play them out.
 					{
 						activeIntent = enemyAI.getNextIntent();
 						activeSkillSprite = activeIntent.skill;
 						enemyAnimatingPlayState.start();
+					}
+					else // there are no more decided intents. Try to create one more list of intents. If there's still nothing to do, give up and end turn.
+					{
+						this.currentIntents = enemyAI.decideIntents();
+						if (this.currentIntents.length == 0)
+							enemyEndState.start();
+						else
+						{
+							activeIntent = enemyAI.getNextIntent();
+							activeSkillSprite = activeIntent.skill;
+							enemyAnimatingPlayState.start();
+						}
 					}
 				}
 			}
@@ -589,6 +627,7 @@ class BattleManager extends FlxBasic
 				this.state = enemyAnimatingSkillState;
 
 				activeSkillSprite.owner.playSkill(activeSkillSprite, activeTargets, context);
+				onAnyPlaySkill(activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
@@ -605,7 +644,7 @@ class BattleManager extends FlxBasic
 				state = enemyEndState;
 
 				for (turnable in this.turnables)
-					turnable.onEnemyEndTurn(context);
+					turnable.onEnemyEndTurn(context); // make sure the character's are BEFORE the decks for this to work properly!!!
 			},
 			update: (elapsed:Float) ->
 			{
@@ -622,22 +661,15 @@ class BattleManager extends FlxBasic
 				this.state = winState;
 
 				// get exp reward
-				var level = Player.level;
-				var leveledUp = false;
 				var expReward = RewardHelper.getExpReward(battleType);
 				Player.exp += expReward;
-				if (level != Player.level)
-				{
-					trace('leveled up!');
-					leveledUp = true;
-				}
 
 				// get money reward
 				var moneyReward = RewardHelper.getMoneyReward(battleType);
 				Player.money += moneyReward;
 
 				// show the win screen, which contains the rewards screen.
-				bss.showWinScreen(leveledUp, expReward, moneyReward);
+				bss.showWinScreen(expReward, moneyReward, battleType);
 			},
 			update: (elapsed:Float) -> {}
 		};

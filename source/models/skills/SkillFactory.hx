@@ -7,8 +7,8 @@ import haxe.Exception;
 import models.skills.Skill.Effect;
 import models.skills.Skill.SkillPointCombination;
 import models.skills.SkillAnimations;
-import ui.battle.DeckSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import utils.BattleAnimationManager.BattleAnimationGroupOptions;
 import utils.BattleManager;
 import utils.GameController;
@@ -26,10 +26,14 @@ class SkillFactory
 	public static final ryderPlaceholder = AssetPaths.ryderSkill__png;
 	public static final kiwiPlaceholder = AssetPaths.kiwiSkill__png;
 
+	public static var enemySkills:SkillList = [];
+
 	public static function init()
 	{
 		var dbPath = haxe.Resource.getString(AssetPaths.skillData__cdb);
 		Castle.load(dbPath);
+
+		enemySkills = SkillFactoryEnemy.enemySkills;
 	}
 
 	static function get(category:SkillDataKind, skillId:SkillData_skillsKind):Null<SkillData_skills>
@@ -85,74 +89,12 @@ class SkillFactory
 		},
 	];
 
-	public static var enemySkills:SkillList = [
-		tackle => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, tackle, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		bite => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, bite, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		cower => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, cower, priority);
-			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		laserBolt => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, laserBolt, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		laserBlast => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, laserBlast, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		howl => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, howl, priority);
-			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
-			{
-				target.addStatus(ATTACK);
-			}
-			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		selfDestruct => (?priority:Int) ->
-		{
-			var skill = skillFromData(enemy, selfDestruct, priority);
-			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
-			{
-				var explosionAnim = SkillAnimations.getSmallBlueExplosionAnim();
-				var sound = FlxG.sound.load(AssetPaths.smallExplosion1__wav);
-				SkillAnimations.genericAttackPlay(skill.value2, explosionAnim, sound)(targets, owner, context);
-				SkillAnimations.genericAttackPlay(skill.value, explosionAnim, sound)([owner], owner, context); // hit self
-			};
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-	];
-
 	public static var ryderSkillsBasic = [
 		bash => (?priority:Int) ->
 		{
 			var skill = skillFromData(ryder, bash);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = ryderPlaceholder;
+			skill.spritePath = AssetPaths.bash__png;
 			return skill;
 		},
 		guard => (?priority:Int) ->
@@ -230,14 +172,14 @@ class SkillFactory
 				target.addStatus(ATTACK, 1);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = ryderPlaceholder;
+			skill.spritePath = AssetPaths.adrenaline__png;
 			return skill;
 		},
 		wideSwing => (?priority:Int) ->
 		{
 			var skill = skillFromData(ryder, wideSwing);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = ryderPlaceholder;
+			skill.spritePath = AssetPaths.wideSwing2__png;
 			return skill;
 		},
 		flurry => (?priority:Int) ->
@@ -342,7 +284,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(kiwi, shuriken);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = kiwiPlaceholder;
+			skill.spritePath = AssetPaths.shuriken__png;
 			return skill;
 		},
 		dodgeRoll => (?priority:Int) ->
@@ -426,7 +368,7 @@ class SkillFactory
 				if (target.currBlock == 0)
 				{
 					owner.dealDamageTo(skill.value, target, context);
-					context.eDeck.discardRandomCards(1);
+					context.eDeck.discardLeftmostCard();
 				}
 				else
 				{
@@ -461,7 +403,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(kiwi, endlessShuriken);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = kiwiPlaceholder;
+			skill.spritePath = AssetPaths.endlessShuriken__png;
 			return skill;
 		}
 	];
@@ -534,34 +476,10 @@ class SkillFactory
 			var skill = skillFromData(kiwi, fullyPrepared);
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
-				if (owner.hasStatus(DODGE) > 0)
+				if (owner.getStatus(DODGE) > 0)
 					SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
 			}
 			skill.spritePath = kiwiPlaceholder;
-			return skill;
-		},
-	];
-
-	public static var rattleSkills = [
-		piercingGaze => (?priority:Int) ->
-		{
-			var skill = skillFromData(rattle, piercingGaze, priority);
-			skill.play = null;
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		snakeBite => (?priority:Int) ->
-		{
-			var skill = skillFromData(rattle, snakeBite, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
-			return skill;
-		},
-		snakeWhip => (?priority:Int) ->
-		{
-			var skill = skillFromData(rattle, snakeWhip, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
 			return skill;
 		},
 	];

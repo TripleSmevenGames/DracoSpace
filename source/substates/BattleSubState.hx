@@ -10,13 +10,14 @@ import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.events.BattleEvent;
+import models.events.GameEvent.GameEventType;
 import models.player.Deck;
 import models.player.Player;
 import ui.TooltipLayer;
 import ui.battle.DamageNumbers;
-import ui.battle.DeckSprite;
 import ui.battle.LoseScreen;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import ui.battle.win.WinScreen;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
@@ -63,8 +64,6 @@ class BattleView extends FlxSpriteGroup
 			var char = playerChars[i];
 			char.setPosition(PLAYER_X, FlxG.height / 3 + cursor);
 			add(char);
-			if (char.drone != null)
-				FlxTween.tween(char.drone, {y: char.drone.y + 10}, 2, {type: PINGPONG, ease: FlxEase.quadOut});
 			cursor += char.height + 24;
 		}
 
@@ -168,9 +167,9 @@ class BattleSubState extends FlxSubState
 		}
 	}
 
-	public function showWinScreen(leveledUp:Bool = false, expReward:Int, moneyReward:Int)
+	public function showWinScreen(expReward:Int, moneyReward:Int, battleType:GameEventType)
 	{
-		view.winScreen.play(leveledUp, expReward, moneyReward);
+		view.winScreen.play(expReward, moneyReward, battleType);
 	}
 
 	public function showLoseScreen()

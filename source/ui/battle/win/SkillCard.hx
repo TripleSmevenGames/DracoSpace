@@ -21,8 +21,8 @@ class SkillCard extends FlxSpriteGroup
 	public var skill:Skill;
 	public var highlight:FlxSprite;
 
-	public static var bodyWidth = 200;
-	public static var bodyHeight = 270;
+	public static var bodyWidth = UIMeasurements.SKILL_CARD_WIDTH;
+	public static var bodyHeight = UIMeasurements.SKILL_CARD_HEIGHT;
 
 	var body:FlxSprite;
 
@@ -59,9 +59,7 @@ class SkillCard extends FlxSpriteGroup
 		title.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
 		parts.push(title);
 
-		var icon = new FlxSprite(0, 0, skill.spritePath);
-		icon.scale.set(3, 3);
-		icon.updateHitbox();
+		var icon = new SkillTile(skill, false);
 		parts.push(icon);
 
 		var costString = skill.getCostString();

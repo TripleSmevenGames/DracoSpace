@@ -5,14 +5,14 @@ import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
 
-// stun usage is defined in skillSprite.
+// stun usage is defined in skillSprite/status display.
 class StunStatus extends DecayingStatus
 {
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = TAUNT;
 		name = 'Stun';
-		var desc = 'At the start of turn, skill cooldowns don\'t count down. Lose 1 stack at the end of turn.';
+		var desc = 'All skills are disabled this turn. Lose 1 stack at the end of turn.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};

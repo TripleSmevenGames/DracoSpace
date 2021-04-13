@@ -9,6 +9,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
+import models.events.GameEvent.GameEventType;
 import models.player.Player;
 import openfl.geom.Rectangle;
 import utils.ViewUtils;
@@ -21,18 +22,20 @@ class SkillRewardButton extends FlxSpriteGroup
 {
 	var button:FlxUIButton;
 
-	static inline final initialString = 'LEVEL UP, CLAIM SKILL REWARD';
+	static inline final initialString = 'CLAIM SKILL REWARD';
 	static inline final claimedString = 'REWARD CLAIMED';
 
 	var clicked:Bool;
 	var subscreen:FlxSprite;
 
-	function new(width:Int = 100, height:Int = 32, onClaim:Void->Void)
+	function new(width:Int = 100, height:Int = 32, onClaim:Void->Void, ?battleType:GameEventType)
 	{
 		super();
+		if (battleType == null)
+			battleType = BATTLE;
 		clicked = false;
 		// make sure to add the subscreen after the button, so it is over top it.
-		this.subscreen = new SkillRewardsSubScreen(onClaim);
+		this.subscreen = new SkillRewardsSubScreen(onClaim, battleType);
 
 		var onClick = () ->
 		{
@@ -70,9 +73,12 @@ class SkillRewardButton extends FlxSpriteGroup
 /** a subscreen showing 3 skills. The user clicks one to claim it. It's centered. **/
 class SkillRewardsSubScreen extends FlxSpriteGroup
 {
-	public function new(onClaim:Void->Void)
+	public function new(onClaim:Void->Void, ?battleType:GameEventType)
 	{
 		super();
+
+		if (battleType == null)
+			battleType = BATTLE;
 
 		// create a grey see-through background to dim the outside
 		var screen = new FlxSprite(0, 0);
@@ -80,7 +86,7 @@ class SkillRewardsSubScreen extends FlxSpriteGroup
 		screen.centerSprite();
 		add(screen);
 
-		var rewards = RewardHelper.getSkillRewards();
+		var rewards = RewardHelper.getSkillRewards(battleType);
 		for (i in 0...rewards.length)
 		{
 			var skillCard = new SkillCard(rewards[i], true);

@@ -7,6 +7,8 @@ import flixel.FlxSubState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.BattleIndicatorIcon;
 import ui.buttons.BasicWhiteButton;
 import ui.header.Header;
 import ui.inventory.InventoryMenu2;
@@ -17,6 +19,7 @@ using utils.ViewUtils;
 // a substate containing the event view
 class InventorySubState extends FlxSubState
 {
+	var header:Header;
 	var menu:InventoryMenu2;
 
 	public function cleanup()
@@ -29,6 +32,18 @@ class InventorySubState extends FlxSubState
 		menu = null;
 	}
 
+	public function initMenu()
+	{
+		if (this.menu != null)
+		{
+			remove(this.menu);
+			this.menu.destroy();
+		}
+		this.menu = new InventoryMenu2(header.height);
+		this.menu.scrollFactor.set(0, 0);
+		add(menu);
+	}
+
 	override public function create()
 	{
 		super.create();
@@ -37,23 +52,29 @@ class InventorySubState extends FlxSubState
 		var background = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, backgroundGradient, 8);
 		this.add(background);
 
-		var header = new Header();
+		this.header = new Header();
 		header.scrollFactor.set(0, 0);
 		add(header);
 
-		this.menu = new InventoryMenu2(header.height);
-		this.menu.scrollFactor.set(0, 0);
-		add(menu);
+		initMenu();
 
-		var infoText = new FlxText(0, 0, 400);
-		infoText.text = 'Click on skills to equip or unequip them on your characters.
-			Only equipped skills can be used during battle. Most skills, but not all, can only be used by certain characters.';
-		infoText.setFormat(Fonts.STANDARD_FONT2, 18, FlxColor.WHITE, 'center');
-		infoText.centerSprite(FlxG.width - 250, FlxG.height - 200);
-		add(infoText);
+		var infoText = 'Click on skills to equip or unequip them on your characters.
+			Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
+		var options:BattleIndicatorIconOptions = {
+			width: 400,
+			display: false,
+			place: 'inv'
+		};
 
-		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.returnToPreviousFromInv());
+		var infoTextIcon = new BattleIndicatorIcon(AssetPaths.info__png, 'Skill Equipment Menu', infoText, options);
+		infoTextIcon.setPosition(FlxG.width - 200, FlxG.height - 100);
+		add(infoTextIcon);
+		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.toggleInventory());
 		backBtn.centerSprite(FlxG.width - 200, FlxG.height - 50);
 		add(backBtn);
+
+		// create the tooltip layer, which is where all tooltips will be added to.
+		// this lets them be rendered on top of the inv view.
+		add(GameController.invTooltipLayer);
 	}
 }

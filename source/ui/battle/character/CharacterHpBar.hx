@@ -75,15 +75,14 @@ class CharacterHpBar extends FlxSpriteGroup
 		var fillColor = Colors.CONSTITUTION_GREEN;
 		bar.createFilledBar(emptyColor, fillColor, true);
 
-		var options = {
-			centered: true,
-			color: Colors.BACKGROUND_BLUE,
-		}
-
 		add(bar);
 		add(numbers);
 		if (block)
 		{
+			var options = {
+				centered: true,
+				color: Colors.BACKGROUND_BLUE,
+			}
 			blockIndicator = new BattleIndicatorIcon(AssetPaths.Block__png, null, 'Block prevents damage until your next turn.', options);
 			blockIndicator.setPosition(bar.width / 2 + blockIndicator.icon.width / 2, 0);
 			add(blockIndicator);

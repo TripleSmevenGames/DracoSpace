@@ -2,6 +2,7 @@ package ui.battle.status;
 
 import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.DeckSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
@@ -18,7 +19,7 @@ class ColdStatus extends DecayingStatus
 
 		if (deck != null)
 		{
-			deck.discardRandomCards(1);
+			deck.discardLeftmostCard();
 			stacks -= 1;
 		}
 	}

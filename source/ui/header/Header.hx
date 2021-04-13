@@ -15,7 +15,7 @@ class Header extends FlxSpriteGroup
 {
 	var body:FlxSprite;
 	var displays:Array<CharacterDisplay> = [];
-	var expBarDisplay:ExpBarDisplay;
+	// var expBarDisplay:ExpBarDisplay;
 	var moneyDisplay:MoneyDisplay;
 
 	var cursor:Float = 100;
@@ -27,7 +27,6 @@ class Header extends FlxSpriteGroup
 		for (display in displays)
 			display.refresh();
 
-		expBarDisplay.refresh();
 		moneyDisplay.refresh();
 	}
 
@@ -45,9 +44,6 @@ class Header extends FlxSpriteGroup
 		body = new FlxSprite(0, 0);
 		body.makeGraphic(FlxG.width, 100, FlxColor.fromRGB(200, 200, 200, 150));
 		add(body);
-
-		this.expBarDisplay = new ExpBarDisplay();
-		addToView(expBarDisplay);
 
 		var charDisplay1 = new CharacterDisplay(Player.chars[0]);
 		addToView(charDisplay1);
