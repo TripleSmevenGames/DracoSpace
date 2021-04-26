@@ -16,17 +16,17 @@ import models.player.CharacterInfo;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
-import ui.battle.DamageNumbers;
 import ui.battle.ITurnTriggerable;
 import ui.battle.status.Status;
 import ui.battle.win.SkillCard;
 import utils.BattleAnimationManager;
-import utils.BattleManager.BattleManagerStateNames;
 import utils.BattleManager;
 import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+
+using utils.ViewUtils;
 
 /** Represents a character's sprite during battle. Centered on the body sprite */
 class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
@@ -77,7 +77,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var healSound:FlxSound;
 
 	// target arrow X distance from char sprite.
-	public static inline final TARGET_ARROW_DISTANCE = 48;
+	public static inline final TARGET_ARROW_DISTANCE = 16;
 
 	// since we are using an FlxBar for the hp bar, the bar should automatically update
 	// we don' t need to explicitly call update on it
@@ -92,6 +92,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			val = 0;
 			if (!dead)
 			{
+				// test: this order should work.
 				dead = true;
 				queueDeadAnimation();
 				this.statusDisplay.onDead(this.context);
@@ -146,7 +147,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	{
 		if (statusDisplay != null)
 			return statusDisplay.getStatus(type);
-		return null;
+		return 0;
 	}
 
 	/** Call this function for the character to take damage blocked by block. **/
@@ -403,8 +404,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	function setupSprite(assetPath:FlxGraphicAsset)
 	{
 		this.sprite = new FlxSprite(0, 0, assetPath);
-		sprite.setGraphicSize(0, Std.int(sprite.height * 4));
-		sprite.updateHitbox();
+		sprite.scale3x();
 		ViewUtils.centerSprite(sprite, 0, 0);
 		this.add(sprite);
 		FlxMouseEventManager.add(sprite, null, null, null, null, false, true, false);
@@ -414,12 +414,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		var targetArrowXPos = TARGET_ARROW_DISTANCE + sprite.width / 2;
 		if (this.info.type == PLAYER)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow1L__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow2L__png);
 			ViewUtils.centerSprite(targetArrow, targetArrowXPos, 0);
 		}
 		else if (this.info.type == ENEMY)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow1R__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow2R__png);
 			ViewUtils.centerSprite(targetArrow, -targetArrowXPos, 0);
 		}
 		targetArrow.scale.set(3, 3);
@@ -434,26 +434,14 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
-	/** Add skills to this character, and setup the skill tiles for battle */
+	/** Make skills to this character. They will be rendered by the DeckSprite */
 	function setupSkills(skills:Array<Skill>)
 	{
 		var skills = this.info.skills;
-		var yStart = -sprite.height / 2;
-		var cursor = sprite.width / 2;
-		var padding = 4;
 		for (i in 0...skills.length)
 		{
 			var skill = skills[i];
 			var skillSprite = new SkillSprite(skill, this);
-
-			// render skills right of player chars, and left of enemy chars.
-			if (this.info.type == PLAYER)
-				skillSprite.setPosition(cursor, yStart);
-			else if (this.info.type == ENEMY)
-				skillSprite.setPosition(-cursor, yStart);
-
-			this.add(skillSprite);
-			cursor += skillSprite.tile.width + padding;
 			skillSprites.push(skillSprite);
 		}
 	}
@@ -477,14 +465,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	function setupCancelSkillButton()
 	{
 		cancelSkillBtn = new FlxSprite(0, 0, AssetPaths.cancelTargeting__png);
-		cancelSkillBtn.scale.set(3, 3);
-		cancelSkillBtn.updateHitbox();
-		ViewUtils.centerSprite(cancelSkillBtn, sprite.width / 2, -sprite.height / 2);
+		cancelSkillBtn.scale3x();
+		cancelSkillBtn.centerSprite(-sprite.width);
 		this.add(cancelSkillBtn);
 		// killing the cancel button here causes uber weird behavior, so don't do it!!
 
 		FlxMouseEventManager.add(cancelSkillBtn);
-		var tooltip = Tooltip.genericTooltip('Cancel', null);
+		var tooltip = Tooltip.genericTooltip('Cancel', null, {});
 		GameController.battleTooltipLayer.registerTooltip(tooltip, cancelSkillBtn);
 	}
 

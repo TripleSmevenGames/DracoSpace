@@ -37,7 +37,10 @@ class WinScreen extends FlxSpriteGroup
 			'scale.y': 1,
 		}, .5);
 
-		continueBtn.disabled = true;
+		if (battleType == BATTLE)
+			continueBtn.disabled = false; // there's no skill reward to claim, so just let them continue;
+		else // ie ELITE battle or BOSS battle.
+			continueBtn.disabled = true; // other wise, stop player from continuing until they claim their skill reward
 
 		var onClaim = () -> continueBtn.disabled = false;
 		var rewardsSprite = new RewardsSprite(expReward, moneyReward, battleType, onClaim);
@@ -61,7 +64,7 @@ class WinScreen extends FlxSpriteGroup
 
 		var onContinueClick = () -> ssm.returnToMap();
 		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
-		ViewUtils.centerSprite(continueBtn, FlxG.width - 200, FlxG.height - 200);
+		ViewUtils.centerSprite(continueBtn, FlxG.width / 2, FlxG.height - 100);
 		continueBtn.disabled = true;
 		add(continueBtn);
 

@@ -2,8 +2,8 @@ package constants;
 
 class UIMeasurements
 {
-	public static inline final CARD_WIDTH = 100;
-	public static inline final CARD_HEIGHT = 140;
+	public static inline final CARD_WIDTH = 90;
+	public static inline final CARD_HEIGHT = 130;
 	public static inline final CARD_FONT_SIZE = 14;
 
 	public static inline final SKILL_CARD_WIDTH = 200;

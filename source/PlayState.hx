@@ -2,6 +2,8 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import models.events.HomeEvent;
+import models.events.battleEvents.BattleEventFactory;
 import models.player.CharacterInfo;
 import models.player.Deck;
 import models.player.Player;
@@ -34,11 +36,13 @@ class PlayState extends FlxState
 
 		GameController.initSSM(this);
 		GameController.initBattleManagers();
-		GameController.subStateManager.returnToMap();
+		GameController.subStateManager.initEvent(new HomeEvent());
 
 		SkillFactory.init();
 
 		Player.init();
+
+		BattleEventFactory.init();
 
 		FlxG.camera.minScrollX = 0;
 		// FlxG.camera.maxScrollX = 5000; // arbitrary

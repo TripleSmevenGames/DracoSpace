@@ -30,6 +30,7 @@ typedef Effect = (CharacterSprite, CharacterSprite, BattleContext) -> Void; // t
  * eg. 2 KNO and 2 ANY
  *
  * Used for skill's costs and card's skill points
+ * Basically a map of skillpoint type to int, with the 0's, and cool functions.
  */
 class SkillPointCombination
 {

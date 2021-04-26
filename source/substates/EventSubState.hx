@@ -9,15 +9,20 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
-import models.events.BattleEvent;
 import models.events.GameEvent;
+import models.events.battleEvents.BattleEvent;
 import openfl.geom.Rectangle;
-import ui.buttons.EventButton;
+import ui.buttons.EventChoiceButton;
 import ui.header.Header;
 import utils.GameController;
 import utils.SubStateManager;
 import utils.ViewUtils;
 
+using utils.ViewUtils;
+
+/** The screen to show during an Event. Not centered. Place at 0, 0
+ * This shows and stores one event at a time. The ESS manages the event stack for multi-part events.
+**/
 class EventView extends FlxSpriteGroup
 {
 	// reference to global sub state manager
@@ -26,62 +31,63 @@ class EventView extends FlxSpriteGroup
 	var titleSprite:FlxText;
 	var descSprite:FlxText;
 	var windowSprite:FlxUI9SliceSprite;
-	var battleButton:EventButton;
-	var exitButton:EventButton;
-
-	public var exitCallback:Void->Void;
+	var buttonsGroup:FlxSpriteGroup;
 
 	public var event:GameEvent;
 
 	static inline final TITLE_FONT_SIZE = 32;
 	static inline final DESC_FONT_SIZE = 24;
 
-	// how many pixels below the screen midpoint that the choices start rendering from.
-	static inline final CHOICES_TOP = 200;
-
-	function onClickExit()
-	{
-		ssm.returnToMap();
-	}
-
-	function onClickBattle()
-	{
-		if (!Std.is(this.event, BattleEvent))
-		{
-			trace('Tried to start battle with a non-battle event: ${event.type.getName()}');
-			return;
-		}
-		var battleEvent:BattleEvent = cast(this.event, BattleEvent);
-		ssm.initBattle(battleEvent);
-	}
-
 	function centerSprites()
 	{
 		var centerX = FlxG.width / 2;
 		var centerY = FlxG.height / 2;
-		ViewUtils.centerSprite(titleSprite, centerX, centerY - 200);
-		ViewUtils.centerSprite(descSprite, centerX, centerY);
-		ViewUtils.centerSprite(windowSprite, centerX, centerY);
+		titleSprite.centerSprite(centerX, centerY - 200);
+		descSprite.centerSprite(centerX, centerY);
+		windowSprite.centerSprite(centerX, centerY);
+	}
 
-		var choiceButtons = [battleButton, exitButton];
-		for (i in 0...choiceButtons.length)
+	/** Get a group of choice buttons to place on the screen. NOT centered.**/
+	function getButtons():FlxSpriteGroup
+	{
+		var group = new FlxSpriteGroup();
+		var cursorY:Float = 0;
+		if (event != null)
 		{
-			ViewUtils.centerSprite(choiceButtons[i], centerX, centerY + CHOICES_TOP + (i * 35));
+			for (choice in event.choices)
+			{
+				var button = new EventChoiceButton(choice);
+				button.setPosition(0, cursorY);
+				if (choice.disabled)
+					button.alpha = .5;
+
+				group.add(button);
+				cursorY += button.height + 4;
+			}
 		}
+
+		return group;
 	}
 
 	public function showEvent(event:GameEvent)
 	{
 		this.event = event;
-		titleSprite.text = '${event.name} (${event.type.getName()})';
+		titleSprite.text = '${event.name}';
 		descSprite.text = event.desc;
 
-		if (event.type == BATTLE)
-			battleButton.visible = true;
-		else
-			battleButton.visible = false;
-
 		centerSprites();
+
+		if (buttonsGroup != null)
+		{
+			remove(buttonsGroup);
+			buttonsGroup.destroy();
+		}
+		buttonsGroup = getButtons();
+		// place the buttons so they'll all fit at the bottom of the window.
+		var yPos = windowSprite.y + windowSprite.height - buttonsGroup.height - 8;
+		buttonsGroup.setPosition(0, yPos);
+		buttonsGroup.centerX(FlxG.width / 2);
+		add(buttonsGroup);
 	}
 
 	public function new()
@@ -106,17 +112,9 @@ class EventView extends FlxSpriteGroup
 		titleSprite.setFormat(Fonts.STANDARD_FONT, TITLE_FONT_SIZE);
 		add(titleSprite);
 
-		descSprite = new FlxText(0, 0, 0, 'this is a sample desc. You should not see this in a real game');
-		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE);
+		descSprite = new FlxText(0, 0, windowWidth - 8, 'this is a sample desc. You should not see this in a real game');
+		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE, null, 'center');
 		add(descSprite);
-
-		battleButton = new EventButton('Battle', onClickBattle);
-		exitButton = new EventButton('Exit', onClickExit);
-
-		add(battleButton);
-		add(exitButton);
-
-		centerSprites();
 	}
 }
 
@@ -124,10 +122,53 @@ class EventView extends FlxSpriteGroup
 class EventSubState extends FlxSubState
 {
 	public var view:EventView;
+	public var eventStack:Array<GameEvent>;
 
+	/** Shows the GameEvent on the screen, along with choices for the player to choose. **/
 	public function showEvent(event:GameEvent)
 	{
 		view.showEvent(event);
+	}
+
+	/** Init a new root game event. Remember to show it afterwards with showEvent. **/
+	public function newRoot(event:GameEvent)
+	{
+		eventStack = [event];
+	}
+
+	/** Proceed into a new sub event. **/
+	public function goToSubEvent(event:GameEvent)
+	{
+		eventStack.push(event);
+		showEvent(event);
+	}
+
+	/** go back to the previous event in the chain (ie. stack)**/
+	public function goBack()
+	{
+		if (eventStack.length > 1)
+		{
+			eventStack.pop();
+			showEvent(eventStack[eventStack.length - 1]);
+		}
+		else
+		{
+			trace('tried to go back on an event that had no parent. ${eventStack[0].name}');
+		}
+	}
+
+	/** Reset the event stack back to the root and show it**/
+	public function goToRoot()
+	{
+		if (eventStack.length != 0)
+		{
+			eventStack = eventStack.slice(0, 1);
+			showEvent(eventStack[0]);
+		}
+		else
+		{
+			trace('tried to go back to event root, but there was no root.');
+		}
 	}
 
 	override public function create()

@@ -72,8 +72,8 @@ class CharacterInfo
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
-		ryder.skills = [sf.ryderSkillsBasic.get(bash)(), sf.ryderSkillsCommon.get(adrenaline)()];
-		ryder.draw = 2;
+		ryder.skills = [sf.ryderSkillsBasic.get(protect)()];
+		ryder.draw = 1;
 
 		return ryder;
 	}
@@ -85,12 +85,12 @@ class CharacterInfo
 		kiwi.name = 'Kiwi';
 		kiwi.category = Castle.SkillDataKind.kiwi;
 		kiwi.type = PLAYER;
-		kiwi.spritePath = AssetPaths.wack_kiwi__png;
+		kiwi.spritePath = AssetPaths.kiwi__png;
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
-		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)(), sf.kiwiSkillsCommon.get(surpriseAttack)()];
-		kiwi.draw = 2;
+		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)()];
+		kiwi.draw = 1;
 
 		return kiwi;
 	}

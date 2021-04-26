@@ -7,6 +7,8 @@ import flixel.util.FlxColor;
 
 // based on http://coinflipstudios.com/devblog/?p=243
 // implements look only. Parent should handle mouse events.
+
+/** not centered.**/
 class BasicWhiteButton extends FlxUIButton
 {
 	public var disabled(default, set):Bool = false;

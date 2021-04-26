@@ -12,6 +12,7 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.skills.Skill.SkillPointCombination;
 import models.skills.Skill.SkillPointType;
+import openfl.geom.Rectangle;
 import ui.CardHighlight;
 import ui.battle.character.CharacterSprite;
 import utils.GameController;
@@ -145,6 +146,9 @@ class Card extends FlxSpriteGroup
 		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH, CARD_HEIGHT, FlxColor.BLACK);
 		ViewUtils.centerSprite(body);
 
+		var frame = new FlxUI9SliceSprite(0, 0, AssetPaths.cardFrameGeneric__png, new Rectangle(0, 0, body.width, body.height), [5, 5, 15, 15]);
+		frame.centerSprite();
+
 		// setup hover effect
 		this.highlight = new CardHighlight(body);
 		highlight.centerSprite();
@@ -153,6 +157,7 @@ class Card extends FlxSpriteGroup
 
 		// add body over the highlight effect
 		add(body);
+		add(frame);
 
 		this.icon = ViewUtils.getIconForType(type);
 		icon.scale.set(3, 3);

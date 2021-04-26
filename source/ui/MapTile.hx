@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import models.GameMap.Node;
+import models.events.GameEvent.GameEventType;
 
 using utils.ViewUtils;
 
@@ -19,6 +20,15 @@ class MapTile extends FlxSpriteGroup
 
 	public var here(default, set):Bool = false;
 	public var highlighted(default, set):Bool = false;
+
+	static var typeToSpriteMap = [
+		CHOICE => AssetPaths.choiceMapTile__png,
+		BATTLE => AssetPaths.enemyMapTile__png,
+		ELITE => AssetPaths.eliteMapTile__png,
+		BOSS => AssetPaths.bossMapTile__png,
+		TREASURE => AssetPaths.treasureMapTile__png,
+		CAMP => AssetPaths.restMapTile__png,
+	];
 
 	public function set_here(val:Bool)
 	{
@@ -43,6 +53,14 @@ class MapTile extends FlxSpriteGroup
 		FlxMouseEventManager.setMouseOutCallback(body, out);
 	}
 
+	function getSpriteForType(type:GameEventType)
+	{
+		if (!typeToSpriteMap.exists(type))
+			return AssetPaths.mapTile__png;
+		else
+			return typeToSpriteMap.get(type);
+	}
+
 	function setupParts()
 	{
 		highlight = new FlxSprite(0, 0, AssetPaths.tileHighlight1__png);
@@ -58,25 +76,9 @@ class MapTile extends FlxSpriteGroup
 		hereMarker.visible = false;
 
 		body = new FlxSprite(0, 0);
-		var type = this.node.event.type;
-		var spritePath = '';
-		switch (type)
-		{
-			case CHOICE:
-				spritePath = AssetPaths.choiceMapTile__png;
-			case BATTLE:
-				spritePath = AssetPaths.enemyMapTile__png;
-			case ELITE:
-				spritePath = AssetPaths.eliteMapTile__png;
-			case BOSS:
-				spritePath = AssetPaths.bossMapTile__png;
-			case TREASURE:
-				spritePath = AssetPaths.treasureMapTile__png;
-			case REST:
-				spritePath = AssetPaths.restMapTile__png;
-			default:
-				spritePath = AssetPaths.mapTile__png;
-		}
+		var type = this.node.eventType;
+		var spritePath = getSpriteForType(type);
+
 		body.loadGraphic(spritePath);
 		body.scale.set(3, 3);
 		body.updateHitbox();

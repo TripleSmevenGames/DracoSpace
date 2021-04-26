@@ -1,5 +1,7 @@
 package constants;
 
+import models.events.GameEvent.GameEventType;
+
 class MapGeneration
 {
 	// nodes per column change
@@ -7,7 +9,7 @@ class MapGeneration
 	public static final NUM_NODE_CHANCE_WEIGHTS:Array<Float> = [60, 30, 10];
 
 	// node type stuff
-	public static final NODE_TYPE_CHANCE_ITEMS = ['BATTLE', 'TREASURE', 'CHOICE', 'REST'];
+	public static final NODE_TYPE_CHANCE_ITEMS:Array<GameEventType> = [BATTLE, TREASURE, CHOICE, CAMP];
 	public static final NODE_TYPE_CHANCE_WEIGHTS:Array<Float> = [60, 5, 15, 10];
 	public static inline final MIN_BATTLES = 20;
 	public static inline final MIN_CHOICES = 8;

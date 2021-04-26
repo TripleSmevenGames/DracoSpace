@@ -63,7 +63,8 @@ class SkillCard extends FlxSpriteGroup
 		parts.push(icon);
 
 		var costString = skill.getCostString();
-		var costTextSprite = new FlxTextWithReplacements(body.width, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, costString);
+		var costTextOptions = {bodyWidth: body.width, fontSize: UIMeasurements.BATTLE_UI_FONT_SIZE_LG};
+		var costTextSprite = new FlxTextWithReplacements(costString, null, null, costTextOptions);
 		parts.push(costTextSprite);
 
 		// y cursor
@@ -76,10 +77,11 @@ class SkillCard extends FlxSpriteGroup
 			cursor += part.height + padding;
 		}
 
-		var descTextSprite = new FlxTextWithReplacements(body.width - 16, UIMeasurements.BATTLE_UI_FONT_SIZE_MED, skill.desc, Std.string(skill.value),
-			Std.string(skill.value2));
-		// put the skill desc in the middle of the remaining space.
-		descTextSprite.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2));
+		var descTextFontSize = skill.desc.length < 30 ? 20 : 18;
+		var descTextOptions = {bodyWidth: body.width - 8, fontSize: descTextFontSize};
+		var descTextSprite = new FlxTextWithReplacements(skill.desc, Std.string(skill.value), Std.string(skill.value2), descTextOptions);
+		// put the skill desc in the middle of the remaining space. Then bump it up a bit lmao
+		descTextSprite.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2) - 16);
 		add(descTextSprite);
 
 		// set up the highlight effect, which appears around the card on hover.

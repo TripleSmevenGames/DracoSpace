@@ -36,6 +36,8 @@ class LastBreathPassive extends Status
 		};
 		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 
+		this.stackable = false;
+
 		super(owner, icon, initialStacks);
 	}
 }

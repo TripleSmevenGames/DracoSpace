@@ -8,9 +8,18 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
+import models.skills.Skill.SkillPointCombination;
+import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
 import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
+
+enum CardPileType
+{
+	DRAW;
+	DISCARD;
+	BUFFER;
+}
 
 /** represents either a drawpile or discard pile during battle. Or maybe another pile in the future (exiled cards?)
  * used with DeckSprite. Centered.
@@ -18,23 +27,27 @@ import utils.ViewUtils;
 class CardPile extends FlxSpriteGroup
 {
 	public var cards(null, null):Cards;
+	public var hidden:Bool = false;
 
 	var body:BattleIndicatorIcon;
-	var pileName:String;
+	var desc:String;
+	var type:CardPileType;
 	var deck:Deck;
 
-	// showing how many cards this deck draws per turn (for enemy probably)
-	var subtitle:FlxText;
-	var subtitleBackground:FlxSprite;
+	public function updateStuff()
+	{
+		updateNum();
+		updateTooltipDesc();
+	}
+
+	inline function updateTooltipDesc()
+	{
+		body.updateTooltipDesc(getDisplayString());
+	}
 
 	inline function updateNum()
 	{
 		body.updateDisplay(Std.string(cards.length));
-	}
-
-	public function updateDraw(val:Int)
-	{
-		subtitle.text = 'Draw: $val';
 	}
 
 	public function getCards()
@@ -45,32 +58,32 @@ class CardPile extends FlxSpriteGroup
 	public function addCard(card:Card)
 	{
 		cards.push(card);
-		updateNum();
+		updateStuff();
 	}
 
 	public function addCards(cards:Cards)
 	{
 		this.cards = this.cards.concat(cards);
-		updateNum();
+		updateStuff();
 	}
 
 	public function drawCard()
 	{
 		var drawn = cards.pop();
-		updateNum();
+		updateStuff();
 		return drawn;
 	}
 
 	public function set(cards:Cards)
 	{
 		this.cards = cards;
-		updateNum();
+		updateStuff();
 	}
 
 	public function clearPile()
 	{
 		cards = [];
-		updateNum();
+		updateStuff();
 	}
 
 	public function shuffle()
@@ -78,30 +91,67 @@ class CardPile extends FlxSpriteGroup
 		GameController.rng.shuffle(cards);
 	}
 
-	/** Name should be 'Draw' or 'Discard'. **/
-	public function new(pileName:String = 'unnamed pile')
+	// maybe slow because we're adding up a lot of maps
+	function getCardMakeUp()
+	{
+		var makeUp = new Array<SkillPointCombination>();
+		for (card in cards)
+		{
+			makeUp.push(card.skillPoints);
+		}
+		return SkillPointCombination.sum(makeUp);
+	}
+
+	function getDisplayString()
+	{
+		var makeUp = getCardMakeUp();
+		var string = '';
+		for (type in SkillPointCombination.ARRAY)
+		{
+			if (deck.cardMap.get(type) != 0)
+			{
+				var thisVal = '??';
+				if (!hidden)
+					thisVal = Std.string(makeUp.get(type));
+				var totalVal = Std.string(deck.cardMap.get(type));
+				string += '${type.getName()} : ${thisVal}/${totalVal} \n '; // spaces are so replacement text can find the \n
+			}
+		}
+		return string;
+	}
+
+	public function new(type:CardPileType, deck:Deck, hidden:Bool = false)
 	{
 		super();
 		cards = [];
+		this.type = type;
+		this.deck = deck;
 
-		this.body = new BattleIndicatorIcon(AssetPaths.cardsIcon__png, pileName, null, {color: FlxColor.WHITE, centered: true});
-		add(body);
-		this.pileName = pileName;
-
-		if (pileName == 'Draw')
+		var spritePath = '';
+		var name = 'nani';
+		if (type == DRAW)
 		{
-			this.subtitle = new FlxText(0, 0, 0, 'Draw: 0');
-			subtitle.setFormat(Fonts.NUMBERS_FONT, BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, FlxTextAlign.CENTER);
-
-			var xPos = 0;
-			var yPos = body.height / 2 + subtitle.height / 2;
-			ViewUtils.centerSprite(subtitle, xPos, yPos);
-			add(subtitle);
-
-			this.subtitleBackground = new FlxSprite();
-			subtitleBackground.makeGraphic(Std.int(body.width), 24, FlxColor.fromRGB(0, 0, 0, 128));
-			ViewUtils.centerSprite(subtitleBackground, xPos, yPos);
-			add(subtitleBackground);
+			spritePath = AssetPaths.drawIcon__png;
+			name = 'Draw';
 		}
+		else if (type == DISCARD)
+		{
+			spritePath = AssetPaths.discardIcon__png;
+			name = 'Discard';
+		}
+		else
+			trace('nani');
+
+		var options:BattleIndicatorIconOptions = {
+			color: FlxColor.WHITE,
+			centered: true,
+			centerTooltip: true,
+			scale: 3,
+			fontSize: 20,
+			tooltipFontSize: 20,
+			width: 100,
+		};
+		this.body = new BattleIndicatorIcon(spritePath, name, getDisplayString(), options);
+		add(body);
 	}
 }

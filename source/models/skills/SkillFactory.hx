@@ -97,9 +97,9 @@ class SkillFactory
 			skill.spritePath = AssetPaths.bash__png;
 			return skill;
 		},
-		guard => (?priority:Int) ->
+		protect => (?priority:Int) ->
 		{
-			var skill = skillFromData(ryder, guard);
+			var skill = skillFromData(ryder, protect);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
 			skill.spritePath = ryderPlaceholder;
 			return skill;
@@ -227,9 +227,9 @@ class SkillFactory
 			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
-		protect => (?priority:Int) ->
+		unyielding => (?priority:Int) ->
 		{
-			var skill = skillFromData(ryder, protect);
+			var skill = skillFromData(ryder, unyielding);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
 			skill.spritePath = ryderPlaceholder;
 			return skill;
@@ -287,32 +287,47 @@ class SkillFactory
 			skill.spritePath = AssetPaths.shuriken__png;
 			return skill;
 		},
-		dodgeRoll => (?priority:Int) ->
-		{
-			var skill = skillFromData(kiwi, dodgeRoll);
-			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
-			{
-				target.addStatus(DODGE, skill.value);
-			}
-			skill.play = SkillAnimations.genericBuffPlay(effect);
-			skill.spritePath = kiwiPlaceholder;
-			return skill;
-		},
 	];
 
 	public static var kiwiSkillsCommon = [
-		takeCover => (?priority:Int) ->
+		smokeBomb => (?priority:Int) ->
 		{
-			var skill = skillFromData(kiwi, takeCover);
-			var animSprite = SkillAnimations.getBlockAnim();
+			var skill = skillFromData(kiwi, smokeBomb);
+			// var animeSprite = get some smoke animation
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				target.currBlock += skill.value;
-				context.pDeck.drawCards(1);
+				owner.addStatus(DODGE);
+				owner.addStatus(MINUSDRAW);
+				context.pDeck.drawModifier -= 1;
 			}
-			var effectFrame = 10;
-			var sound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
-			skill.play = SkillAnimations.getCustomPlay(animSprite, effect, effectFrame, sound);
+			skill.play = SkillAnimations.genericBuffPlay(effect);
+			return skill;
+		},
+		parry => (?priority:Int) ->
+		{
+			var skill = skillFromData(kiwi, parry);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				owner.currBlock += skill.value;
+				owner.addStatus(PLUSDRAW);
+				context.pDeck.drawModifier += 1;
+			}
+			skill.play = SkillAnimations.genericBuffPlay(effect);
+			return skill;
+		},
+		pawsUp => (?priority:Int) ->
+		{
+			var skill = skillFromData(kiwi, pawsUp);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				owner.addStatus(STATIC, skill.value2);
+			}
+			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
+			{
+				SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
+				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
+			}
+			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		},
 		electricSurge => (?priority:Int) ->
@@ -320,7 +335,7 @@ class SkillFactory
 			var skill = skillFromData(kiwi, electricSurge);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				owner.addStatus(STATIC, 1);
+				owner.addStatus(STATIC, skill.value2);
 			}
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
@@ -454,17 +469,27 @@ class SkillFactory
 				SkillAnimations.genericAttackPlay(skill.value)(targets, owner, context);
 				var followUpEffect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 				{
-					for (skill in owner.skillSprites)
+					// get last skill (ie left most skill);
+					var skill = owner.skillSprites[owner.skillSprites.length - 1];
+					if (skill.cooldownTimer > 0)
 					{
-						if (skill.cooldownTimer > 0)
-						{
-							skill.cooldownTimer -= 1;
-							return;
-						}
+						skill.cooldownTimer -= 1;
+						return;
 					}
 				};
 				SkillAnimations.genericBuffPlay(followUpEffect)([owner], owner, context);
 			};
+			skill.spritePath = kiwiPlaceholder;
+			return skill;
+		},
+		dodgeRoll => (?priority:Int) ->
+		{
+			var skill = skillFromData(kiwi, dodgeRoll);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.addStatus(DODGE, skill.value);
+			}
+			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		}

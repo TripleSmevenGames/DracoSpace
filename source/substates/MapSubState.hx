@@ -10,6 +10,9 @@ import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.GameMap;
+import models.events.*;
+import models.events.GameEvent.GameEventType;
+import models.events.battleEvents.*;
 import ui.MapTile;
 import ui.header.Header;
 import utils.GameController;
@@ -54,13 +57,41 @@ class GameMapView extends FlxSpriteGroup
 		mapTile.here = true;
 	}
 
+	/** Return an event for given event type.
+	 * For event types like Choice and Battle, it will return the next event in that type's randomized queue.
+	**/
+	function getEventForEventType(type:GameEventType):GameEvent
+	{
+		switch (type)
+		{
+			case BATTLE:
+				return BattleEventFactory.getNextBattleEvent();
+			case ELITE:
+				return BattleEventFactory.ghosts2();
+			case BOSS:
+				return BossEventFactory.rattle();
+			case CHOICE:
+				return GameEvent.getGenericEvent('Sample', 'Sample event. Something happened, choose what to do.');
+			case CAMP:
+				return new CampEvent();
+			case HOME:
+				return new HomeEvent();
+			case TREASURE:
+				return TreasureEvent.sample();
+			default:
+				return GameEvent.getGenericEvent('Sample', 'Sample event. Something happened, choose what to do.');
+		}
+	}
+
+	/** Mark the node (ie the map tile) as visited, and open its event. **/
 	public function visit(mapTile:MapTile)
 	{
 		if (currentTile.connectedNodesId.contains(mapTile.id))
 		{
 			currentTile = mapTile;
 			markHere(mapTile);
-			ssm.initEvent(mapTile.node.event);
+			var event = getEventForEventType(mapTile.node.eventType);
+			ssm.initEvent(event);
 		}
 	}
 

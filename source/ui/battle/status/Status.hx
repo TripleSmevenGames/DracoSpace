@@ -18,8 +18,13 @@ enum StatusType
 	EXHAUST;
 	EXPOSED;
 	LASTBREATH;
+	DYINGWISH;
 	CUNNING;
 	OBSERVATION;
+	PETALARMOR;
+	PETALSPIKES;
+	PLUSDRAW;
+	MINUSDRAW;
 }
 
 class Status extends FlxSpriteGroup implements ITurnTriggerable
@@ -35,6 +40,7 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function set_stacks(val:Int)
 	{
+		var valBefore = stacks;
 		if (val <= 0)
 		{
 			val = 0;
@@ -46,6 +52,8 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 		else
 			icon.updateDisplay('');
 
+		onSetStacks(valBefore, val);
+
 		return stacks = val;
 	}
 
@@ -54,7 +62,12 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 		owner.removeStatus(type);
 	}
 
-	// some of these functions are just dummies. The status classes need to override these.
+	public function updateTooltip(val:String)
+	{
+		icon.updateTooltipDesc(val);
+	}
+
+	// some of these functions are just dummies. The status classes need to override these to provide functionality.
 	public function onPlayerStartTurn(context:BattleContext) {}
 
 	public function onPlayerEndTurn(context:BattleContext) {}
@@ -63,7 +76,9 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function onEnemyEndTurn(context:BattleContext) {}
 
-	// dont modify damage here
+	/** dont modify damage here
+		*This is called AFTER the character has taken damage.
+	**/
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	public function onTakeUnblockedDamage() {}
@@ -72,10 +87,15 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}
 
-	// dont modify damage here
+	/** dont modify damage here.
+	 * This is called BEFORE char.dealDamageTo() is called.
+	**/
 	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext) {}
 
 	public function onDead(context:BattleContext) {}
+
+	/** Override this to do something when the stack changes, like update the tooltip for example. **/
+	public function onSetStacks(valBefore:Int, valAfter:Int) {}
 
 	public function new(owner:CharacterSprite, icon:BattleIndicatorIcon, initialStacks:Int = 1)
 	{

@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.CharacterInfo.CharacterType;
@@ -19,13 +20,14 @@ import utils.battleManagerUtils.BattleContext;
  *
  * This does NOT handle the rerendering or animating of the sprites. The sprite itself should handle that.
  * You should never interact with Hand or CardPile's internal card array.
+ *
+ * Not centered.
  */
 @:access(ui.battle.combatUI.Hand)
 class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 {
 	var drawPile:CardPile;
 	var discardPile:CardPile;
-	var body:FlxSprite;
 	var hand:Hand;
 	var endTurnBtn:BasicWhiteButton;
 
@@ -35,14 +37,13 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	// for enemy only
 	public var hiddenCards:Int = 0;
 
+	public var drawModifier:Int = 0;
+
 	var bm:BattleManager;
 
 	public var deck:Deck;
 
-	public static inline final DECK_HEIGHT:Int = 200;
-	public static inline final ENEMY_DECK_WIDTH:Int = 600;
-
-	public function blinkSkillPointDisplay()
+	function blinkSkillPointDisplay()
 	{
 		if (hand != null)
 			hand.blinkSkillPointDisplay();
@@ -76,7 +77,10 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y), hidden, i);
 		}
 		else
+		{
+			trace('tried to draw a card, but it was null!');
 			return;
+		}
 	}
 
 	/** Queue an animation to draw x cards. **/
@@ -194,6 +198,9 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 				cardsToDraw += char.info.draw;
 		}
 
+		cardsToDraw += this.drawModifier;
+		this.drawModifier = 0;
+
 		drawCards(cardsToDraw);
 	}
 
@@ -215,7 +222,20 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			discardHand();
 	}
 
-	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>, hiddenCards:Int = 0)
+	/** create skill lists BACKWARDS, so they are easy to place bottom to top**/
+	function getSkillLists()
+	{
+		var skillLists = new Array<CombatSkillList>();
+		for (i in 0...this.chars.length)
+		{
+			var char = this.chars[this.chars.length - 1 - i];
+			var skillList = new CombatSkillList(char);
+			skillLists.push(skillList);
+		}
+		return skillLists;
+	}
+
+	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>)
 	{
 		super(x, y);
 
@@ -229,26 +249,43 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			this.hiddenCards = deck.hiddenCards;
 		}
 
-		var width = type == PLAYER ? FlxG.width : ENEMY_DECK_WIDTH;
+		var cursor = new FlxPoint(0, 0);
+		// for the enemy UI, the stuff is rendered the opposite way
+		var addToCursor = (x:Float, y:Float) ->
+		{
+			if (type == ENEMY)
+				cursor.add(-x, y);
+			else
+				cursor.add(x, y);
+		};
 
-		body = new FlxSprite(0, 0).makeGraphic(width, DECK_HEIGHT, FlxColor.fromRGB(255, 255, 255, 10));
-		drawPile = new CardPile('Draw');
-		discardPile = new CardPile('Discard');
+		// all these are centered
+		drawPile = new CardPile(DRAW, deck, hiddenCards > 0);
+		discardPile = new CardPile(DISCARD, deck, hiddenCards > 0);
 		hand = new Hand(0, 0, type);
 
-		// where everything is placed depends on if its an player or enemy decksprite.
-		if (type == PLAYER)
+		// alright, time to meticulously position everything
+		addToCursor(drawPile.width / 2, -drawPile.height / 2);
+		drawPile.setPosition(cursor.x, cursor.y);
+		addToCursor(0, discardPile.height);
+		discardPile.setPosition(cursor.x, cursor.y);
+
+		cursor.x = 0;
+		cursor.y = 0;
+		addToCursor(drawPile.width + hand.width / 2, 0);
+		hand.setPosition(cursor.x, cursor.y);
+
+		addToCursor(hand.width / 2 + 30, hand.height / 2 - 30); // 30 is approx half of avatar after scaling
+
+		// place bottom to top
+		var skillLists = getSkillLists();
+		for (skillList in skillLists)
 		{
-			drawPile.setPosition(200, Std.int(body.height / 2));
-			discardPile.setPosition(Std.int(body.width - 200), Std.int(body.height / 2));
-			hand.setPosition(Std.int(body.width / 2), Std.int(body.height / 2));
+			skillList.setPosition(cursor.x, cursor.y);
+			add(skillList);
+			addToCursor(0, -skillList.height);
 		}
-		else if (type == ENEMY)
-		{
-			drawPile.setPosition(0, Std.int(body.height / 2));
-			discardPile.setPosition(Std.int(body.width), Std.int(body.height / 2));
-			hand.setPosition(Std.int(body.width / 2), Std.int(body.height / 2));
-		}
+
 		add(drawPile);
 		add(discardPile);
 		add(hand);
@@ -256,7 +293,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (type == PLAYER)
 		{
 			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick);
-			endTurnBtn.setPosition(Std.int(body.width - 300), Std.int(body.height / 2) + 50);
+			endTurnBtn.setPosition(hand.width / 2, hand.height / 2 + 4);
 			add(endTurnBtn);
 		}
 

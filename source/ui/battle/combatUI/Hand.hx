@@ -101,11 +101,8 @@ class SkillPointDisplay extends FlxSpriteGroup
 	}
 }
 
-/**
-	A SpriteGroup representing the player's cards in hand.
-	Remember that funky stuff can happen during tweens because of
-	global vs local positioning. Tweens always want global positioning!!!
- */ @:access(ui.battle.combatUI.SkillPointDisplay)
+/** Holds the cards in the player's hand and handles animations of cards. It's centered. **/
+@:access(ui.battle.combatUI.SkillPointDisplay)
 class Hand extends FlxSpriteGroup
 {
 	public var cards(null, null):Cards;
@@ -148,7 +145,7 @@ class Hand extends FlxSpriteGroup
 	/** Get the would-be LOCAL xCoord of the card when placed in hand. Needed for the card's animation when its drawn. **/
 	function getCardXCoordInHand(i, numCards)
 	{
-		var width = CARD_WIDTH + 10; // padding
+		var width = CARD_WIDTH + 4; // padding
 		var maxCardsWithoutOverlap = Math.floor(body.width / width);
 		var xCoord;
 		if (numCards <= maxCardsWithoutOverlap)
@@ -305,6 +302,7 @@ class Hand extends FlxSpriteGroup
 	public function addCardAnimate(card:Card, drawX:Int, drawY:Int, hidden = false, i:Int)
 	{
 		add(card); // add the card to the sprite group
+
 		card.visible = false;
 		card.hidden = hidden;
 		card.setPosition(drawX, drawY);
@@ -322,8 +320,7 @@ class Hand extends FlxSpriteGroup
 			card.visible = true;
 			card.highlight.visible = false;
 			card.setPosition(drawX, drawY);
-			card.scale.x = .5;
-			card.scale.y = .5;
+			card.scale.set(.5, .5);
 			card.alpha = .5;
 		}
 
@@ -333,7 +330,7 @@ class Hand extends FlxSpriteGroup
 			"scale.x": 1,
 			"scale.y": 1,
 			alpha: 1
-		}, .1, {onStart: onStart, onComplete: onComplete});
+		}, .2, {onStart: onStart, onComplete: onComplete});
 		bam.addTweens([tween]);
 	}
 
@@ -420,7 +417,7 @@ class Hand extends FlxSpriteGroup
 			'scale.x': .5,
 			'scale.y': .5,
 			alpha: .5,
-		}, 0.1, {onComplete: onComplete});
+		}, 0.2, {onComplete: onComplete});
 
 		bam.addTweens([tween]);
 	}
@@ -488,16 +485,16 @@ class Hand extends FlxSpriteGroup
 		this.cards = [];
 		this.type = type;
 
-		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 7, CARD_HEIGHT + 10, FlxColor.TRANSPARENT);
+		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 5, CARD_HEIGHT + 8, FlxColor.fromRGB(0, 0, 0, 100));
 		ViewUtils.centerSprite(body);
 		add(body);
 
-		this.skillPointDisplay = null;
-		if (type == PLAYER) // if you're the player, give a display showing how many points your picked cards have.
-		{
-			this.skillPointDisplay = new SkillPointDisplay(Std.int(body.width / 2), Std.int(-body.height / 2));
-			add(skillPointDisplay);
-		}
+		/* this.skillPointDisplay = null;
+			if (type == PLAYER) // if you're the player, give a display showing how many points your picked cards have.
+			{
+				this.skillPointDisplay = new SkillPointDisplay(Std.int(body.width / 2), Std.int(-body.height / 2));
+				add(skillPointDisplay);
+		}*/
 
 		bam = GameController.battleAnimationManager;
 		bm = GameController.battleManager;

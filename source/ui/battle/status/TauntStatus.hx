@@ -6,13 +6,18 @@ import utils.BattleManager;
 import utils.ViewUtils;
 
 // taunts usage is defined in BattleManager's target state.
-class TauntStatus extends DecayingStatus
+class TauntStatus extends BuffStatus
 {
+	override public function onSetStacks(valBefore:Int, valAfter:Int)
+	{
+		updateTooltip('Enemies are more likely to target this character for the next $stacks turn(s).');
+	}
+
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = TAUNT;
 		name = 'Taunt';
-		var desc = 'Enemies will target this character if able. Lose 1 stack at the end of turn.';
+		var desc = 'Enemies are more likely to target this character for the next $initialStacks turn(s).';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};

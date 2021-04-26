@@ -63,9 +63,10 @@ class SkillSprite extends FlxSpriteGroup
 		if (val < 0)
 			val = 0;
 
+		currentCharges = val;
 		checkDisabled();
 
-		return currentCharges = val;
+		return currentCharges;
 	}
 
 	/** Disable this skill, greying it out and stopping all click handlers. 
@@ -156,7 +157,8 @@ class SkillSprite extends FlxSpriteGroup
 		this.priority = skill.priority;
 
 		// setup the cost indicator under the tile.
-		var costTextSprite = new FlxTextWithReplacements(80, 12, skill.getCostStringCompact());
+		var costTextOptions = {bodyWidth: 72.0, fontSize: 12};
+		var costTextSprite = new FlxTextWithReplacements(skill.getCostStringCompact(), null, null, costTextOptions);
 		costTextSprite.centerSprite(0, tile.height / 2 + 8);
 		add(costTextSprite);
 

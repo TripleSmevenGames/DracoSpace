@@ -1,4 +1,4 @@
-package models.events;
+package models.events.battleEvents;
 
 import models.player.CharacterInfo;
 import models.player.Deck;

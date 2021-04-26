@@ -29,7 +29,7 @@ class HpBarSprite extends FlxUIBar
 		else if (this.percent < 75)
 			fillColor = FlxColor.YELLOW;
 
-		this.createFilledBar(emptyColor, fillColor);
+		this.createFilledBar(emptyColor, fillColor, true);
 
 		if (this.parent != null)
 			this.text.text = '${this.value}/${this.max}';
@@ -81,7 +81,7 @@ class CharacterHpBar extends FlxSpriteGroup
 		{
 			var options = {
 				centered: true,
-				color: Colors.BACKGROUND_BLUE,
+				color: FlxColor.BLACK,
 			}
 			blockIndicator = new BattleIndicatorIcon(AssetPaths.Block__png, null, 'Block prevents damage until your next turn.', options);
 			blockIndicator.setPosition(bar.width / 2 + blockIndicator.icon.width / 2, 0);

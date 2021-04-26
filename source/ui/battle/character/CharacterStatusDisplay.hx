@@ -6,7 +6,6 @@ import ui.battle.ITurnTriggerable;
 import ui.battle.status.*;
 import ui.battle.status.Status;
 import ui.battle.status.enemyPassives.*;
-import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -15,7 +14,26 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 	var statuses:Array<Status> = [];
 	var owner:CharacterSprite;
 
-	static var map:Map<StatusType, Void->Status> = [];
+	static var map:Map<StatusType, CharacterSprite->Status> = [
+		BURN => (owner:CharacterSprite) -> new BurnStatus(owner),
+		STATIC => (owner:CharacterSprite) -> new StaticStatus(owner),
+		COLD => (owner:CharacterSprite) -> new ColdStatus(owner),
+		ATTACK => (owner:CharacterSprite) -> new AttackStatus(owner),
+		TAUNT => (owner:CharacterSprite) -> new TauntStatus(owner),
+		COUNTER => (owner:CharacterSprite) -> new CounterStatus(owner),
+		DODGE => (owner:CharacterSprite) -> new DodgeStatus(owner),
+		STUN => (owner:CharacterSprite) -> new StunStatus(owner),
+		EXHAUST => (owner:CharacterSprite) -> new ExhaustStatus(owner),
+		// EXPOSED => () -> new TauntStatus(owner),
+		LASTBREATH => (owner:CharacterSprite) -> new LastBreathPassive(owner),
+		DYINGWISH => (owner:CharacterSprite) -> new DyingWishPassive(owner),
+		CUNNING => (owner:CharacterSprite) -> new CunningPassive(owner),
+		OBSERVATION => (owner:CharacterSprite) -> new ObservationPassive(owner),
+		PETALARMOR => (owner:CharacterSprite) -> new PetalArmorPassive(owner),
+		PETALSPIKES => (owner:CharacterSprite) -> new PetalSpikesPassive(owner),
+		PLUSDRAW => (owner:CharacterSprite) -> new PlusDraw(owner),
+		MINUSDRAW => (owner:CharacterSprite) -> new MinusDraw(owner),
+	];
 
 	/** Position the status icons correctly based on how many there are. Assumes they are all added.
 		Centered on the display's 0, 0;
@@ -69,7 +87,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return;
 			}
 		}
-		var status = map.get(type)();
+		var status = map.get(type)(this.owner);
 		if (status != null)
 		{
 			status.stacks = stacks;
@@ -183,21 +201,5 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 	{
 		super(0, 0);
 		this.owner = owner;
-
-		map = [
-			BURN => () -> new BurnStatus(owner),
-			STATIC => () -> new StaticStatus(owner),
-			COLD => () -> new ColdStatus(owner),
-			ATTACK => () -> new AttackStatus(owner),
-			TAUNT => () -> new TauntStatus(owner),
-			COUNTER => () -> new CounterStatus(owner),
-			DODGE => () -> new DodgeStatus(owner),
-			STUN => () -> new StunStatus(owner),
-			EXHAUST => () -> new ExhaustStatus(owner),
-			// EXPOSED => () -> new TauntStatus(owner),
-			LASTBREATH => () -> new LastBreathPassive(owner),
-			CUNNING => () -> new CunningPassive(owner),
-			OBSERVATION => () -> new ObservationPassive(owner)
-		];
 	}
 }

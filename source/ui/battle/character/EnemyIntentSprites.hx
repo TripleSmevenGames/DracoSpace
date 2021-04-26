@@ -63,18 +63,18 @@ class EnemyIntentSprite extends FlxSpriteGroup
 			add(skillTile);
 			return;
 		}
-		var arrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
+		var arrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
 		arrow.scale3x();
 		var targetSprites = new TargetSprites(intent.targets);
 
 		// put the arrow in the middle
 		arrow.centerSprite();
 
-		// put the skillTile on the left.
-		skillTile.setPosition(-(arrow.width / 2 + skillTile.width / 2 + 4), 0);
+		// put the skillTile on the right.
+		skillTile.setPosition((arrow.width / 2 + skillTile.width / 2 + 4), 0);
 
-		// put the targets on the right.
-		targetSprites.setPosition(arrow.width / 2 + targetSprites.width / 2 + 4, 0);
+		// put the targets on the left.
+		targetSprites.setPosition(-arrow.width / 2 - targetSprites.width / 2 - 4, 0);
 
 		add(arrow);
 		add(skillTile);

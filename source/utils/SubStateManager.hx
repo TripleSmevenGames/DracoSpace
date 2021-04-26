@@ -3,8 +3,8 @@ package utils;
 import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.util.FlxColor;
-import models.events.BattleEvent;
 import models.events.GameEvent;
+import models.events.battleEvents.BattleEvent;
 import substates.BattleSubState;
 import substates.EventSubState;
 import substates.InventorySubState;
@@ -17,10 +17,10 @@ class SubStateManager
 {
 	var playState:PlayState;
 
-	var mss:MapSubState;
-	var ess:EventSubState;
-	var bss:BattleSubState;
-	var iss:InventorySubState;
+	public var mss:MapSubState;
+	public var ess:EventSubState;
+	public var bss:BattleSubState;
+	public var iss:InventorySubState;
 
 	var returnHereFromInv:FlxSubState;
 
@@ -37,7 +37,10 @@ class SubStateManager
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 				if (event != null)
+				{
+					ess.newRoot(event);
 					ess.showEvent(event);
+				}
 			}
 			playState.openSubState(ess);
 		}
@@ -100,6 +103,7 @@ class SubStateManager
 			openInventory();
 	}
 
+	/** Fade out, clean up ALL substates, open the map substate, then fade back in.**/
 	public function returnToMap()
 	{
 		var onFadeComplete = () ->

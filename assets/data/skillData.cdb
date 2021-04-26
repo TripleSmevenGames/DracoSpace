@@ -223,18 +223,21 @@
 							"value": 7
 						},
 						{
-							"id": "guard",
-							"name": "Guard",
-							"desc": "Gain $x Block.",
+							"id": "protect",
+							"name": "protect",
+							"desc": "An ally gains $x Block.",
 							"rarity": 0,
 							"costs": [
 								{
 									"CON": 1
+								},
+								{
+									"ANY": 2
 								}
 							],
-							"targetMethod": 7,
+							"targetMethod": 3,
 							"value": 6,
-							"cooldown": 2,
+							"cooldown": 1,
 							"maxCharges": 1
 						},
 						{
@@ -381,7 +384,7 @@
 							],
 							"targetMethod": 0,
 							"value": 8,
-							"flavor": "I prefer Sprite.",
+							"flavor": "Ryder prefers Sprite.",
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -404,22 +407,19 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "protect",
-							"name": "Protect",
-							"desc": "A party member gains $x Block.",
+							"id": "unyielding",
+							"name": "Unyielding",
+							"desc": "Gain $x Block. Holds 2 charges.",
 							"rarity": 1,
 							"costs": [
 								{
 									"CON": 1
-								},
-								{
-									"ANY": 2
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 7,
 							"value": 8,
-							"cooldown": 2,
-							"maxCharges": 1,
+							"cooldown": 1,
+							"maxCharges": 2,
 							"chargesPerCD": 1
 						},
 						{
@@ -657,6 +657,9 @@
 							"costs": [
 								{
 									"AGI": 1
+								},
+								{
+									"ANY": 2
 								}
 							],
 							"targetMethod": 0,
@@ -666,13 +669,16 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "dodgeRoll",
-							"name": "Dodge Roll",
-							"desc": "Gain 1 Dodge.",
-							"rarity": 0,
+							"id": "smokeBomb",
+							"name": "Smoke Bomb",
+							"desc": "Gain 1 Dodge. Draw 1 fewer cards next turn.",
+							"rarity": 1,
 							"costs": [
 								{
 									"AGI": 1
+								},
+								{
+									"ANY": 2
 								}
 							],
 							"targetMethod": 7,
@@ -681,20 +687,34 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "takeCover",
-							"name": "Take Cover",
-							"desc": "Gain $x Block and draw a card.",
+							"id": "parry",
+							"name": "Parry",
+							"desc": "Gain $x Block. Draw 1 more card next turn.",
 							"rarity": 1,
 							"costs": [
 								{
 									"CON": 1
-								},
-								{
-									"ANY": 2
 								}
 							],
 							"targetMethod": 7,
 							"value": 5,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "pawsUp",
+							"name": "Paws Up",
+							"desc": "Gain $x Block and $x2 Static.",
+							"rarity": 1,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 7,
+							"value2": 1,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -702,7 +722,7 @@
 						{
 							"id": "electricSurge",
 							"name": "Electric Surge",
-							"desc": "Deal $x damage and gain 1 Static.",
+							"desc": "Deal $x damage and gain $x2 Static.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -716,7 +736,8 @@
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 8
+							"value": 8,
+							"value2": 1
 						},
 						{
 							"id": "shockShield",
@@ -786,25 +807,6 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "charge",
-							"name": "Charge",
-							"desc": "Gain $x Static. Draw a card.",
-							"rarity": 1,
-							"costs": [
-								{
-									"AGI": 1
-								},
-								{
-									"ANY": 2
-								}
-							],
-							"targetMethod": 7,
-							"value": 3,
-							"cooldown": 1,
-							"maxCharges": 1,
-							"chargesPerCD": 1
-						},
-						{
 							"id": "blindThrow",
 							"name": "Blind Throw",
 							"desc": "Deal $x damage to a random enemy.",
@@ -841,6 +843,40 @@
 							"cooldown": 1,
 							"maxCharges": 2,
 							"chargesPerCD": 2
+						},
+						{
+							"id": "dodgeRoll",
+							"name": "Dodge Roll",
+							"desc": "Gain 1 Dodge.",
+							"rarity": 2,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 7,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "charge",
+							"name": "Charge",
+							"desc": "Gain $x Static. Draw a card.",
+							"rarity": 2,
+							"costs": [
+								{
+									"AGI": 1
+								},
+								{
+									"ANY": 2
+								}
+							],
+							"targetMethod": 7,
+							"value": 3,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						},
 						{
 							"id": "fanOfKnives",
@@ -1049,7 +1085,7 @@
 						{
 							"id": "dummy",
 							"name": "Dummy",
-							"desc": "Gain 1 block",
+							"desc": "Gain 1 block.",
 							"rarity": 0,
 							"costs": [
 								{
@@ -1074,7 +1110,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 1,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 5
@@ -1096,8 +1132,8 @@
 							"value": 4
 						},
 						{
-							"id": "bite",
-							"name": "Bite",
+							"id": "houndBite",
+							"name": "Hound Bite",
 							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
@@ -1107,6 +1143,23 @@
 							],
 							"targetMethod": 0,
 							"value": 6,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "houndRam",
+							"name": "Hound Ram",
+							"desc": "Deal $x damage and gain $x2 Block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 2,
+							"value2": 4,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1228,14 +1281,14 @@
 						{
 							"id": "giveLife",
 							"name": "Give Life",
-							"desc": "Take $x damage. Another ally gains 1 Attack.",
+							"desc": "Take $x damage. All allies gain 1 Attack.",
 							"rarity": 0,
 							"costs": [
 								{
-									"POW": 2
+									"POW": 1
 								}
 							],
-							"targetMethod": 4,
+							"targetMethod": 6,
 							"value": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -1244,7 +1297,7 @@
 						{
 							"id": "blindFire",
 							"name": "Blind Fire",
-							"desc": "Deal $x damage",
+							"desc": "Deal $x damage.",
 							"rarity": 0,
 							"costs": [
 								{
@@ -1256,6 +1309,88 @@
 							"cooldown": 1,
 							"maxCharges": 4,
 							"chargesPerCD": 4
+						},
+						{
+							"id": "hotHands",
+							"name": "Hot Hands",
+							"desc": "Deal $x damage and apply $x2 Burn.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 3,
+							"value2": 3,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "flameShield",
+							"name": "Flame Shield",
+							"desc": "Gain $x block and apply $x2 Burn to all enemies.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 2,
+							"value": 5,
+							"value2": 1,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "golemSmash",
+							"name": "Golem Smash",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 3
+								}
+							],
+							"targetMethod": 0,
+							"value": 12,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "petalShield",
+							"name": "Petal Shield",
+							"desc": "All alies gain $x block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 6,
+							"value": 9,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "petalBlade",
+							"name": "Petal Blade",
+							"desc": "Deal $x damage to all enemies.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 2,
+							"value": 5,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						}
 					]
 				},
@@ -1336,7 +1471,7 @@
 						{
 							"id": "snakeFangs",
 							"name": "snakeFangs",
-							"desc": "Deal $x damage. Then, if the target took damage, draw $x2 cards.",
+							"desc": "Deal $x damage. Then, if the target took unblocked damage, draw $x2 cards.",
 							"rarity": 0,
 							"costs": [
 								{

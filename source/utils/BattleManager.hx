@@ -189,7 +189,8 @@ class BattleManager extends FlxBasic
 
 		if (!skill.canPayWith(context.pDeck.getSkillPoints()))
 		{
-			pDeck.blinkSkillPointDisplay(); // warn the player they are short on points
+			// pDeck.blinkSkillPointDisplay(); // warn the player they are short on points
+			// play some sound instead
 			return;
 		}
 

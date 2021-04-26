@@ -17,6 +17,14 @@ import utils.ViewUtils;
 
 // if all these tooltips cause a performance issue, make this one tooltip that "teleports" around instead.
 
+typedef TooltipOptions =
+{
+	?pos:TooltipPos,
+	?width:Float,
+	?centered:Bool,
+	?fontSize:Int
+}
+
 enum TooltipPos
 {
 	TOP;
@@ -28,10 +36,26 @@ class Tooltip extends FlxSpriteGroup
 {
 	var sprite:FlxSprite;
 	var parent:FlxObject;
-	var pos:TooltipPos;
+	var name:String;
 
-	public var descText:FlxText;
+	// these two dont exist if we put in a group directly
+	public var descText:Null<FlxTextWithReplacements>;
 	public var body:FlxSprite;
+	public var options:TooltipOptions;
+
+	static function getDefaultOptions(options:TooltipOptions)
+	{
+		if (options.pos == null)
+			options.pos = TOP;
+		if (options.width == null)
+			options.width = 200;
+		if (options.centered == null)
+			options.centered = false;
+		if (options.fontSize == null)
+			options.fontSize = UIMeasurements.BATTLE_UI_FONT_SIZE_MED;
+
+		return options;
+	}
 
 	// functions below are very dirty.
 	// If we are creating the tooltip with genericTooltip, its not centered so we have to center it onHover.
@@ -51,12 +75,12 @@ class Tooltip extends FlxSpriteGroup
 
 	function putAboveParent()
 	{
-		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y - this.height / 2 - parent.height / 2 - 8);
+		this.setPosition(parent.x, parent.y - this.height / 2 - parent.height / 2 - 8);
 	}
 
 	function putBelowParent()
 	{
-		this.setPosition(parent.getMidpoint().x, parent.getMidpoint().y + this.height / 2 + parent.height / 2 + 8);
+		this.setPosition(parent.x, parent.y + this.height / 2 + parent.height / 2 + 8);
 	}
 
 	/** Uses the mouseEventManager to set mouse in/out callbacks on the parent. Assumes you added the parent to the manager already. **/
@@ -65,10 +89,13 @@ class Tooltip extends FlxSpriteGroup
 		this.parent = parent;
 		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
 		{
-			if (pos == TOP)
+			if (options.pos == TOP)
 				centerAboveParent();
-			else if (pos == BOTTOM)
+			else if (options.pos == BOTTOM)
 				centerBelowParent();
+			else
+				trace('buggah, options.POS was nothing');
+
 			this.visible = true;
 		});
 		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
@@ -79,7 +106,7 @@ class Tooltip extends FlxSpriteGroup
 		this.parent = skillSprite.tile;
 		var over = (_) ->
 		{
-			if (pos == TOP)
+			if (options.pos == TOP)
 			{
 				var canFit = parent.y > this.height + 16; // padding;
 				if (canFit)
@@ -87,7 +114,7 @@ class Tooltip extends FlxSpriteGroup
 				else
 					putBelowParent();
 			}
-			else if (pos == BOTTOM)
+			else if (options.pos == BOTTOM)
 			{
 				var canFit = FlxG.height - parent.y > this.height + 16;
 				if (canFit)
@@ -95,6 +122,9 @@ class Tooltip extends FlxSpriteGroup
 				else
 					putAboveParent();
 			}
+			else
+				trace('buggah, options.pos was nothing');
+
 			this.visible = true;
 		};
 		var out = (_) -> this.visible = false;
@@ -104,46 +134,51 @@ class Tooltip extends FlxSpriteGroup
 	/** Don't change the desc so much that we'd have to recalculate the body's height. I dont want to do that. **/
 	public function updateDesc(val:String)
 	{
-		descText.text = val;
+		if (descText != null)
+			descText.processAndPlaceInput(val);
+		else
+			trace('tried to update a descText, but it was null!');
 	}
 
 	/** default width is 200. **/
-	public static function genericTooltip(name:Null<String>, desc:Null<String>, pos:TooltipPos = TOP, ?width = 200)
+	public static function genericTooltip(name:Null<String>, desc:Null<String>, options:TooltipOptions)
 	{
 		var group = new FlxSpriteGroup();
-		var fontSize = UIMeasurements.BATTLE_UI_FONT_SIZE_MED;
+		options = getDefaultOptions(options);
 		var spaceBetweenNameAndDesc = 12;
 		var paddingVertical = 6;
-		var paddingSide = 4;
+		var paddingSide = 6;
 		var font = Fonts.STANDARD_FONT;
 
 		var body = new FlxSprite(0, 0);
 		var bodyHeight:Float = 0;
 		group.add(body);
 
-		var descText = new FlxText();
+		var descText = null;
 		if (name != null)
 		{
-			var nameText = new FlxText(paddingSide, paddingVertical, width, name);
+			var nameText = new FlxText(paddingSide, paddingVertical, options.width, name);
 
-			nameText.setFormat(font, UIMeasurements.BATTLE_UI_FONT_SIZE_MED, FlxColor.WHITE, 'center');
+			nameText.setFormat(font, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, 'center');
 			bodyHeight += nameText.height;
 			group.add(nameText);
 		}
 		if (desc != null)
 		{
-			descText = new FlxText(paddingSide, bodyHeight + spaceBetweenNameAndDesc, width, desc);
+			// descText = new FlxText(paddingSide, bodyHeight + spaceBetweenNameAndDesc, width, desc);
+			var options = {bodyWidth: options.width, centered: options.centered, fontSize: options.fontSize};
+			descText = new FlxTextWithReplacements(desc, null, null, options);
+			descText.setPosition(paddingSide, bodyHeight + spaceBetweenNameAndDesc);
 
-			descText.setFormat(font, fontSize);
 			bodyHeight += descText.height + spaceBetweenNameAndDesc;
 			group.add(descText);
 		}
 		// adjust the body based on the height its content
-		body.makeGraphic(width + paddingSide * 2, Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
+		body.makeGraphic(Std.int(options.width + paddingSide * 2), Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
 		// then make it slightly see-through
 		body.alpha = .5;
 
-		var tooltip = new Tooltip(group);
+		var tooltip = new Tooltip(group, options);
 		tooltip.body = body;
 		tooltip.descText = descText;
 		return tooltip;
@@ -152,16 +187,16 @@ class Tooltip extends FlxSpriteGroup
 	public static function skillTooltip(skill:Skill)
 	{
 		var sprite = new SkillCard(skill);
-		return new Tooltip(sprite);
+		return new Tooltip(sprite, {});
 	}
 
 	/* Creates tooltip from a sprite. The sprite probably should be a group that's centered. */
-	public function new(sprite:FlxSprite, pos:TooltipPos = TOP)
+	public function new(sprite:FlxSprite, options:TooltipOptions)
 	{
 		super();
 		this.sprite = sprite;
 		add(sprite);
-		this.pos = pos;
+		this.options = getDefaultOptions(options);
 		this.visible = false;
 	}
 }

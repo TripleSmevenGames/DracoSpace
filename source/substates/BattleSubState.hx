@@ -9,8 +9,8 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
-import models.events.BattleEvent;
 import models.events.GameEvent.GameEventType;
+import models.events.battleEvents.BattleEvent;
 import models.player.Deck;
 import models.player.Player;
 import ui.TooltipLayer;
@@ -23,7 +23,10 @@ import utils.BattleAnimationManager;
 import utils.BattleManager;
 import utils.GameController;
 import utils.SubStateManager;
+import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+
+using utils.ViewUtils;
 
 class BattleView extends FlxSpriteGroup
 {
@@ -41,50 +44,61 @@ class BattleView extends FlxSpriteGroup
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
 
-	final PLAYER_X = FlxG.width * (1 / 5);
-	final ENEMY_X = FlxG.width * (4 / 5);
+	final PLAYER_X = FlxG.width * (1 / 4);
+	final ENEMY_X = FlxG.width * (3 / 4);
 
 	var wait:Bool;
 
 	public function initBattle(event:BattleEvent)
 	{
-		var background = new FlxSprite();
-		background.loadGraphic(AssetPaths.battlebg_mistywoods__png);
-		background.setGraphicSize(FlxG.width, FlxG.height);
-		background.updateHitbox();
+		// add background in the middle. This way the bg will still fit different resolutions.
+		var background = new FlxSprite(0, 0, AssetPaths.forestBackgroundDay__png);
+		background.scale3x();
+		background.centerSprite(FlxG.width / 2, FlxG.height / 2);
 		add(background);
 
+		// create the characters and the deck, but only add the deck first.
 		playerChars = [];
 		for (charInfo in Player.chars)
 			playerChars.push(new CharacterSprite(charInfo));
 
-		var cursor:Float = 0;
-		for (i in 0...playerChars.length)
-		{
-			var char = playerChars[i];
-			char.setPosition(PLAYER_X, FlxG.height / 3 + cursor);
-			add(char);
-			cursor += char.height + 24;
-		}
+		playerDeckSprite = new DeckSprite(50, FlxG.height - 120, Player.deck, PLAYER, playerChars);
+		add(playerDeckSprite);
 
 		enemyChars = [];
 		for (charInfo in event.enemies)
 			enemyChars.push(new CharacterSprite(charInfo));
 
-		cursor = 0;
+		enemyDeckSprite = new DeckSprite(FlxG.width - 50, FlxG.height - 120, event.eDeck, ENEMY, enemyChars);
+		add(enemyDeckSprite);
+
+		// the y "0" of where to start rendering characters from.
+		var middleY = (FlxG.height / 2) - 32;
+
+		// render the player chars
+		for (i in 0...playerChars.length)
+		{
+			var char = playerChars[i];
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.width + 16);
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.height / 2);
+			char.setPosition(PLAYER_X + xPos, middleY - yPos);
+			add(char);
+		}
+
+		// render the enemy chars
 		for (i in 0...enemyChars.length)
 		{
 			var char = enemyChars[i];
-			char.setPosition(ENEMY_X, FlxG.height / 3 + cursor);
+			// var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.height);
+			// char.setPosition(ENEMY_X, middleY + yPos);
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.width + 12);
+			char.setPosition(ENEMY_X + xPos, middleY);
 			add(char);
-			cursor += char.height + 24;
+
+			#if godmode
+			char.currHp = 1;
+			#end
 		}
-
-		playerDeckSprite = new DeckSprite(0, FlxG.height - 200, Player.deck, PLAYER, playerChars);
-		add(playerDeckSprite);
-
-		enemyDeckSprite = new DeckSprite(Std.int(FlxG.width / 2), 10, event.eDeck, ENEMY, enemyChars);
-		add(enemyDeckSprite);
 
 		winScreen = new WinScreen();
 		add(winScreen);
@@ -119,15 +133,6 @@ class BattleView extends FlxSpriteGroup
 
 		ssm = GameController.subStateManager;
 		tooltipLayer = GameController.battleTooltipLayer;
-
-		#if debug
-		exitButton = new FlxSprite(0, 0);
-		exitButton.makeGraphic(10, 10, FlxColor.RED);
-		add(exitButton);
-		exitButton.scrollFactor.set(0, 0);
-		FlxMouseEventManager.add(exitButton, null, null, null, null, false);
-		FlxMouseEventManager.setMouseClickCallback(exitButton, (_) -> exitBattle());
-		#end
 	}
 
 	override function update(elapsed:Float)
@@ -181,36 +186,32 @@ class BattleSubState extends FlxSubState
 	{
 		super.create();
 
-		// do only once when you first switch to the battle state (that's when create() is called);
-		if (view == null)
-		{
-			view = new BattleView();
-			view.scrollFactor.set(0, 0);
-			add(view);
+		view = new BattleView();
+		view.scrollFactor.set(0, 0);
+		add(view);
 
-			this.bm = GameController.battleManager;
-			this.bam = GameController.battleAnimationManager;
+		this.bm = GameController.battleManager;
+		this.bam = GameController.battleAnimationManager;
 
-			add(bam);
-			bam.kill();
-			add(bm);
-			bm.kill();
+		add(bam);
+		bam.kill();
+		add(bm);
+		bm.kill();
 
-			// set up the physics for the damager numbers and other physics based sprites.
-			// refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape
-			FlxNapeSpace.init();
-			FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
+		// set up the physics for the damager numbers and other physics based sprites.
+		// refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape
+		FlxNapeSpace.init();
+		FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
 
-			// layer to draw the sprite animations
-			add(GameController.battleSpriteAnimsLayer);
+		// layer to draw the sprite animations
+		add(GameController.battleSpriteAnimsLayer);
 
-			// layer to draw the damage numbers, which are shot out of characters when they get damaged.
-			add(GameController.battleDamageNumbers);
+		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
+		add(GameController.battleDamageNumbers);
 
-			// create the tooltip layer, which is where all tooltips will be added to.
-			// this lets them be rendered on top of the battle view.
-			add(GameController.battleTooltipLayer);
-		}
+		// create the tooltip layer, which is where all tooltips will be added to.
+		// this lets them be rendered on top of the battle view.
+		add(GameController.battleTooltipLayer);
 	}
 
 	override public function destroy()

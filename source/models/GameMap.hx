@@ -5,6 +5,8 @@ import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import haxe.Exception;
 import models.events.*;
+import models.events.GameEvent.GameEventType;
+import models.events.battleEvents.*;
 import utils.GameController;
 import utils.GameUtils;
 
@@ -15,12 +17,12 @@ class Node
 {
 	public var id:Int;
 	public var connectedNodesId:Array<Int> = new Array<Int>();
-	public var event:GameEvent;
+	public var eventType:GameEventType;
 
-	public function new(id:Int, ?event:GameEvent)
+	public function new(id:Int, ?eventType:GameEventType)
 	{
 		this.id = id;
-		this.event = event;
+		this.eventType = eventType;
 	}
 }
 
@@ -32,20 +34,6 @@ class GameMap
 
 	// reference to the global RNG
 	var random:FlxRandom;
-
-	public function print()
-	{
-		for (i in 0...columns.length)
-		{
-			var traceVal:String = '';
-			var column = columns[i];
-			for (i in 0...column.length)
-			{
-				traceVal += 'id:${column[i].id} name:${column[i].event.name}, ';
-			}
-			trace(traceVal);
-		}
-	}
 
 	function numNodesWeightedPick()
 	{
@@ -61,48 +49,39 @@ class GameMap
 		return GameUtils.weightedPick(items, weights);
 	}
 
-	function createEventPool(length:Int)
+	/** Create a pool of GameEvents to fill in the map with. **/
+	function createEventTypePool(length:Int)
 	{
-		var eventPool = new Array<GameEvent>();
-		// add the guaranteed events in first
+		var eventTypePool = new Array<GameEventType>();
+		// add the guaranteed events in first, the battles and the choice events.
 		for (i in 0...MapGenConsts.MIN_BATTLES)
 		{
-			if (eventPool.length < length)
-				eventPool.push(BattleEventFactory.dogs());
+			if (eventTypePool.length < length)
+				eventTypePool.push(BATTLE);
 		}
 		for (i in 0...MapGenConsts.MIN_CHOICES)
 		{
-			if (eventPool.length < length)
-				eventPool.push(ChoiceEvent.sample());
+			if (eventTypePool.length < length)
+				eventTypePool.push(CHOICE);
 		}
 
 		// now add the variable events to the pool, based on their weight;
-		while (eventPool.length < length)
+		while (eventTypePool.length < length)
 		{
 			var event:GameEvent;
 			var type = nodeTypeWeightedPick();
-			switch (type)
-			{
-				case 'BATTLE':
-					event = BattleEventFactory.dogs();
-				case 'TREASURE':
-					event = TreasureEvent.sample();
-				case 'CHOICE':
-					event = ChoiceEvent.sample();
-				case 'REST':
-					event = RestEvent.sample();
-				default:
-					event = new NoneEvent();
-			}
-			eventPool.push(event);
+			eventTypePool.push(type);
 		}
-		if (eventPool.length != length)
+		if (eventTypePool.length != length)
 		{
-			throw new Exception('bad eventPool length. eventPool:${eventPool.length}, input length: ${length}');
+			throw new Exception('bad eventTypePool length. eventTypePool:${eventTypePool.length}, input length: ${length}');
 		}
-		return eventPool;
+		return eventTypePool;
 	}
 
+	/** Fill the map with some pre determined events like treasures and Elites.
+	 * Then, fill the rest of the nodes with variable events. 
+	**/
 	function fillVariableNodes(variableNodes:Array<Node>)
 	{
 		var nodeInd:Int = 0;
@@ -110,14 +89,14 @@ class GameMap
 		for (i in 0...MapGenConsts.TREASURES_IN_FIRST_HALF)
 		{
 			var nodeInd = random.int(0, Math.round(variableNodes.length / 2) - 1);
-			variableNodes[nodeInd].event = TreasureEvent.sample();
+			variableNodes[nodeInd].eventType = TREASURE;
 			variableNodes.splice(nodeInd, 1);
 		}
 		// add a treasure somewhere in the second half.
 		for (i in 0...MapGenConsts.TREASURES_IN_SECOND_HALF)
 		{
 			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-			variableNodes[nodeInd].event = TreasureEvent.sample();
+			variableNodes[nodeInd].eventType = TREASURE;
 			variableNodes.splice(nodeInd, 1);
 		}
 
@@ -125,27 +104,27 @@ class GameMap
 		for (i in 0...MapGenConsts.ELITES_IN_SECOND_HALF)
 		{
 			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
-			variableNodes[nodeInd].event = BattleEventFactory.drones();
+			variableNodes[nodeInd].eventType = ELITE;
 			variableNodes.splice(nodeInd, 1);
 		}
 
 		// now, create a pool of events to be assigned to the rest nodes
-		var eventPool = createEventPool(variableNodes.length);
+		var eventTypePool = createEventTypePool(variableNodes.length);
 
 		// for each of these nodes, assign a random event from the pool to it and remove the event from the pool
 		for (i in 0...variableNodes.length)
 		{
-			var eventInd = random.int(0, eventPool.length - 1);
-			variableNodes[i].event = eventPool[eventInd];
-			eventPool.splice(eventInd, 1);
+			var eventInd = random.int(0, eventTypePool.length - 1);
+			variableNodes[i].eventType = eventTypePool[eventInd];
+			eventTypePool.splice(eventInd, 1);
 		}
-		if (eventPool.length != 0)
+		if (eventTypePool.length != 0)
 		{
-			throw new Exception(' event pool not empty after assignment:${eventPool.length}
-				');
+			throw new Exception('event pool not empty after assignment:${eventTypePool.length}');
 		}
 	}
 
+	/** Create connections for each node to some nodes in the next column. Make sure every node is accessible somehow. **/
 	function connectNodes()
 	{
 		for (i in 0...columns.length - 1)
@@ -232,13 +211,13 @@ class GameMap
 			// create the initial "home" node in first column
 			if (i == 0)
 			{
-				var node = new Node(0, new HomeEvent('Home'));
+				var node = new Node(0, HOME);
 				column.push(node);
 			}
 			// create the boss node in the last column
 			else if (i == numColumns - 1)
 			{
-				var node = new Node(++idCounter, BossEventFactory.rattle());
+				var node = new Node(++idCounter, BOSS);
 				column.push(node);
 			}
 			// for all the nodes in between, create empty ones to be filled in later.
@@ -249,10 +228,10 @@ class GameMap
 				for (j in 0...nodesInColumn)
 				{
 					var node = new Node(++idCounter);
-					// if we're at the halfway point, make them rest nodes.
+					// if we're at the halfway point, make them Camp nodes.
 					if (i == Math.round(numColumns / 2))
 					{
-						node.event = RestEvent.sample();
+						node.eventType = CAMP;
 					}
 					else
 					{
@@ -265,6 +244,7 @@ class GameMap
 			// finally, add this column to the map
 			this.columns.push(column);
 		}
+		// now that we've filled in the fixed nodes with their events, let's fill in the rest of them.
 		fillVariableNodes(variableNodes);
 		connectNodes();
 	}

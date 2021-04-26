@@ -31,10 +31,8 @@ class Player
 	public static function init()
 	{
 		chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
-		deck = Deck.sample();
+		deck = Deck.ryderKiwiDeck();
 		inventory = new Inventory();
-		gainSkill(SkillFactory.ryderSkillsRare.get(revenge)());
-		gainSkill(SkillFactory.kiwiSkillsRare.get(fullyPrepared)());
 
 		money = 0;
 		exp = 0;

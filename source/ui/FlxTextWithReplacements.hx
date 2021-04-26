@@ -9,11 +9,32 @@ import models.skills.Skill.SkillPointType;
 import ui.battle.status.Status.StatusType;
 import utils.ViewUtils;
 
+typedef FlxTextWithReplacementsOptions =
+{
+	?bodyWidth:Float,
+	?fontSize:Int,
+	?border:Bool,
+	?centered:Bool,
+}
+
 class FlxTextWithReplacements extends FlxSpriteGroup
 {
-	var fontSize:Int;
 	var xReplacement:Null<String> = null;
 	var x2Replacement:Null<String> = null;
+	var options:FlxTextWithReplacementsOptions;
+
+	function getDefaults(options:FlxTextWithReplacementsOptions)
+	{
+		if (options.bodyWidth == null)
+			options.bodyWidth = 200;
+		if (options.fontSize == null)
+			options.fontSize = 16;
+		if (options.border == null)
+			options.border = false;
+		if (options.centered == null)
+			options.centered = false;
+		return options;
+	}
 
 	// turn the word into flxText or sprite depending on what it is.
 	function processWord(word:String, fontSize:Int = 16, border:Bool = false):FlxSprite
@@ -58,24 +79,26 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		return textSprite;
 	}
 
-	/** Create a sprite group from string, which will replace certain things with custom sprites. NOT CENTERED. **/
-	public function new(width:Float = 100, fontSize:Int = 16, input:String, ?xReplacement:String, ?x2Replacement:String, ?border:Bool = false)
+	/** Takes an input string, processes it, add add()'s the sprites in. **/
+	public function processAndPlaceInput(input:String)
 	{
-		super();
-		this.fontSize = fontSize;
-		this.xReplacement = xReplacement;
-		this.x2Replacement = x2Replacement;
-
+		forEach((sprite:FlxSprite) -> remove(sprite));
 		var text = input.split(' ');
 		var cursor = new FlxPoint();
-		var lineheight = fontSize * 1.2;
+		var lineheight = options.fontSize * 1.2;
 
 		for (word in text)
 		{
 			// turn the word into its correct replacement if needed.
-			var spriteToPlace = processWord(word, fontSize, border);
+			if (word == '\n')
+			{
+				cursor.x = 0;
+				cursor.y += lineheight;
+				continue;
+			}
+			var spriteToPlace = processWord(word, options.fontSize, options.border);
 			// then, check if this sprite can fit at the current cursor (not centered).
-			var canFit = cursor.x + spriteToPlace.width < width;
+			var canFit = cursor.x + spriteToPlace.width < options.bodyWidth;
 			if (!canFit)
 			{
 				cursor.x = 0;
@@ -86,5 +109,28 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 
 			cursor.x += spriteToPlace.width + 2;
 		}
+		if (options.centered)
+			centerText();
+	}
+
+	/** Doesnt center align the text, just shifts all of it over**/
+	function centerText()
+	{
+		var shiftAmount = (options.bodyWidth - this.width) / 2;
+		forEach((sprite:FlxSprite) ->
+		{
+			sprite.x += shiftAmount;
+		});
+	}
+
+	/** Create a sprite group from string, which will replace certain things with custom sprites. NOT CENTERED. **/
+	public function new(input:String, ?xReplacement:String, ?x2Replacement:String, options:FlxTextWithReplacementsOptions)
+	{
+		super();
+		this.options = getDefaults(options);
+		this.xReplacement = xReplacement;
+		this.x2Replacement = x2Replacement;
+
+		processAndPlaceInput(input);
 	}
 }

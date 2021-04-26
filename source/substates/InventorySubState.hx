@@ -63,7 +63,7 @@ class InventorySubState extends FlxSubState
 		var options:BattleIndicatorIconOptions = {
 			width: 400,
 			display: false,
-			place: 'inv'
+			place: INV,
 		};
 
 		var infoTextIcon = new BattleIndicatorIcon(AssetPaths.info__png, 'Skill Equipment Menu', infoText, options);

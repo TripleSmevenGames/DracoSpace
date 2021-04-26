@@ -5,14 +5,19 @@ import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
 
-// Dodge usage is defined in CharacterSPrite's takeDamage.
-class DodgeStatus extends DecayingStatus
+// Dodge usage is defined in CharacterSprite's takeDamage.
+class DodgeStatus extends BuffStatus
 {
+	override public function onSetStacks(valBefore:Int, valAfter:Int)
+	{
+		updateTooltip('Completely evade the next $valAfter attack(s). Lose 1 stack per turn.');
+	}
+
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = DODGE;
 		name = 'Dodge';
-		var desc = 'When this character would take damage, instead dodge it and lose 1 stack. Lose 1 stack at the end of turn.';
+		var desc = 'Completely evade the next $initialStacks attack(s). Lose 1 stack per turn.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
