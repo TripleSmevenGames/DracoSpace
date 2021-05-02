@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSubState;
 import flixel.util.FlxColor;
 import models.events.GameEvent;
+import models.events.HomeEvent;
 import models.events.battleEvents.BattleEvent;
 import substates.BattleSubState;
 import substates.EventSubState;
@@ -122,10 +123,15 @@ class SubStateManager
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
+	/** Call this to return to this map tile's event after the tutorial, instead of going back to the map. **/
+	public function returnToHome()
+	{
+		initEvent(new HomeEvent());
+	}
+
 	// paranoid function to free up memory. Might be un-needed.
 	public function destroyAll()
 	{
-		trace('destroyAll in ssm was called');
 		mss.destroy();
 		ess.destroy();
 		bss.destroy();

@@ -20,7 +20,8 @@ class HomeEvent extends GameEvent
 	public function new()
 	{
 		var name = 'Base';
-		var desc = 'You have your mission. Take some time to prepare.';
+		var desc = 'Your mission is to figure out what is causing the disturbance in the forest. The monsters are hostile, '
+			+ 'and ancient machines from the ruins are activating. Take some time to prepare.';
 		var choices:Array<Choice> = [getTrainingDummyChoice(), Choice.getLeave()];
 		super(name, desc, HOME, choices);
 	}

@@ -13,14 +13,18 @@ import models.events.GameEvent.GameEventType;
 import models.events.battleEvents.BattleEvent;
 import models.player.Deck;
 import models.player.Player;
+import models.skills.SkillAnimations;
 import ui.TooltipLayer;
 import ui.battle.DamageNumbers;
 import ui.battle.LoseScreen;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.win.WinScreen;
+import ui.debug.BAMIndicator;
+import ui.debug.BMIndicator;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
+import utils.BattleSoundManager;
 import utils.GameController;
 import utils.SubStateManager;
 import utils.ViewUtils;
@@ -32,7 +36,6 @@ class BattleView extends FlxSpriteGroup
 {
 	// reference to global sub state manager
 	var ssm:SubStateManager;
-	var tooltipLayer:TooltipLayer;
 
 	var exitButton:FlxSprite;
 
@@ -79,7 +82,7 @@ class BattleView extends FlxSpriteGroup
 		for (i in 0...playerChars.length)
 		{
 			var char = playerChars[i];
-			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.width + 16);
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.width + 20);
 			var yPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.height / 2);
 			char.setPosition(PLAYER_X + xPos, middleY - yPos);
 			add(char);
@@ -89,10 +92,9 @@ class BattleView extends FlxSpriteGroup
 		for (i in 0...enemyChars.length)
 		{
 			var char = enemyChars[i];
-			// var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.height);
-			// char.setPosition(ENEMY_X, middleY + yPos);
-			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.width + 12);
-			char.setPosition(ENEMY_X + xPos, middleY);
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.width + 20);
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.height / 2);
+			char.setPosition(ENEMY_X - xPos, middleY - yPos);
 			add(char);
 
 			#if godmode
@@ -106,7 +108,12 @@ class BattleView extends FlxSpriteGroup
 		loseScreen = new LoseScreen(() -> FlxG.switchState(new MenuState()));
 		add(loseScreen);
 
-		add(tooltipLayer);
+		#if debug
+		add(new BAMIndicator(GameController.battleAnimationManager));
+		var bmind = new BMIndicator(GameController.battleManager);
+		bmind.setPosition(0, 50);
+		add(bmind);
+		#end
 	}
 
 	public function exitBattle()
@@ -114,30 +121,11 @@ class BattleView extends FlxSpriteGroup
 		ssm.returnToMap();
 	}
 
-	public function cleanup()
-	{
-		tooltipLayer.cleanupTooltips();
-		this.forEach((sprite:FlxSprite) ->
-		{
-			if (sprite != tooltipLayer)
-			{
-				remove(sprite);
-				sprite.destroy(); // possibly un needed
-			}
-		});
-	}
-
 	public function new()
 	{
 		super();
 
 		ssm = GameController.subStateManager;
-		tooltipLayer = GameController.battleTooltipLayer;
-	}
-
-	override function update(elapsed:Float)
-	{
-		super.update(elapsed);
 	}
 }
 
@@ -151,10 +139,18 @@ class BattleSubState extends FlxSubState
 	var view:BattleView;
 	var bm:BattleManager;
 	var bam:BattleAnimationManager;
+	var bsm:BattleSoundManager;
 
 	public function initBattle(event:BattleEvent)
 	{
+		cleanup();
+		view = new BattleView();
+		view.scrollFactor.set(0, 0);
+		add(view);
 		view.initBattle(event);
+
+		setupBattleLayers();
+		setupSoundManager();
 
 		bam.reset();
 		var context = new BattleContext(view.playerDeckSprite, view.enemyDeckSprite, view.playerChars, view.enemyChars);
@@ -164,12 +160,31 @@ class BattleSubState extends FlxSubState
 	public function cleanup()
 	{
 		if (view != null)
-			view.cleanup();
+		{
+			remove(view);
+			view.destroy();
+			view = null;
+		}
+
+		if (bsm != null)
+		{
+			remove(bsm);
+			bsm.destroy();
+			bsm = null;
+		}
+
 		if (bam != null && bm != null)
 		{
 			bam.kill();
 			bm.kill();
 		}
+
+		remove(GameController.battleTooltipLayer);
+		GameController.battleTooltipLayer.kill();
+		remove(GameController.battleSpriteAnimsLayer);
+		GameController.battleSpriteAnimsLayer.kill();
+		remove(GameController.battleDamageNumbers);
+		GameController.battleDamageNumbers.kill();
 	}
 
 	public function showWinScreen(expReward:Int, moneyReward:Int, battleType:GameEventType)
@@ -180,6 +195,29 @@ class BattleSubState extends FlxSubState
 	public function showLoseScreen()
 	{
 		view.loseScreen.play();
+	}
+
+	function setupBattleLayers()
+	{
+		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
+		GameController.battleDamageNumbers.revive();
+		add(GameController.battleDamageNumbers);
+
+		// create the tooltip layer, which is where all tooltips will be added to.
+		// this lets them be rendered on top of the battle view.
+		GameController.battleTooltipLayer.revive();
+		add(GameController.battleTooltipLayer);
+
+		// layer to draw the sprite animations
+		GameController.battleSpriteAnimsLayer.revive();
+		add(GameController.battleSpriteAnimsLayer);
+	}
+
+	function setupSoundManager()
+	{
+		this.bsm = new BattleSoundManager();
+		GameController.battleSoundManager = bsm;
+		add(bsm);
 	}
 
 	override public function create()
@@ -203,21 +241,6 @@ class BattleSubState extends FlxSubState
 		FlxNapeSpace.init();
 		FlxNapeSpace.space.gravity.setxy(0, GRAVITY_Y);
 
-		// layer to draw the sprite animations
-		add(GameController.battleSpriteAnimsLayer);
-
-		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
-		add(GameController.battleDamageNumbers);
-
-		// create the tooltip layer, which is where all tooltips will be added to.
-		// this lets them be rendered on top of the battle view.
-		add(GameController.battleTooltipLayer);
-	}
-
-	override public function destroy()
-	{
-		super.destroy();
-		if (view != null)
-			this.view.destroy();
+		setupBattleLayers();
 	}
 }

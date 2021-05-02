@@ -23,7 +23,7 @@ class SkillFactoryRattle
 	static var skillFromData = SkillFactory.skillFromData;
 	static var gazeAnimSprite:FlxSprite;
 
-	// the sprite sheet for rattle's gaze attack is pretty big
+	// the sprite sheet for rattle's gaze attack is a pretty big file.
 	// so lets save it here
 	public static function init()
 	{

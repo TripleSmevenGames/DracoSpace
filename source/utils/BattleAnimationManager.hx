@@ -36,9 +36,9 @@ class BattleAnimationGroup
 	// Assumes you are referring to the first flxAnimation in the array.
 	public var effect:Void->Void;
 	public var effectFrame:Int = 0;
+	public var state:BattleAnimationGroupState = WAITING;
 
 	var effectPlayed:Bool = false;
-	var state:BattleAnimationGroupState = WAITING;
 
 	/** Fire off all the animations and tweens**/
 	public function play()

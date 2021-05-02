@@ -9,12 +9,15 @@ import models.skills.Skill.SkillPointType;
 import ui.battle.status.Status.StatusType;
 import utils.ViewUtils;
 
+using StringTools;
+
 typedef FlxTextWithReplacementsOptions =
 {
 	?bodyWidth:Float,
 	?fontSize:Int,
 	?border:Bool,
 	?centered:Bool,
+	?lineHeightMultiplier:Float,
 }
 
 class FlxTextWithReplacements extends FlxSpriteGroup
@@ -33,12 +36,25 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 			options.border = false;
 		if (options.centered == null)
 			options.centered = false;
+		if (options.lineHeightMultiplier == null)
+			options.lineHeightMultiplier = 1.2;
 		return options;
 	}
 
 	// turn the word into flxText or sprite depending on what it is.
 	function processWord(word:String, fontSize:Int = 16, border:Bool = false):FlxSprite
 	{
+		// ending punctuation like commas or periods mess things up. So lets first take it out, then add it back at the end.
+		var punctuation = null;
+		if (word.endsWith('.'))
+			punctuation = '.';
+		else if (word.endsWith(','))
+			punctuation = ',';
+
+		if (punctuation != null)
+			word = word.substring(0, word.length - 1);
+
+		// if the word is one of our skill types, return that skills type's icon.
 		if (word == 'POW' || word == 'AGI' || word == 'CON' || word == 'KNO' || word == 'WIS' || word == 'ANY')
 		{
 			var sprite = ViewUtils.getIconForType(SkillPointType.createByName(word));
@@ -71,6 +87,10 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		else
 			textSprite.text = word;
 
+		// add back the punctuation
+		if (punctuation != null)
+			textSprite.text += punctuation;
+
 		if (border)
 		{
 			textSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE);
@@ -85,7 +105,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 		forEach((sprite:FlxSprite) -> remove(sprite));
 		var text = input.split(' ');
 		var cursor = new FlxPoint();
-		var lineheight = options.fontSize * 1.2;
+		var lineheight = options.fontSize * options.lineHeightMultiplier;
 
 		for (word in text)
 		{

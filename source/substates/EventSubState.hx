@@ -32,6 +32,7 @@ class EventView extends FlxSpriteGroup
 	var descSprite:FlxText;
 	var windowSprite:FlxUI9SliceSprite;
 	var buttonsGroup:FlxSpriteGroup;
+	var header:Header;
 
 	public var event:GameEvent;
 
@@ -88,6 +89,9 @@ class EventView extends FlxSpriteGroup
 		buttonsGroup.setPosition(0, yPos);
 		buttonsGroup.centerX(FlxG.width / 2);
 		add(buttonsGroup);
+
+		// update the header
+		header.refresh();
 	}
 
 	public function new()
@@ -100,7 +104,7 @@ class EventView extends FlxSpriteGroup
 		var background = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, backgroundGradient, 8);
 		add(background);
 
-		var header = new Header();
+		this.header = new Header();
 		add(header);
 
 		var windowWidth = FlxG.width * (3 / 5);
@@ -112,7 +116,7 @@ class EventView extends FlxSpriteGroup
 		titleSprite.setFormat(Fonts.STANDARD_FONT, TITLE_FONT_SIZE);
 		add(titleSprite);
 
-		descSprite = new FlxText(0, 0, windowWidth - 8, 'this is a sample desc. You should not see this in a real game');
+		descSprite = new FlxText(0, 0, windowWidth * (3 / 4), 'this is a sample desc. You should not see this in a real game');
 		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE, null, 'center');
 		add(descSprite);
 	}
@@ -177,12 +181,5 @@ class EventSubState extends FlxSubState
 		this.view = new EventView();
 		this.view.scrollFactor.set(0, 0);
 		add(view);
-	}
-
-	override public function destroy()
-	{
-		super.destroy();
-		if (view != null)
-			this.view.destroy(); // possibly unneeded
 	}
 }

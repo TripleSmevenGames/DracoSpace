@@ -7,6 +7,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.CharacterInfo;
+import ui.battle.character.CharacterSprite;
 import ui.battle.win.SkillCard;
 import ui.inventory.SkillCardBlank;
 import ui.inventory.SkillCardLocked;
@@ -26,13 +27,13 @@ class CharacterProfile2 extends FlxSpriteGroup
 		this.char = char;
 
 		var background = new FlxSprite();
-		background.makeGraphic(64 * 3, 80 * 3, FlxColor.fromRGB(0, 0, 0, 128));
+		background.makeGraphic(64 * 3, 80 * 3, FlxColor.fromRGB(0, 0, 0, 100));
 		add(background);
 
-		var characterSprite = new FlxSprite(0, 0, char.spritePath);
-		characterSprite.scale3x();
+		var characterSprite = CharacterSprite.loadSpriteSheetInfo(char.spriteSheetInfo);
 		characterSprite.centerSprite(background.getMidpoint().x, background.getMidpoint().y);
 		add(characterSprite);
+		characterSprite.animation.play('idle');
 
 		var charName = new FlxText(0, 0, 0, char.name);
 		charName.setFormat(Fonts.STANDARD_FONT, 24, FlxColor.YELLOW);
@@ -73,7 +74,5 @@ class CharacterProfile2 extends FlxSpriteGroup
 
 			cursor += locked.width + 8;
 		}
-
-		add(ViewUtils.newAnchor());
 	}
 }

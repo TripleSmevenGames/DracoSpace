@@ -19,7 +19,10 @@ class LastBreathPassive extends Status
 			// when its triggered and when its played.
 			var trueTarget = context.getLowestHealthEnemy();
 			if (trueTarget != null)
+			{
+				trueTarget.currBlock += 10;
 				trueTarget.healHp(15);
+			}
 		}
 		// create a 'play', then call it immediately.
 		// this will add the animation to the queue.
@@ -30,11 +33,11 @@ class LastBreathPassive extends Status
 	{
 		type = LASTBREATH;
 		name = 'Last Breath';
-		var desc = 'When this character dies, an ally is healed for 15 hp.';
+		var desc = 'When this character dies, an ally gains 10 Block is healed for 15 hp.';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new BattleIndicatorIcon(AssetPaths.lastBreath__png, name, desc, options);
 
 		this.stackable = false;
 

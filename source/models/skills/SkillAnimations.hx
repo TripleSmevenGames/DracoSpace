@@ -21,13 +21,6 @@ typedef CustomPlayOptions =
 /** Used as a helper to create "play" functions for skills. **/
 class SkillAnimations
 {
-	static var bsal = GameController.battleSpriteAnimsLayer;
-
-	public static function refreshBsal()
-	{
-		bsal = GameController.battleSpriteAnimsLayer;
-	}
-
 	public static function getHitAnim()
 	{
 		return SpriteAnimsLayer.createStandardAnim(AssetPaths.weaponhit_spritesheet__png, 100, 100, 30, 2);
@@ -77,7 +70,7 @@ class SkillAnimations
 			// so just call addScreenAnim() and return early.
 			if (options.screenAnim == true)
 			{
-				bsal.addScreenAnim(animSprite, effect, effectFrame);
+				GameController.battleSpriteAnimsLayer.addScreenAnim(animSprite, effect, effectFrame);
 				return;
 			}
 
@@ -96,9 +89,9 @@ class SkillAnimations
 			}
 
 			if (options.touchBase == true)
-				bsal.addOneShotAnimTouchBase(animSprites, others, effect, effectFrame);
+				GameController.battleSpriteAnimsLayer.addOneShotAnimTouchBase(animSprites, others, effect, effectFrame);
 			else
-				bsal.addOneShotAnim(animSprites, others, effect, effectFrame);
+				GameController.battleSpriteAnimsLayer.addOneShotAnim(animSprites, others, effect, effectFrame);
 		}
 		return play;
 	}

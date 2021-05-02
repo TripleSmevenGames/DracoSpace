@@ -4,7 +4,7 @@ import flixel.FlxG;
 import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.system.FlxSound;
 
-class BattleSounds
+class BattleUISounds
 {
 	public var startPlayerTurn:FlxSound;
 	public var endPlayerTurn:FlxSound;

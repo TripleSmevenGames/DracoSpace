@@ -94,7 +94,7 @@ class InventoryMenu2 extends FlxSpriteGroup
 		unequippedSkillsList = new UnequippedSkillsList2();
 
 		// put the unequipped list at the bottom.
-		unequippedSkillsList.setPosition(FlxG.width / 2, FlxG.height - (unequippedSkillsList.bodyHeight / 2) - 4);
+		unequippedSkillsList.setPosition(FlxG.width / 2, FlxG.height - (unequippedSkillsList.bodyHeight / 2) - 10);
 		add(unequippedSkillsList);
 
 		// then place the 2 profiles under the header

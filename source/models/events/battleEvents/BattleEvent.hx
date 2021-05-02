@@ -14,7 +14,7 @@ class BattleEvent extends GameEvent
 	{
 		switch (type)
 		{
-			case BATTLE, ELITE, BOSS:
+			case TUTORIAL, BATTLE, ELITE, BOSS:
 			// no-op
 			default:
 				throw new Exception('Bad type for Battle event: ${name}, ${type.getName()}');

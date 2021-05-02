@@ -15,7 +15,7 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
-import utils.battleManagerUtils.BattleSounds;
+import utils.battleManagerUtils.BattleUISounds;
 import utils.battleManagerUtils.RewardHelper;
 
 enum BattleManagerStateNames
@@ -56,7 +56,7 @@ class BattleManager extends FlxBasic
 	var state:BattleManagerState;
 	var bam:BattleAnimationManager;
 	var bss:BattleSubState;
-	var sounds:BattleSounds;
+	var sounds:BattleUISounds;
 
 	var playerSkillSprites:Array<SkillSprite>;
 	var enemySkillSprites:Array<SkillSprite>;
@@ -173,6 +173,14 @@ class BattleManager extends FlxBasic
 			char.targetArrow.visible = val;
 			char.targetArrow.alpha = .5;
 		}
+	}
+
+	function playAllCharIdle()
+	{
+		for (char in context.pChars)
+			char.playIdle();
+		for (char in context.eChars)
+			char.playIdle();
 	}
 
 	// called during idle state, player is picking a skill to activate.
@@ -299,7 +307,7 @@ class BattleManager extends FlxBasic
 		super();
 		this.bam = GameController.battleAnimationManager;
 		this.bss = GameController.subStateManager.bss;
-		this.sounds = new BattleSounds();
+		this.sounds = new BattleUISounds();
 
 		/**--------------DEFINE ALL THE STATES-----------**/
 		/**                                              **/
@@ -340,6 +348,7 @@ class BattleManager extends FlxBasic
 				state = playerIdleState;
 
 				showAllSkillSprites();
+				playAllCharIdle();
 
 				// reset this stuff
 				activeSkillSprite = null;
@@ -539,6 +548,8 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				state = enemyIdleState;
+
+				playAllCharIdle();
 
 				activeSkillSprite = null;
 				activeTargets = null;

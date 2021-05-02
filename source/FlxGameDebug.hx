@@ -24,6 +24,15 @@ class FlxGameDebug extends FlxGame
 			GameController.latestException = e;
 			trace(e.message);
 			trace(e.stack);
+			if (e.previous != null)
+			{
+				trace(e.previous.message);
+				trace(e.previous.stack);
+			}
+			else
+			{
+				trace('no previous');
+			}
 			FlxG.switchState(new CrashState());
 		}
 	}

@@ -147,7 +147,7 @@ class SkillSprite extends FlxSpriteGroup
 		// setup the cooldown counter, which will appear on the tile when its on cooldown.
 		cooldownCountdownSprite = new FlxText(0, 0, 0, '0');
 		cooldownCountdownSprite.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
-		cooldownCountdownSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE, 0, 1);
+		cooldownCountdownSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		cooldownCountdownSprite.centerSprite();
 		add(cooldownCountdownSprite);
 		cooldownCountdownSprite.visible = false;

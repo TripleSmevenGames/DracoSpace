@@ -20,7 +20,7 @@ class RewardHelper
 		ELITE => SKILL_RARITY_WEIGHTS_ELITE,
 		BOSS => SKILL_RARITY_WEIGHTS_BOSS
 	];
-	static final REWARD_MULTIPLIER:Map<GameEventType, Int> = [BATTLE => 1, ELITE => 2, BOSS => 3];
+	static final REWARD_MULTIPLIER:Map<GameEventType, Int> = [TUTORIAL => 0, BATTLE => 1, ELITE => 2, BOSS => 3];
 
 	static final random = new FlxRandom();
 
@@ -86,12 +86,18 @@ class RewardHelper
 
 	public static function getExpReward(battleType:GameEventType)
 	{
-		return REWARD_MULTIPLIER.get(battleType) * 10;
+		if (REWARD_MULTIPLIER.exists(battleType))
+			return REWARD_MULTIPLIER.get(battleType) * 10;
+		else
+			return 0;
 	}
 
 	public static function getMoneyReward(battleType:GameEventType)
 	{
 		var baseMoney = random.int(4, 7);
-		return REWARD_MULTIPLIER.get(battleType) * baseMoney;
+		if (REWARD_MULTIPLIER.exists(battleType))
+			return REWARD_MULTIPLIER.get(battleType) * baseMoney;
+		else
+			return 0;
 	}
 }

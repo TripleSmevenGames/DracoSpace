@@ -64,7 +64,16 @@ class SpriteAnimsLayer extends FlxSpriteGroup
 		{
 			var center = others[i].getMidpoint();
 			sprites[i].centerSprite(center.x, center.y);
-			add(sprites[i]);
+			try
+			{
+				add(sprites[i]);
+			}
+			catch (e)
+			{
+				trace('sprite has x? ${sprites[i].x}');
+				trace('this has x? ${this.x}');
+				throw e;
+			}
 			animations.push(sprites[i].animation.getByName('play'));
 		}
 		var bagOptions:BattleAnimationGroupOptions = {

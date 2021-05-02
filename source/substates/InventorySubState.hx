@@ -58,8 +58,8 @@ class InventorySubState extends FlxSubState
 
 		initMenu();
 
-		var infoText = 'Click on skills to equip or unequip them on your characters.
-			Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
+		var infoText = 'Click on skills to equip or unequip them on your characters. '
+			+ 'Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
 		var options:BattleIndicatorIconOptions = {
 			width: 400,
 			display: false,

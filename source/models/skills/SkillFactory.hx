@@ -101,7 +101,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(ryder, protect);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = ryderPlaceholder;
+			skill.spritePath = AssetPaths.guard__png;
 			return skill;
 		},
 	];

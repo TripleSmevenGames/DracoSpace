@@ -36,6 +36,11 @@ class GameController
 
 	public static var battleSpriteAnimsLayer:SpriteAnimsLayer;
 
+	/** Sound manager. One is created (then destroyed) for every battle sequence. 
+	 * The bss needs to set this variable so its easily accessible by its children.
+	**/
+	public static var battleSoundManager:BattleSoundManager;
+
 	public static var player:Player;
 
 	public static var latestException:haxe.Exception;
@@ -64,13 +69,16 @@ class GameController
 	{
 		battleAnimationManager = new BattleAnimationManager();
 		battleManager = new BattleManager();
+		initBattleLayers();
+
+		invTooltipLayer = new TooltipLayer();
+	}
+
+	public static function initBattleLayers()
+	{
+		// maybe memory leak if we're not destroying before re-creating them??
 		battleTooltipLayer = new TooltipLayer();
 		battleDamageNumbers = new DamageNumbers();
 		battleSpriteAnimsLayer = new SpriteAnimsLayer();
-
-		invTooltipLayer = new TooltipLayer();
-
-		// ensure the SkillAnimations has access to a non-null bsal.
-		SkillAnimations.refreshBsal();
 	}
 }

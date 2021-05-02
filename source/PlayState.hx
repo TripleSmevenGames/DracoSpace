@@ -49,15 +49,11 @@ class PlayState extends FlxState
 		FlxG.camera.minScrollY = 0;
 		//	FlxG.camera.maxScrollY = 1000;
 
+		FlxG.sound.volume = .7;
+
 		#if debug
 		memIndicator = new MemIndicator();
 		add(memIndicator);
-
-		bamIndicator = new BAMIndicator(GameController.battleAnimationManager);
-		add(bamIndicator);
-
-		bmIndicator = new BMIndicator(GameController.battleManager);
-		add(bmIndicator);
 		#end
 	}
 

@@ -16,14 +16,16 @@ class BossEventFactory
 		];
 		var numDraw = 3;
 		var hp = 150;
-		var rattle = CharacterInfo.createEnemy('Rattle', AssetPaths.poochyena__png, hp, skills, numDraw);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.rattleIdle72x61x16__png, 72, 61, 16);
+		var rattle = CharacterInfo.createEnemy('Rattle', spriteSheetInfo, hp, skills, numDraw);
+		rattle.avatarPath = AssetPaths.RattleAvatar__png;
 		rattle.initialStatuses = [CUNNING];
 
 		var name = 'Rattle, The Twin Fangs';
 		var desc = 'A snake lady blocks your path.';
 		var enemies = [rattle];
 		var hiddenCards = 1;
-		var deck = Deck.fromMap([POW => 10, AGI => 10, WIS => 3], hiddenCards);
+		var deck = new Deck([POW => 10, AGI => 10, WIS => 3], hiddenCards);
 		return new BattleEvent(name, desc, enemies, deck, BOSS);
 	}
 
@@ -35,14 +37,15 @@ class BossEventFactory
 		var skills = [SF.pinSkills.get(summonK9)(2), SF.pinSkills.get(commandGuard)(1),];
 		var numDraw = 4;
 		var hp = 100;
-		var pin = CharacterInfo.createEnemy('Pin', AssetPaths.poochyena__png, hp, skills, numDraw);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.poochyena__png, 45, 42, 1);
+		var pin = CharacterInfo.createEnemy('Pin', spriteSheetInfo, hp, skills, numDraw);
 		pin.initialStatuses = [OBSERVATION];
 
 		var name = 'Pin, The Machinist';
 		var desc = 'A group of robot dogs emerge, along with what looks like their leader.';
 		var enemies = [pin];
 		var hiddenCards = 1;
-		var deck = Deck.fromMap([POW => 10, CON => 8, KNO => 5], hiddenCards);
+		var deck = new Deck([POW => 10, CON => 8, KNO => 5], hiddenCards);
 		return new BattleEvent(name, desc, enemies, deck, BOSS);
 	}
 }

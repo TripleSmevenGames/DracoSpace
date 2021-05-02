@@ -27,7 +27,7 @@ class HpBarSprite extends FlxUIBar
 		if (this.percent < 25)
 			fillColor = FlxColor.RED;
 		else if (this.percent < 75)
-			fillColor = FlxColor.YELLOW;
+			fillColor = FlxColor.ORANGE;
 
 		this.createFilledBar(emptyColor, fillColor, true);
 

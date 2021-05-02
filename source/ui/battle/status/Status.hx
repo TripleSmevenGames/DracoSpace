@@ -11,6 +11,7 @@ enum StatusType
 	STATIC;
 	COLD;
 	ATTACK;
+	ATTACKDOWN;
 	TAUNT;
 	COUNTER;
 	DODGE;

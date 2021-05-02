@@ -32,7 +32,7 @@ class GameMapView extends FlxSpriteGroup
 	// flattened version of columnSprites
 	public var mapTiles = new Array<MapTile>();
 
-	var currentTile:MapTile;
+	public var currentTile:MapTile;
 
 	// large sprite that draws the lines connecting the nodes
 	var connectingLinesScreen:FlxSprite;
@@ -156,9 +156,6 @@ class GameMapView extends FlxSpriteGroup
 				});
 				mapTile.addHoverListener(function(_)
 				{
-					#if debug
-					trace('mouse over node');
-					#end
 					mapTile.highlighted = true;
 				}, function(_)
 				{
@@ -202,6 +199,7 @@ class MapSubState extends FlxSubState
 	{
 		super.create();
 		view = new GameMapView(0, 0);
+		view.scrollFactor.set(0, 0);
 		add(view);
 	}
 
@@ -241,12 +239,5 @@ class MapSubState extends FlxSubState
 	{
 		super.update(elapsed);
 		updateMovement();
-	}
-
-	override public function destroy()
-	{
-		super.destroy();
-		if (view != null)
-			this.view.destroy();
 	}
 }

@@ -26,7 +26,6 @@ class Card extends FlxSpriteGroup
 {
 	public var name(default, null):String;
 	public var skillPoints:SkillPointCombination;
-	public var effect:Void->Void;
 	public var only(default, set):Null<CharacterSprite>;
 	public var carryOver(default, set):Bool = false;
 
@@ -34,7 +33,6 @@ class Card extends FlxSpriteGroup
 	var cover:CardCover;
 	var icon:FlxSprite;
 	var bodyText:FlxText;
-	var anchor:FlxSprite;
 
 	public var highlight:FlxSprite;
 
@@ -135,10 +133,6 @@ class Card extends FlxSpriteGroup
 
 		this.name = name;
 		this.skillPoints = new SkillPointCombination(skillPoints);
-		this.effect = function()
-		{
-			trace('played a ${name}');
-		};
 
 		if (type == null)
 			type = ANY;
@@ -181,10 +175,5 @@ class Card extends FlxSpriteGroup
 
 		cover.alpha = 0;
 		this.hidden = false;
-
-		#if debug
-		this.anchor = new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
-		add(anchor);
-		#end
 	}
 }

@@ -62,10 +62,16 @@ class EnemyIntentMaker
 		if (!canPayForSkillWithHand(skillSprite)) // or, can't pay even if used whole hand
 			return false;
 
+		if (skillSprite.owner.dead)
+			return false;
+
 		return true;
 	}
 
-	/** Return skills of the highest priority that are playable with the current ghostHand. **/
+	/** Return skills of the highest priority that are playable with the current ghostHand. 
+	 * If we want a custom AI, override this function with custom logic, and have it return a set of ghost skills.
+	 * Whatever you return here, decideSkill() will choose a random one to play.
+	**/
 	function getHighestPriorityPlaybleSkills():Array<GhostSkill>
 	{
 		var highest = 0;
@@ -91,7 +97,7 @@ class EnemyIntentMaker
 		return ghostsToReturn;
 	}
 
-	/** Decide on a one of the ghost skills to play. If that skill has only 1 charge left, remove it from the ghostSkills. 
+	/** Decide on a one of the ghost skills to play randomly. If that skill has only 1 charge left, remove it from the ghostSkills. 
 	 * Return null if no skill can be played.
 	**/
 	function decideSkill():Null<SkillSprite>
@@ -164,26 +170,24 @@ class EnemyIntentMaker
 			}
 			else
 			{
-				var choice = random.int(0, context.pChars.length - 1);
-				targets.push(context.pChars[choice]);
+				var alivePlayers = context.getAlivePlayers();
+				targets.push(alivePlayers.getRandomChoice());
 			}
 		}
 		else if (method == SINGLE_ALLY)
 		{
 			var aliveEnemies = context.getAliveEnemies();
-			var choice = random.int(0, aliveEnemies.length - 1);
-			targets.push(aliveEnemies[choice]);
+			targets.push(aliveEnemies.getRandomChoice());
 		}
 		else if (method == SINGLE_OTHER_ALLY)
 		{
 			var aliveEnemies = context.getAliveEnemies();
 			aliveEnemies.remove(skillSprite.owner);
-			var choice = random.int(0, aliveEnemies.length - 1);
-			targets.push(aliveEnemies[choice]);
+			targets.push(aliveEnemies.getRandomChoice());
 		}
 		else if (method == ALL_ENEMY)
 		{
-			targets = context.pChars;
+			targets = context.getAlivePlayers();
 		}
 		else if (method == ALL_ALLY)
 		{

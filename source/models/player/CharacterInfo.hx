@@ -1,9 +1,13 @@
 package models.player;
 
+import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.battle.status.Status;
+import utils.BattleSoundManager.SoundType;
+
+using utils.ViewUtils;
 
 enum CharacterType
 {
@@ -12,14 +16,30 @@ enum CharacterType
 	NONE;
 }
 
+typedef SpriteSheetInfo =
+{
+	?spritePath:FlxGraphicAsset,
+	?width:Int,
+	?height:Int,
+	?idleFrames:Array<Int>,
+	?hurtFrames:Array<Int>,
+	?attackFrames:Array<Int>,
+}
+
 /** Represents a character outside of battle. Health, skills, etc. **/
 class CharacterInfo
 {
-	public var spritePath:FlxGraphicAsset;
+	public var spriteSheetInfo:SpriteSheetInfo;
 	public var avatarPath:FlxGraphicAsset;
 
 	public var name:String;
+
+	/** PLAYER or ENEMY**/
 	public var type:CharacterType;
+
+	/** What type of sound should be played when this character is hit. E.g. Flesh, rock, ghost, etc. **/
+	public var soundType:SoundType;
+
 	public var category:Castle.SkillDataKind; // used by a Skill to know what player character can equip it.
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
@@ -61,6 +81,22 @@ class CharacterInfo
 		}
 	}
 
+	public static function newSpriteSheetInfo(spritePath:FlxGraphicAsset, width:Int, height:Int, numIdleFrames:Int)
+	{
+		var idleFrames = new Array<Int>();
+		for (i in 0...numIdleFrames)
+			idleFrames.push(i);
+
+		var spriteSheetInfo:SpriteSheetInfo = {
+			spritePath: spritePath,
+			width: width,
+			height: height,
+			idleFrames: idleFrames,
+		};
+
+		return spriteSheetInfo;
+	}
+
 	public static function sampleRyder()
 	{
 		var ryder = new CharacterInfo();
@@ -68,12 +104,13 @@ class CharacterInfo
 		ryder.name = 'Ryder';
 		ryder.category = Castle.SkillDataKind.ryder;
 		ryder.type = PLAYER;
-		ryder.spritePath = AssetPaths.lucario__png;
+		ryder.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.ryderIdle66x82x1__png, 66, 82, 1);
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
 		ryder.skills = [sf.ryderSkillsBasic.get(protect)()];
 		ryder.draw = 1;
+		ryder.soundType = FLESH;
 
 		return ryder;
 	}
@@ -85,28 +122,31 @@ class CharacterInfo
 		kiwi.name = 'Kiwi';
 		kiwi.category = Castle.SkillDataKind.kiwi;
 		kiwi.type = PLAYER;
-		kiwi.spritePath = AssetPaths.kiwi__png;
+		kiwi.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.kiwi__png, 48, 50, 1);
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
 		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)()];
 		kiwi.draw = 1;
+		kiwi.soundType = FLESH;
 
 		return kiwi;
 	}
 
-	public static function createEnemy(name:String, spritePath:FlxGraphicAsset, hp:Int, skills:Array<Skill>, draw:Int = 1)
+	public static function createEnemy(name:String, spriteSheetInfo:SpriteSheetInfo, hp:Int, skills:Array<Skill>, draw:Int = 1)
 	{
 		var enemy = new CharacterInfo();
 		enemy.name = name;
 		enemy.type = ENEMY;
-		enemy.spritePath = spritePath;
+		enemy.category = Castle.SkillDataKind.enemy;
+		enemy.spriteSheetInfo = spriteSheetInfo;
 		enemy.maxHp = hp;
 		enemy.currHp = hp;
 		enemy.skills = skills;
 		enemy.draw = draw;
+		enemy.soundType = FLESH;
 		return enemy;
 	}
 
-	public function new() {}
+	function new() {}
 }

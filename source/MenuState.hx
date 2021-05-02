@@ -37,7 +37,7 @@ class MenuState extends FlxState
 
 	function setupScreen()
 	{
-		var titleText = new FlxText(0, 0, 0, "DrakoSpace");
+		var titleText = new FlxText(0, 0, 0, "DracoSpace");
 		titleText.setFormat(AssetPaths.font04B30__ttf, 100);
 		ViewUtils.centerSprite(titleText, FlxG.width / 2, 200);
 		add(titleText);

@@ -17,7 +17,7 @@ using utils.ViewUtils;
 class UnequippedSkillsList2 extends FlxSpriteGroup
 {
 	public var skillCards:Array<SkillCard> = [];
-	public var bodyHeight = 300;
+	public var bodyHeight = 280;
 
 	public function new()
 	{

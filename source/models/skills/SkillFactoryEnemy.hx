@@ -36,6 +36,30 @@ class SkillFactoryEnemy
 			skill.spritePath = AssetPaths.slimeTackle__png;
 			return skill;
 		},
+		waterBlast => (?priority:Int) ->
+		{
+			var skill = skillFromData(enemy, waterBlast, priority);
+			var animSprite:FlxSprite = SkillAnimations.getHitAnim();
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				owner.dealDamageTo(skill.value, target, context);
+				target.addStatus(ATTACKDOWN, skill.value2);
+			};
+			skill.play = SkillAnimations.getCustomPlay(animSprite, effect);
+			skill.spritePath = AssetPaths.slimeTackle__png;
+			return skill;
+		},
+		springWater => (?priority:Int) ->
+		{
+			var skill = skillFromData(enemy, springWater, priority);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.healHp(skill.value);
+			};
+			skill.play = SkillAnimations.genericBuffPlay(effect);
+			skill.spritePath = AssetPaths.slimeTackle__png;
+			return skill;
+		},
 		houndBite => (?priority:Int) ->
 		{
 			var skill = skillFromData(enemy, houndBite, priority);
@@ -103,16 +127,16 @@ class SkillFactoryEnemy
 		{
 			var skill = skillFromData(enemy, spook, priority);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = AssetPaths.spook__png;
 			return skill;
 		},
-		giveLife => (?priority:Int) ->
+		ghostlyStrength => (?priority:Int) ->
 		{
-			var skill = skillFromData(enemy, giveLife, priority);
+			var skill = skillFromData(enemy, ghostlyStrength, priority);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.takeDamage(skill.value, owner, context);
-				target.addStatus(ATTACK);
+				target.addStatus(ATTACK, skill.value2);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = AssetPaths.emptySkill__png;

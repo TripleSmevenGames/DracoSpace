@@ -65,10 +65,10 @@ class ViewUtils
 	}
 
 	// quick way to make a tiny white dot, good for marking a spot during debug mode.
-	public static function newAnchor(?parent:FlxSprite)
+	public static function newAnchor(?parent:FlxSprite, invisible:Bool = false)
 	{
 		if (parent == null)
-			return new FlxSprite(0, 0).makeGraphic(4, 4, FlxColor.WHITE);
+			return new FlxSprite(0, 0).makeGraphic(4, 4, invisible ? FlxColor.TRANSPARENT : FlxColor.WHITE);
 		else
 			return new FlxSprite(parent.width, parent.height).makeGraphic(4, 4, FlxColor.WHITE);
 	}

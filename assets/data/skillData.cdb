@@ -224,7 +224,7 @@
 						},
 						{
 							"id": "protect",
-							"name": "protect",
+							"name": "Protect",
 							"desc": "An ally gains $x Block.",
 							"rarity": 0,
 							"costs": [
@@ -1110,10 +1110,43 @@
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 2,
+							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 5
+						},
+						{
+							"id": "waterBlast",
+							"name": "Water Blast",
+							"desc": "Deal $x damage and apply $x2 Attack Down.",
+							"rarity": 0,
+							"costs": [
+								{
+									"KNO": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 6,
+							"value2": 1,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "springWater",
+							"name": "Spring Water",
+							"desc": "Heal an ally for $x health.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 5,
+							"value": 8,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						},
 						{
 							"id": "cower",
@@ -1274,25 +1307,26 @@
 							],
 							"targetMethod": 0,
 							"flavor": "There's something strange...",
-							"value": 4,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1
 						},
 						{
-							"id": "giveLife",
-							"name": "Give Life",
-							"desc": "Take $x damage. All allies gain 1 Attack.",
+							"id": "ghostlyStrength",
+							"name": "Ghostly Strength",
+							"desc": "Take $x damage and gain $x2 Attack.",
 							"rarity": 0,
 							"costs": [
 								{
 									"POW": 1
 								}
 							],
-							"targetMethod": 6,
+							"targetMethod": 7,
 							"value": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 1
 						},
 						{
 							"id": "blindFire",
@@ -1387,7 +1421,7 @@
 								}
 							],
 							"targetMethod": 2,
-							"value": 5,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1

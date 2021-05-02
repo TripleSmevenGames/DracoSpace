@@ -23,11 +23,32 @@ class WinScreen extends FlxSpriteGroup
 
 	var canContinue:Bool = false;
 
+	function createNewContinueBtn(battleType:GameEventType)
+	{
+		// first, cleanup the old continue button
+		if (this.continueBtn != null)
+		{
+			remove(this.continueBtn);
+			this.continueBtn.destroy();
+			this.continueBtn = null;
+		}
+
+		var onContinueClick = () -> ssm.returnToMap();
+		if (battleType == TUTORIAL)
+			onContinueClick = () -> ssm.returnToHome();
+
+		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
+		ViewUtils.centerSprite(continueBtn, FlxG.width / 2, FlxG.height - 100);
+		continueBtn.disabled = true;
+		add(continueBtn);
+	}
+
 	/** Play the animation of this screen.
 	**/
 	public function play(expReward:Int, moneyReward:Int, battleType:GameEventType)
 	{
 		this.revive();
+		createNewContinueBtn(battleType);
 
 		text.scale.set(0.1, 0.1);
 		text.alpha = 0;
@@ -37,7 +58,7 @@ class WinScreen extends FlxSpriteGroup
 			'scale.y': 1,
 		}, .5);
 
-		if (battleType == BATTLE)
+		if (battleType == BATTLE || battleType == TUTORIAL)
 			continueBtn.disabled = false; // there's no skill reward to claim, so just let them continue;
 		else // ie ELITE battle or BOSS battle.
 			continueBtn.disabled = true; // other wise, stop player from continuing until they claim their skill reward
@@ -61,12 +82,6 @@ class WinScreen extends FlxSpriteGroup
 		text.setFormat(Fonts.STANDARD_FONT, 100, FlxColor.WHITE);
 		ViewUtils.centerSprite(text, FlxG.width / 2, 200);
 		add(text);
-
-		var onContinueClick = () -> ssm.returnToMap();
-		this.continueBtn = new BasicWhiteButton('Continue', onContinueClick);
-		ViewUtils.centerSprite(continueBtn, FlxG.width / 2, FlxG.height - 100);
-		continueBtn.disabled = true;
-		add(continueBtn);
 
 		this.kill();
 	}

@@ -26,7 +26,9 @@ class BaseAI
 
 	public var currentDecidedIntents:Array<Intent>;
 
-	/** call this ONCE per round, like at the start of the player's turn. **/
+	/** call this ONCE per round, like at the start of the player's turn. 
+	 * The seed guaruntees that if nothing changed the RNG will produce the same intent every time.
+	**/
 	public function generateNewSeedForTurn()
 	{
 		currentSeed = random.int();

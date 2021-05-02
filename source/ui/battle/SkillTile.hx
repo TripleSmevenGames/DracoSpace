@@ -10,9 +10,12 @@ using utils.ViewUtils;
 /** Combines the skill art and its border. Centered by default **/
 class SkillTile extends FlxSpriteGroup
 {
-	public function new(skill:Null<Skill>, centered = true)
+	public var skill:Skill;
+
+	public function new(skill:Null<Skill>, centered:Bool = true)
 	{
 		super();
+		this.skill = skill;
 
 		if (skill != null)
 		{
@@ -39,5 +42,8 @@ class SkillTile extends FlxSpriteGroup
 			tile.centerSprite();
 			add(tile);
 		}
+
+		// setup tooltip on hover
+		// GameController.battleTooltipLayer.createTooltipForSkillTile(this);
 	}
 }

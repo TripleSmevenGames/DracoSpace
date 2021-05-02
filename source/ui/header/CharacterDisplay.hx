@@ -30,7 +30,7 @@ class HpDisplay extends FlxSpriteGroup
 		if (percent < .25)
 			valText.color = FlxColor.RED;
 		else if (percent < .75)
-			valText.color = FlxColor.YELLOW;
+			valText.color = FlxColor.ORANGE;
 
 		maxText.text = Std.string(max);
 

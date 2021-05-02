@@ -14,6 +14,7 @@ enum GameEventType
 	CAMP;
 	HOME;
 	SUB; // a sub event of a one of the above root events.
+	TUTORIAL;
 }
 
 /** Base class for all Events. Pretty much every single node on the map should result in an event.**/

@@ -3,6 +3,8 @@ package ui.battle.character;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import models.ai.EnemyIntentMaker.Intent;
+import ui.TooltipLayer.Tooltip;
+import utils.GameController;
 
 using utils.ViewUtils;
 
@@ -47,12 +49,35 @@ class EnemyIntentSprites extends FlxSpriteGroup
 	{
 		super();
 		intentSprites = [];
+
+		// stupid hack that prevents the entire group from seemingly disappearing at times.
+		// I SUSPECT it's because when I call resetIntents, it removes ever sprite from the group.
+		// And when no more sprites exist in the group, it kills itself, or something. SO adding this dummy prevents all sprites from being removed.
+		// Looking into the code itself, I actually couldnt find proof if this being true. So idk.
+		var anchor = ViewUtils.newAnchor();
+		anchor.alpha = 1;
+		add(anchor);
 	}
 }
 
 /** Centered around the pointing arrow **/
 class EnemyIntentSprite extends FlxSpriteGroup
 {
+	/** Generate a string describing this intent **/
+	static function generateTooltipString(intent:Intent)
+	{
+		var string = '${intent.skill.owner.info.name} wants to use ${intent.skill.skill.name.toUpperCase()} ';
+		if (intent.targets != null)
+		{
+			var targets = intent.targets;
+			string += 'on ';
+			var names = targets.map((target:CharacterSprite) -> target.info.name);
+			string += names.join(', ');
+		}
+
+		return string;
+	}
+
 	public function new(intent:Intent)
 	{
 		super();
@@ -79,6 +104,9 @@ class EnemyIntentSprite extends FlxSpriteGroup
 		add(arrow);
 		add(skillTile);
 		add(targetSprites);
+
+		var tooltip = Tooltip.genericTooltip('Intent', generateTooltipString(intent), {});
+		GameController.battleTooltipLayer.registerTooltip(tooltip, this);
 	}
 }
 
@@ -88,7 +116,13 @@ class TargetSprites extends FlxSpriteGroup
 	public function new(targets:Array<CharacterSprite>)
 	{
 		super();
-		var avatarSprites = targets.map((char:CharacterSprite) -> new FlxSprite(0, 0, char.info.avatarPath));
+		var avatarSprites = targets.map((char:CharacterSprite) ->
+		{
+			if (char.info.avatarPath == null)
+				trace('${char.info.name} is missing avatarPath');
+			return new FlxSprite(0, 0, char.info.avatarPath);
+		});
+
 		for (i in 0...avatarSprites.length)
 		{
 			var sprite = avatarSprites[i];

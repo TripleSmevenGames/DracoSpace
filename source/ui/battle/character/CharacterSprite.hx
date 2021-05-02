@@ -6,6 +6,7 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouse;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.system.FlxAssets.FlxSoundAsset;
 import flixel.system.FlxSound;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
@@ -21,11 +22,13 @@ import ui.battle.status.Status;
 import ui.battle.win.SkillCard;
 import utils.BattleAnimationManager;
 import utils.BattleManager;
+import utils.BattleSoundManager as BSM;
 import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
+using utils.GameUtils;
 using utils.ViewUtils;
 
 /** Represents a character's sprite during battle. Centered on the body sprite */
@@ -70,11 +73,8 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	// internal timer used for some animations.
 	var timer:FlxTimer;
 
-	var hurtSound:FlxSound;
-	var blockedSound:FlxSound;
-	var gainBlockSound:FlxSound;
-	var missSound:FlxSound;
-	var healSound:FlxSound;
+	/** Array of sounds to play with this character takes damage. Should be assetPaths from the BattleSoundManager. **/
+	var hitSoundArray:Array<FlxSoundAsset>;
 
 	// target arrow X distance from char sprite.
 	public static inline final TARGET_ARROW_DISTANCE = 16;
@@ -125,6 +125,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return dead = val;
 	}
 
+	function playHitSound()
+	{
+		var soundToPlay = this.hitSoundArray.getRandomChoice();
+		GameController.battleSoundManager.playSound(soundToPlay);
+	}
+
 	/** Add that many stacks of the status to this char. **/
 	public function addStatus(type:StatusType, stacks:Int = 1)
 	{
@@ -162,29 +168,29 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (getStatus(DODGE) > 0)
 		{
 			removeStacksOnStatus(DODGE, 1);
-			missSound.play(true);
+			GameController.battleSoundManager.playSound(BSM.miss);
 			spawnDamageNumber('MISS');
 			return;
 		}
 
 		if (val == 0)
 		{
-			missSound.play(true);
+			GameController.battleSoundManager.playSound(BSM.miss);
 			spawnDamageNumber('MISS');
 			return;
 		}
 
-		currBlock -= val;
 		if (val > currBlock)
 		{
-			hurtSound.play(true);
+			playHitSound();
 			playHurtAnimation();
 			currHp -= (val - currBlock);
 		}
 		else
 		{
-			blockedSound.play(true);
+			GameController.battleSoundManager.playSound(BSM.blocked);
 		}
+		currBlock -= val;
 
 		this.onTakeDamage(val, dealer, context);
 		spawnDamageNumber(Std.string(val));
@@ -195,6 +201,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext)
 	{
 		val += this.statusDisplay.getStatus(ATTACK);
+		val -= this.statusDisplay.getStatus(ATTACKDOWN);
 		onDealDamage(val, target, context);
 		target.takeDamage(val, this, context);
 	}
@@ -208,7 +215,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 
 		currHp += val;
-		spawnDamageNumber(Std.string(val), FlxColor.GREEN, false);
+		spawnDamageNumber('+${Std.string(val)}', FlxColor.GREEN, false);
 	}
 
 	function singleFlash()
@@ -226,6 +233,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		var onComplete = (_) -> singleFlash();
 
 		timer.start(time, onComplete, loops);
+	}
+
+	public function playIdle()
+	{
+		this.sprite.animation.play('idle');
 	}
 
 	public function isPlayingHurtAnimation()
@@ -255,6 +267,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		GameController.battleDamageNumbers.spawnDamageNumber(spawnX, spawnY, val, color, usePhysics);
 	}
 
+	/** Just places the intent sprites so they float above the body properly. **/
 	function rerenderEnemyIntentSprites()
 	{
 		if (enemyIntentSprites != null)
@@ -379,15 +392,20 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		skillSprite.play(targets, context);
 	}
 
+	/** set a callback when you click on the main body OR the target arrow. **/
 	public function setOnClick(onClick:CharacterSprite->Void)
 	{
 		FlxMouseEventManager.setMouseClickCallback(sprite, (_) -> onClick(this));
+		FlxMouseEventManager.setMouseClickCallback(targetArrow, (_) -> onClick(this));
 	}
 
+	/** set a callback when you hover on the main body OR the target arrow. **/
 	public function setOnHover(onOver:CharacterSprite->Void, onOut:CharacterSprite->Void)
 	{
 		FlxMouseEventManager.setMouseOverCallback(sprite, (_) -> onOver(this));
 		FlxMouseEventManager.setMouseOutCallback(sprite, (_) -> onOut(this));
+		FlxMouseEventManager.setMouseOverCallback(targetArrow, (_) -> onOver(this));
+		FlxMouseEventManager.setMouseOutCallback(targetArrow, (_) -> onOut(this));
 	}
 
 	public function setOnClickCancelSkill(onClick:Void->Void)
@@ -400,10 +418,20 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return new CharacterSprite(CharacterInfo.sampleRyder());
 	}
 
-	/** Setup this character's sprite. It is the reference for the rest of the things, so probably should call this first. **/
-	function setupSprite(assetPath:FlxGraphicAsset)
+	public static function loadSpriteSheetInfo(ssi:SpriteSheetInfo)
 	{
-		this.sprite = new FlxSprite(0, 0, assetPath);
+		var frameRate = 10;
+		var sprite = new FlxSprite(0, 0);
+		sprite.loadGraphic(ssi.spritePath, true, ssi.width, ssi.height);
+		sprite.animation.add('idle', ssi.idleFrames, frameRate, true);
+		sprite.scale3x();
+		return sprite;
+	}
+
+	/** Setup this character's sprite. It is the reference for the rest of the things, so probably should call this first. **/
+	function setupSprite(spriteSheetInfo:SpriteSheetInfo)
+	{
+		this.sprite = loadSpriteSheetInfo(spriteSheetInfo);
 		sprite.scale3x();
 		ViewUtils.centerSprite(sprite, 0, 0);
 		this.add(sprite);
@@ -422,9 +450,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow2R__png);
 			ViewUtils.centerSprite(targetArrow, -targetArrowXPos, 0);
 		}
-		targetArrow.scale.set(3, 3);
-		this.add(targetArrow);
+		targetArrow.scale3x();
+		add(targetArrow);
 		targetArrow.visible = false;
+
+		FlxMouseEventManager.add(targetArrow, null, null, null, null, false, true, false);
 
 		// if this is an enemy, render the intent container (should be empty rn).
 		if (this.info.type == ENEMY)
@@ -495,7 +525,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		currHp = info.currHp;
 		currBlock = 0;
 
-		setupSprite(info.spritePath);
+		setupSprite(info.spriteSheetInfo);
 
 		setupHpBar();
 
@@ -511,17 +541,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.timer = new FlxTimer();
 		timer.cancel();
 
-		this.hurtSound = FlxG.sound.load(AssetPaths.standardHit2__wav);
-		this.blockedSound = FlxG.sound.load(AssetPaths.blockedHit1__wav);
-		this.gainBlockSound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
-		this.missSound = FlxG.sound.load(AssetPaths.miss1__wav);
-		this.healSound = FlxG.sound.load(AssetPaths.heal1__wav);
+		this.hitSoundArray = BSM.getHitSoundArrayForType(info.soundType);
 	}
-	/*
-		override public function destroy()
-			{
-				super.destroy();
-				FlxMouseEventManager.remove(sprite);
-			}
-	 */
 }

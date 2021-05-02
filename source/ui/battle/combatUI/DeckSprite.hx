@@ -9,6 +9,7 @@ import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
+import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
 import ui.buttons.BasicWhiteButton;
 import utils.BattleManager;
@@ -32,16 +33,24 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var endTurnBtn:BasicWhiteButton;
 
 	var type:CharacterType;
+
+	/** The chars associated with this decksprite. IE players for a player decksprite, enemies for an enemy deck sprite.**/
 	var chars:Array<CharacterSprite>;
 
 	// for enemy only
 	public var hiddenCards:Int = 0;
 
+	/** How much the card amount is modified for the next start of round. **/
 	public var drawModifier:Int = 0;
 
 	var bm:BattleManager;
 
 	public var deck:Deck;
+
+	/** Basically taking the deck's card map and turning into a pool of cards for this sprite to manipulate. 
+	 * Will be destroyed after every battle (but obviously the Deck object is preserved)
+	**/
+	public var cardPool:Array<Card>;
 
 	function blinkSkillPointDisplay()
 	{
@@ -235,11 +244,28 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return skillLists;
 	}
 
+	function getCardPoolFromDeck(deck:Deck):Array<Card>
+	{
+		var cards = new Cards();
+		var map = deck.cardMap;
+		for (type in SkillPointCombination.ARRAY)
+		{
+			if (map.exists(type))
+			{
+				var num = map.get(type);
+				for (i in 0...num)
+					cards.push(Card.newBasic(type));
+			}
+		}
+		return cards;
+	}
+
 	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>)
 	{
 		super(x, y);
 
 		this.deck = deck;
+		this.cardPool = getCardPoolFromDeck(deck);
 		this.bm = GameController.battleManager;
 		this.type = type;
 		this.chars = chars;
@@ -299,7 +325,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		hand.clearHand();
 		discardPile.clearPile();
-		drawPile.set(deck.cardList);
+		drawPile.set(this.cardPool);
 		shuffle();
 	}
 

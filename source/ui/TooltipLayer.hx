@@ -12,6 +12,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
 import ui.battle.SkillSprite;
+import ui.battle.SkillTile;
 import ui.battle.win.SkillCard;
 import utils.ViewUtils;
 
@@ -101,6 +102,23 @@ class Tooltip extends FlxSpriteGroup
 		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
 	}
 
+	function bindToPut(parent:FlxObject)
+	{
+		this.parent = parent;
+		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
+		{
+			if (options.pos == TOP)
+				putAboveParent();
+			else if (options.pos == BOTTOM)
+				putBelowParent();
+			else
+				trace('buggah, options.POS was nothing');
+
+			this.visible = true;
+		});
+		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
+	}
+
 	function bindToSkill(skillSprite:SkillSprite)
 	{
 		this.parent = skillSprite.tile;
@@ -140,7 +158,9 @@ class Tooltip extends FlxSpriteGroup
 			trace('tried to update a descText, but it was null!');
 	}
 
-	/** default width is 200. **/
+	/** Create a generic tooltip object. You must register it ontop of an object by calling TooltipLayer.registerTooltip().
+	 * default width is 200. 
+	**/
 	public static function genericTooltip(name:Null<String>, desc:Null<String>, options:TooltipOptions)
 	{
 		var group = new FlxSpriteGroup();
@@ -176,7 +196,7 @@ class Tooltip extends FlxSpriteGroup
 		// adjust the body based on the height its content
 		body.makeGraphic(Std.int(options.width + paddingSide * 2), Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
 		// then make it slightly see-through
-		body.alpha = .5;
+		body.alpha = .7;
 
 		var tooltip = new Tooltip(group, options);
 		tooltip.body = body;
@@ -208,7 +228,7 @@ class TooltipLayer extends FlxSpriteGroup
 	var tooltips:Array<Tooltip> = [];
 
 	/** Shows the passed in tooltip over the parent when you hover over the parent. Puts it in the global tooltip layer. 
-	 *
+	 * use Tooltip.genericTooltip to create the tooltip.
 	 * DON'T add() the tooltip yourself in a group.
 	**/
 	public function registerTooltip(tooltip:Tooltip, parent:FlxObject)
@@ -227,14 +247,12 @@ class TooltipLayer extends FlxSpriteGroup
 		tooltips.push(tooltip);
 	}
 
-	public function cleanupTooltips()
+	public function createTooltipForSkillTile(skillTile:SkillTile)
 	{
-		for (tooltip in tooltips)
-		{
-			remove(tooltip);
-			tooltip.destroy();
-		}
-		tooltips = [];
+		var tooltip = Tooltip.skillTooltip(skillTile.skill);
+		tooltip.bindToPut(skillTile);
+		add(tooltip);
+		tooltips.push(tooltip);
 	}
 
 	public function new()

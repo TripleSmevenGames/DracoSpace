@@ -500,7 +500,6 @@ class Hand extends FlxSpriteGroup
 		bm = GameController.battleManager;
 
 		this.pickSound = FlxG.sound.load(AssetPaths.pickCard1__wav);
-		pickSound.volume = .7;
 		this.playSounds = [];
 		this.playSounds.push(FlxG.sound.load(AssetPaths.playCard1__wav));
 		this.playSounds.push(FlxG.sound.load(AssetPaths.playCard2__wav));
