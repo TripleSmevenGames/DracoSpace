@@ -12,6 +12,7 @@ import ui.battle.BattleIndicatorIcon;
 import ui.buttons.BasicWhiteButton;
 import ui.header.Header;
 import ui.inventory.InventoryMenu2;
+import ui.inventory.InventoryMenu3;
 import utils.GameController;
 
 using utils.ViewUtils;
@@ -20,7 +21,9 @@ using utils.ViewUtils;
 class InventorySubState extends FlxSubState
 {
 	var header:Header;
-	var menu:InventoryMenu2;
+
+	// var menu:InventoryMenu2;
+	var menu:InventoryMenu3;
 
 	public function cleanup()
 	{
@@ -39,7 +42,7 @@ class InventorySubState extends FlxSubState
 			remove(this.menu);
 			this.menu.destroy();
 		}
-		this.menu = new InventoryMenu2(header.height);
+		this.menu = new InventoryMenu3(header.height);
 		this.menu.scrollFactor.set(0, 0);
 		add(menu);
 	}
@@ -61,7 +64,7 @@ class InventorySubState extends FlxSubState
 		var infoText = 'Click on skills to equip or unequip them on your characters. '
 			+ 'Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
 		var options:BattleIndicatorIconOptions = {
-			width: 400,
+			tooltipOptions: {width: 400},
 			display: false,
 			place: INV,
 		};

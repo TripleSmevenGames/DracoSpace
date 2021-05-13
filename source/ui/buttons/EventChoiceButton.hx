@@ -42,9 +42,9 @@ class EventChoiceButton extends FlxUIButton
 
 		final FONT_SIZE = 24;
 
-		var upSprite = AssetPaths.grey_light__png;
-		var hoverSprite = AssetPaths.grey__png;
-		var downSprite = AssetPaths.grey_pressed__png;
+		var upSprite = AssetPaths.greyBlue_light__png;
+		var hoverSprite = AssetPaths.greyBlue__png;
+		var downSprite = AssetPaths.greyBlue_pressed__png;
 		var graphicArray:Array<FlxGraphicAsset> = [upSprite, hoverSprite, downSprite];
 
 		var slice9 = [8, 8, 40, 40];

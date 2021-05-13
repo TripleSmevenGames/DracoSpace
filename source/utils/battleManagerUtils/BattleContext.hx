@@ -14,6 +14,7 @@ class BattleContext
 	public var eDeck:DeckSprite;
 	public var pChars:Array<CharacterSprite>;
 	public var eChars:Array<CharacterSprite>;
+	public var turnCounter:Int = 0;
 
 	public function getChars(type:CharacterType)
 	{

@@ -3,7 +3,7 @@ package models.player;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 
-/** Represents the player itself outside of battle. Characters, inventory, skills, money, etc. **/
+/** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. **/
 class Player
 {
 	public static var deck:Deck;
@@ -11,6 +11,7 @@ class Player
 	public static var money:Int;
 	public static var inventory:Inventory;
 	public static var exp:Int;
+	public static var skillsBought:Int; // we scale the price of skills based on how many you've bought already
 
 	/** Get a list of all the skills the player has. **/
 	public static function getSkills()
@@ -33,8 +34,10 @@ class Player
 		chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
 		deck = Deck.ryderKiwiDeck();
 		inventory = new Inventory();
+		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
 
 		money = 0;
 		exp = 0;
+		skillsBought = 0;
 	}
 }

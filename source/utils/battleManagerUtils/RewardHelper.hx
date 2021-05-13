@@ -7,6 +7,8 @@ import models.player.Player;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 
+using utils.GameUtils;
+
 /** Helper class to create after-battle rewards. **/
 class RewardHelper
 {
@@ -66,7 +68,7 @@ class RewardHelper
 		return chosenSkill;
 	}
 
-	/** Get the 3 skill rewards for levelling up in battle.
+	/** Get the 3 skill rewards from a battle. Elite or boss only?
 	 * 
 	 * The first is for your first char. The 2nd is for your second char.
 	 *
@@ -99,5 +101,27 @@ class RewardHelper
 			return REWARD_MULTIPLIER.get(battleType) * baseMoney;
 		else
 			return 0;
+	}
+
+	public static function getShopChoices()
+	{
+		var retVal = new Array<Skill>();
+
+		// get x common skills for each character.
+		for (char in Player.chars)
+		{
+			var x = 2;
+			var currentChoices = new Array<SkillBlueprint>(); // keep track of our choices so we don't choose duplicates
+			for (i in 0...x)
+			{
+				var rarity = GameUtils.weightedPick(SKILL_RARITY_ITEMS, SKILL_RARITY_WEIGHTS_NORMAL);
+				var pool = SkillFactory.getSkillBlueprints(char.name, rarity);
+				var choice = pool.getRandomChoice(currentChoices); // pass in the currentChoices as excludes so we dont get duplicates.
+				currentChoices.push(choice); // add the skill blueprint to that array.
+				retVal.push(choice()); // call the skill blueprint to add the actual skill to the return array.
+			}
+		}
+
+		return retVal;
 	}
 }

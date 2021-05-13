@@ -18,6 +18,8 @@ class BattleEventFactory
 
 	public static function getNextBattleEvent():BattleEvent
 	{
+		if (battleQueue.length == 0)
+			init();
 		return battleQueue.shift()();
 	}
 
@@ -25,16 +27,18 @@ class BattleEventFactory
 	public static function init()
 	{
 		var random = new FlxRandom();
-		random.shuffle(battleQueueStart);
-		random.shuffle(battleQueueEnd);
-		battleQueue = battleQueueStart.concat(battleQueueEnd);
+		var start = battleQueueStart.copy();
+		var end = battleQueueEnd.copy();
+		random.shuffle(start);
+		random.shuffle(end);
+		battleQueue = start.concat(end);
 	}
 
 	public static function trainingDummy()
 	{
 		var createDummy = () ->
 		{
-			var skills = [SF.enemySkills.get(dummy)()];
+			var skills = [SF.enemySkills.get(idle)()];
 			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.trainingDummy__png, 48, 48, 1);
 			var dummyChar = CharacterInfo.createEnemy('Dummy', spriteSheetInfo, 8, skills);
 			dummyChar.avatarPath = AssetPaths.trainingDummyAvatar__png;
@@ -45,7 +49,7 @@ class BattleEventFactory
 		var name = 'Training Dummy';
 		var desc = 'You decide to spar with the training dummy before heading out.';
 		var enemies = [createDummy()];
-		var deck = new Deck([CON => 10]);
+		var deck = new Deck([CON => 10], 0, 1);
 		return new BattleEvent(name, desc, enemies, deck, TUTORIAL);
 	}
 
@@ -63,8 +67,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(waterBlast)(), SF.enemySkills.get(springWater)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.blueSlime60x60x12__png, 60, 60, 12);
-		var draw = 2;
-		var slime = CharacterInfo.createEnemy('Blue Slime', spriteSheetInfo, 20, skills, draw);
+		var slime = CharacterInfo.createEnemy('Blue Slime', spriteSheetInfo, 20, skills);
 		slime.avatarPath = AssetPaths.SlimeAvatar__png;
 		slime.soundType = SLIME;
 		return slime;
@@ -76,7 +79,8 @@ class BattleEventFactory
 		var desc = 'There\'s a giant slime in your path. It\'s cute. It attacks.';
 		var enemies = [createGreenSlime()];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 4, CON => 2], hiddenCards);
+		var draw = 1;
+		var deck = new Deck([POW => 4, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -86,7 +90,8 @@ class BattleEventFactory
 		var desc = 'Now two slimes are in your way. This is getting out of control!';
 		var enemies = [createGreenSlime(), createBlueSlime()];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 5, CON => 3, KNO => 3], hiddenCards);
+		var draw = 2;
+		var deck = new Deck([POW => 5, CON => 3, KNO => 3], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -105,7 +110,8 @@ class BattleEventFactory
 		var desc = 'You stumble upon a hostile mechanical dog. It clearly doesn\'t belong in the forest. Who made this?';
 		var enemies = [createDog()];
 		var hiddenCards = 0;
-		var deck = new Deck([AGI => 5], hiddenCards);
+		var draw = 1;
+		var deck = new Deck([AGI => 5], hiddenCards, draw);
 
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
@@ -145,7 +151,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(spook)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost2__png, 32, 40, 1);
-		var hp = weak ? 8 : 16;
+		var hp = weak ? 8 : 10;
 		var ghost = CharacterInfo.createEnemy('Ghost Type F', spriteSheetInfo, hp, skills);
 		ghost.avatarPath = AssetPaths.ghost2Avatar__png;
 		ghost.initialStatuses = weak ? [] : [LASTBREATH];
@@ -157,7 +163,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(spook)(), SF.enemySkills.get(ghostlyStrength)(1)];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost3__png, 32, 40, 1);
-		var ghost = CharacterInfo.createEnemy('Ghost Type C', spriteSheetInfo, 20, skills);
+		var ghost = CharacterInfo.createEnemy('Ghost Type C', spriteSheetInfo, 15, skills);
 		ghost.avatarPath = AssetPaths.ghost3Avatar__png;
 		ghost.initialStatuses = [ATTACK, DYINGWISH];
 		ghost.soundType = GHOST;
@@ -170,7 +176,8 @@ class BattleEventFactory
 		var desc = 'Whatever\'s been going on in the forest has awakened the local spirits. These aren\'t the friendly kind. ';
 		var enemies = [createGhostF(true), createGhostF(true)];
 		var hiddenCards = 0;
-		var deck = new Deck([KNO => 6, CON => 2], hiddenCards);
+		var draw = 2;
+		var deck = new Deck([KNO => 6, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -180,7 +187,8 @@ class BattleEventFactory
 		var desc = 'Some more woodland ghosts float towards you. They look much stronger than usual ghosts.';
 		var enemies = [createGhostF(), createGhostF(), createGhostC(), createGhostC()];
 		var hiddenCards = 0;
-		var deck = new Deck([KNO => 10, POW => 6, CON => 2], hiddenCards);
+		var draw = 4;
+		var deck = new Deck([KNO => 10, POW => 6, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -190,8 +198,7 @@ class BattleEventFactory
 		{
 			var skills = [SF.enemySkills.get(hotHands)(), SF.enemySkills.get(flameShield)()];
 			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.firewood__png, 75, 55, 1);
-			var draw = 2;
-			var firewood = CharacterInfo.createEnemy('Firewood', spriteSheetInfo, 30, skills, draw);
+			var firewood = CharacterInfo.createEnemy('Firewood', spriteSheetInfo, 30, skills);
 			firewood.avatarPath = AssetPaths.firewoodAvatar__png;
 			return firewood;
 		};
@@ -200,7 +207,8 @@ class BattleEventFactory
 		var desc = 'Something ghastly is burning over there.';
 		var enemies = [createFireWood()];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 10, CON => 10], hiddenCards);
+		var draw = 2;
+		var deck = new Deck([POW => 10, CON => 10], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -210,9 +218,9 @@ class BattleEventFactory
 		{
 			var skills = [SF.enemySkills.get(golemSmash)()];
 			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.golem__png, 79, 96, 1);
-			var draw = 4;
-			var golem = CharacterInfo.createEnemy('Golem', spriteSheetInfo, 40, skills, draw);
+			var golem = CharacterInfo.createEnemy('Golem', spriteSheetInfo, 40, skills);
 			golem.avatarPath = AssetPaths.golemAvatar__png;
+			golem.initialStatuses = [STURDY];
 			golem.soundType = ROCK;
 			return golem;
 		};
@@ -221,7 +229,8 @@ class BattleEventFactory
 		var desc = 'A hulking creature made of soil and stone towers over you. Something awakened this ancient weapon of war.';
 		var enemies = [createGolem()];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 10, CON => 10], hiddenCards);
+		var draw = 4;
+		var deck = new Deck([POW => 10, CON => 10], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -229,8 +238,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(petalShield)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.dandelionGreenIdle32x32x10__png, 32, 32, 10);
-		var draw = 1;
-		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 18, skills, draw);
+		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 18, skills);
 		gd.avatarPath = AssetPaths.dandelionGreenAvatar__png;
 		gd.initialStatuses = [PETALARMOR];
 		gd.soundType = PLANT;
@@ -242,9 +250,8 @@ class BattleEventFactory
 		var skills = [SF.enemySkills.get(petalBlade)()];
 		var spriteSheet = weak ? AssetPaths.dandelionNoPetalIdle32x32x10__png : AssetPaths.dandelionRedIdle32x32x10__png;
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(spriteSheet, 32, 32, 10);
-		var draw = 1;
 		var hp = weak ? 10 : 18;
-		var rd = CharacterInfo.createEnemy('Red Dandelion', spriteSheetInfo, hp, skills, draw);
+		var rd = CharacterInfo.createEnemy('Red Dandelion', spriteSheetInfo, hp, skills);
 		rd.avatarPath = AssetPaths.dandelionRedAvatar__png;
 		if (!weak)
 			rd.initialStatuses = [PETALSPIKES];
@@ -258,7 +265,8 @@ class BattleEventFactory
 		var desc = 'Dandelions normally aren\'t hostile. But the disturbance in the forest must be agitating them. One of them attacks you!';
 		var enemies = [createRedDanelion(true)];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 4, CON => 2], hiddenCards);
+		var draw = 1;
+		var deck = new Deck([POW => 4, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -268,7 +276,8 @@ class BattleEventFactory
 		var desc = 'Dandelions normally aren\'t hostile. But the disturbance in the forest must be agitating them. ' + 'A group of them attack you!';
 		var enemies = [createGreenDanelion(), createRedDanelion()];
 		var hiddenCards = 0;
-		var deck = new Deck([POW => 8, CON => 8], hiddenCards);
+		var draw = 2;
+		var deck = new Deck([POW => 8, CON => 8], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -276,11 +285,23 @@ class BattleEventFactory
 	{
 		var createRockAnt = () ->
 		{
-			var skills = [SF.enemySkills.get(golemSmash)()];
+			var skills = [SF.enemySkills.get(laserBolt)()];
 			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.rockAnt__png, 80, 50, 1);
-			var draw = 2;
-			var rockAnt = CharacterInfo.createEnemy('Rock Ant', spriteSheetInfo, 28, skills, draw);
+
+			var rockAnt = CharacterInfo.createEnemy('Stone Hexapod', spriteSheetInfo, 25, skills);
 			rockAnt.avatarPath = AssetPaths.rockAntAvatar__png;
+			rockAnt.initialStatuses = [STURDY];
+			rockAnt.soundType = ROCK;
+			return rockAnt;
+		}
+
+		var createStoneSentry = (type:Int = 0) ->
+		{
+			var skills = [];
+			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.stoneSentry50x50x2__png, 50, 50, 2);
+			var rockAnt = CharacterInfo.createEnemy('Stone Sentry', spriteSheetInfo, 10, skills);
+			rockAnt.avatarPath = AssetPaths.rockAntAvatar__png;
+			rockAnt.initialStatuses = [STURDY];
 			rockAnt.soundType = ROCK;
 			return rockAnt;
 		}

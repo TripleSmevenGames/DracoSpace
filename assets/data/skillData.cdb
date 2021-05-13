@@ -792,21 +792,6 @@
 							"value2": 1
 						},
 						{
-							"id": "sabatoge",
-							"name": "Sabatoge",
-							"desc": "Add 2 Cooldown to one of the target's skills, chosen randomly.",
-							"rarity": 1,
-							"costs": [
-								{
-									"AGI": 1
-								}
-							],
-							"targetMethod": 0,
-							"cooldown": 3,
-							"maxCharges": 1,
-							"chargesPerCD": 1
-						},
-						{
 							"id": "blindThrow",
 							"name": "Blind Throw",
 							"desc": "Deal $x damage to a random enemy.",
@@ -843,6 +828,21 @@
 							"cooldown": 1,
 							"maxCharges": 2,
 							"chargesPerCD": 2
+						},
+						{
+							"id": "sabatoge",
+							"name": "Sabatoge",
+							"desc": "Add 2 Cooldown to one of the target's skills, chosen randomly.",
+							"rarity": 2,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 0,
+							"cooldown": 3,
+							"maxCharges": 1,
+							"chargesPerCD": 1
 						},
 						{
 							"id": "dodgeRoll",
@@ -1083,8 +1083,8 @@
 					"charName": "enemy",
 					"skills": [
 						{
-							"id": "dummy",
-							"name": "Dummy",
+							"id": "idle",
+							"name": "Idle",
 							"desc": "Gain 1 block.",
 							"rarity": 0,
 							"costs": [
@@ -1200,14 +1200,14 @@
 						{
 							"id": "laserBolt",
 							"name": "Laser Bolt",
-							"desc": "Deal $x damage.",
+							"desc": "Deal $x damage to 2 random targets.",
 							"rarity": 0,
 							"costs": [
 								{
 									"KNO": 1
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 2,
 							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,

@@ -63,6 +63,7 @@ class SkillFactory
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				context.eDeck.revealCards(skill.value);
+				context.pDeck.drawCards(1);
 			}
 			skill.spritePath = AssetPaths.watch1__png;
 			return skill;
@@ -525,7 +526,9 @@ class SkillFactory
 
 	public static var charNameToSkillListMap = ['Ryder' => ryderSkills, 'Kiwi' => kiwiSkills];
 
-	/** return an array of SkillBlueprints for this character and rarity, which will get you the Skill when called. **/
+	/** return an array of SkillBlueprints for this character and rarity, which will get you the Skill when called.
+	 * Best used to create a pool of skills to grab from. You can call getSkillBlueprints().randomChoice() to grab random skill.
+	**/
 	public static function getSkillBlueprints(charName:String = 'Ryder', rarity:SkillData_skills_rarity = BASIC)
 	{
 		var skillsToRetrieve = charNameToSkillListMap.get(charName).get(rarity);

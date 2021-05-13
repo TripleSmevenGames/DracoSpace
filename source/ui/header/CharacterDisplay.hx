@@ -10,6 +10,9 @@ import models.player.CharacterInfo;
 
 using utils.ViewUtils;
 
+/** Centered on Y only, x starts at the left side. 
+ * Shows something like 20/30, coloring the numbers based on % hp.
+**/
 class HpDisplay extends FlxSpriteGroup
 {
 	var valText:FlxText;
@@ -49,21 +52,21 @@ class HpDisplay extends FlxSpriteGroup
 		maxText.centerY(this.y);
 	}
 
-	public function new(val:Int, max:Int)
+	public function new(val:Int, max:Int, ?fontSize = 24)
 	{
 		super(0, 0);
 
 		valText = new FlxText(0, 0, 0, 'abcde');
-		valText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED);
-		valText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
+		valText.setFormat(Fonts.NUMBERS_FONT, fontSize);
+		valText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
 
 		slashText = new FlxText(0, 0, 0, '/');
-		slashText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, FlxColor.BLACK, 'center');
-		slashText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
+		slashText.setFormat(Fonts.NUMBERS_FONT, fontSize, FlxColor.BLACK, 'center');
+		slashText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
 
 		maxText = new FlxText(0, 0, 0, 'abcde');
-		maxText.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, FlxColor.GREEN, 'center');
-		maxText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 3);
+		maxText.setFormat(Fonts.NUMBERS_FONT, fontSize, FlxColor.GREEN, 'center');
+		maxText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
 
 		add(valText);
 		add(slashText);

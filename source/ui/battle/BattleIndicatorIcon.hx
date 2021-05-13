@@ -22,16 +22,12 @@ typedef BattleIndicatorIconOptions =
 {
 	?scale:Int,
 	?fontSize:Int,
-	?tooltipFontSize:Int,
 	?color:FlxColor,
 	?centered:Bool,
-	?centerTooltip:Bool,
 	?outlined:Bool,
-	?tooltipPos:TooltipPos,
 	?display:Bool,
-	?width:Float,
-	// tooltip width
 	?place:TooltipPlace,
+	?tooltipOptions:TooltipOptions,
 }
 
 /** Use to generate an icon with a number and tooltip on hover. Use for battles. It's centered. **/
@@ -54,14 +50,12 @@ class BattleIndicatorIcon extends FlxSpriteGroup
 			options.centered = false;
 		if (options.outlined == null)
 			options.outlined = false;
-		if (options.tooltipPos == null)
-			options.tooltipPos = TOP;
 		if (options.display == null)
 			options.display = true;
-		if (options.width == null)
-			options.width == 200;
 		if (options.place == null)
 			options.place = BATTLE;
+		if (options.tooltipOptions == null)
+			options.tooltipOptions = {};
 
 		return options;
 	}
@@ -101,13 +95,7 @@ class BattleIndicatorIcon extends FlxSpriteGroup
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
 		FlxMouseEventManager.add(icon, null, null, null, null, false, true, false);
 
-		var tooltipOptions = {
-			pos: options.tooltipPos,
-			width: options.width,
-			centered: options.centerTooltip,
-			fontSize: options.tooltipFontSize,
-		};
-		tooltip = Tooltip.genericTooltip(name, desc, tooltipOptions);
+		tooltip = Tooltip.genericTooltip(name, desc, options.tooltipOptions);
 		if (options.place == BATTLE)
 			GameController.battleTooltipLayer.registerTooltip(tooltip, icon);
 		else if (options.place == INV)

@@ -25,6 +25,8 @@ import utils.BattleManager;
 import utils.GameController;
 import utils.ViewUtils;
 
+using utils.ViewUtils;
+
 /** Indicator on the side of the "Hand" telling you how many
 	of each skill point you will get from the picked cards. */
 class SkillPointDisplay extends FlxSpriteGroup
@@ -112,7 +114,7 @@ class Hand extends FlxSpriteGroup
 	// which kind of hand this is. The player's or the enemy's.
 	var type:CharacterType;
 
-	var body:FlxSprite;
+	public var body:FlxSprite;
 
 	var skillPoints:SkillPointCombination;
 
@@ -488,6 +490,12 @@ class Hand extends FlxSpriteGroup
 		this.body = new FlxSprite(0, 0).makeGraphic(CARD_WIDTH * 5, CARD_HEIGHT + 8, FlxColor.fromRGB(0, 0, 0, 100));
 		ViewUtils.centerSprite(body);
 		add(body);
+
+		var titleText = new FlxText(0, 0, 0, type.getName());
+		titleText.setFormat(Fonts.STANDARD_FONT, 24);
+		titleText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		titleText.centerSprite(0, -body.height / 2 - titleText.height + 6);
+		add(titleText);
 
 		/* this.skillPointDisplay = null;
 			if (type == PLAYER) // if you're the player, give a display showing how many points your picked cards have.

@@ -47,7 +47,7 @@ class PlayState extends FlxState
 		FlxG.camera.minScrollX = 0;
 		// FlxG.camera.maxScrollX = 5000; // arbitrary
 		FlxG.camera.minScrollY = 0;
-		//	FlxG.camera.maxScrollY = 1000;
+		// FlxG.camera.maxScrollY = 1000;
 
 		FlxG.sound.volume = .7;
 

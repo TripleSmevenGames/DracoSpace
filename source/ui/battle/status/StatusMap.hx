@@ -21,9 +21,10 @@ class StatusMap
 		LASTBREATH => (owner:CharacterSprite) -> new LastBreathPassive(owner),
 		DYINGWISH => (owner:CharacterSprite) -> new DyingWishPassive(owner),
 		CUNNING => (owner:CharacterSprite) -> new CunningPassive(owner),
-		OBSERVATION => (owner:CharacterSprite) -> new ObservationPassive(owner),
+		SIPHON => (owner:CharacterSprite) -> new SiphonPassive(owner),
 		PETALARMOR => (owner:CharacterSprite) -> new PetalArmorPassive(owner),
 		PETALSPIKES => (owner:CharacterSprite) -> new PetalSpikesPassive(owner),
+		STURDY => (owner:CharacterSprite) -> new SturdyPassive(owner),
 		PLUSDRAW => (owner:CharacterSprite) -> new PlusDraw(owner),
 		MINUSDRAW => (owner:CharacterSprite) -> new MinusDraw(owner),
 	];

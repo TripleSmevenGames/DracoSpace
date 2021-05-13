@@ -66,6 +66,15 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 			return sprite;
 		}
 
+		// replace $cd with a clock icon for indicating cooldown
+		if (word == "$cd")
+		{
+			var sprite = new FlxSprite(0, 0, AssetPaths.cooldownIcon__png);
+			sprite.scale.set(2, 2);
+			sprite.updateHitbox();
+			return sprite;
+		}
+
 		// see if the word is a StatusType. If so, color it.
 		try
 		{

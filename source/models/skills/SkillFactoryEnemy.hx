@@ -22,11 +22,11 @@ class SkillFactoryEnemy
 	static var skillFromData = SkillFactory.skillFromData;
 
 	public static var enemySkills:SkillList = [
-		dummy => (?priority:Int) ->
+		idle => (?priority:Int) ->
 		{
-			var skill = skillFromData(enemy, dummy, priority);
+			var skill = skillFromData(enemy, idle, priority);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = AssetPaths.trainingDummySkill__png;
+			skill.spritePath = AssetPaths.idle__png;
 			return skill;
 		},
 		tackle => (?priority:Int) ->
@@ -117,8 +117,8 @@ class SkillFactoryEnemy
 			{
 				var explosionAnim = SkillAnimations.getSmallBlueExplosionAnim();
 				var sound = FlxG.sound.load(AssetPaths.smallExplosion1__wav);
-				SkillAnimations.genericAttackPlay(skill.value2, explosionAnim, sound)(targets, owner, context);
-				SkillAnimations.genericAttackPlay(skill.value, explosionAnim, sound)([owner], owner, context); // hit self
+				SkillAnimations.genericAttackPlay(skill.value2, explosionAnim, 0, sound)(targets, owner, context);
+				SkillAnimations.genericAttackPlay(skill.value, explosionAnim, 0, sound)([owner], owner, context); // hit self
 			};
 			skill.spritePath = AssetPaths.emptySkill__png;
 			return skill;

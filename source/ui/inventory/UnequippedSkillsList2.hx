@@ -38,7 +38,7 @@ class UnequippedSkillsList2 extends FlxSpriteGroup
 		for (i in 0...numSkills)
 		{
 			var skill = Player.inventory.unequippedSkills[i];
-			var skillCard = new SkillCard(skill, true);
+			var skillCard = new SkillCard(skill, NORMAL);
 			var xPos = ViewUtils.getXCoordForCenteringLR(i, numSkills, skillCard.width, 4);
 			skillCard.setPosition(xPos, 0);
 			skillCards.push(skillCard);

@@ -12,9 +12,10 @@ class DyingWishPassive extends Status
 {
 	override public function onDead(context:BattleContext)
 	{
+		var attackValue = owner.getStatus(ATTACK);
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
-			target.addStatus(ATTACK, owner.getStatus(ATTACK));
+			target.addStatus(ATTACK, attackValue);
 		}
 		// create a 'play', then call it immediately.
 		// this will add the animation to the queue.

@@ -45,7 +45,6 @@ class CharacterInfo
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
 	public var numSkillSlots:Int = 2;
-	public var draw:Int = 0;
 
 	public var initialStatuses:Array<StatusType> = [];
 
@@ -109,7 +108,6 @@ class CharacterInfo
 		ryder.maxHp = 30;
 		ryder.currHp = 30;
 		ryder.skills = [sf.ryderSkillsBasic.get(protect)()];
-		ryder.draw = 1;
 		ryder.soundType = FLESH;
 
 		return ryder;
@@ -127,13 +125,12 @@ class CharacterInfo
 		kiwi.maxHp = 30;
 		kiwi.currHp = 30;
 		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)()];
-		kiwi.draw = 1;
 		kiwi.soundType = FLESH;
 
 		return kiwi;
 	}
 
-	public static function createEnemy(name:String, spriteSheetInfo:SpriteSheetInfo, hp:Int, skills:Array<Skill>, draw:Int = 1)
+	public static function createEnemy(name:String, spriteSheetInfo:SpriteSheetInfo, hp:Int, skills:Array<Skill>)
 	{
 		var enemy = new CharacterInfo();
 		enemy.name = name;
@@ -143,7 +140,6 @@ class CharacterInfo
 		enemy.maxHp = hp;
 		enemy.currHp = hp;
 		enemy.skills = skills;
-		enemy.draw = draw;
 		enemy.soundType = FLESH;
 		return enemy;
 	}

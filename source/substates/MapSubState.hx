@@ -7,6 +7,7 @@ import flixel.FlxSubState;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
+import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.GameMap;
@@ -37,10 +38,10 @@ class GameMapView extends FlxSpriteGroup
 	// large sprite that draws the lines connecting the nodes
 	var connectingLinesScreen:FlxSprite;
 
-	var header:Header;
-
 	// reference to global sub state manager
 	var ssm:SubStateManager;
+
+	var footstepSound:FlxSound;
 
 	static inline final COL_WIDTH = 250;
 	static inline final COL_HEIGHT = 800;
@@ -90,6 +91,8 @@ class GameMapView extends FlxSpriteGroup
 		{
 			currentTile = mapTile;
 			markHere(mapTile);
+			footstepSound.play();
+
 			var event = getEventForEventType(mapTile.node.eventType);
 			ssm.initEvent(event);
 		}
@@ -109,11 +112,6 @@ class GameMapView extends FlxSpriteGroup
 				connectingLinesScreen.drawLine(mapTile.x, mapTile.y, otherMapTile.x, otherMapTile.y, lineStyle, drawStyle);
 			}
 		}
-	}
-
-	public function refresh()
-	{
-		header.refresh();
 	}
 
 	public function new(x:Float = 0, y:Float = 0)
@@ -173,12 +171,10 @@ class GameMapView extends FlxSpriteGroup
 
 		drawConnectingLines();
 
-		this.header = new Header();
-		header.scrollFactor.set(0, 0);
-		add(header);
-
 		currentTile = mapTiles[0];
 		markHere(currentTile);
+
+		footstepSound = FlxG.sound.load(AssetPaths.footSteps1__wav);
 	}
 }
 
@@ -186,44 +182,46 @@ class GameMapView extends FlxSpriteGroup
 class MapSubState extends FlxSubState
 {
 	var view:GameMapView;
+	var header:Header;
+
+	/** The amount the user was scrolled on the map. We save this because when we switch from the map state, we scroll the camera back 
+	 * to 0 for easer of rendering. But we when switch back to the map, we need to remember where the user was scrolled.
+	**/
+	var scrollX:Float = 0;
 
 	static inline final SCROLL_SPEED = 25;
 
-	/** Call this when we switch back to this state from the ssm. **/
+	/** Callback when we switch TO the map state.**/
 	public function onSwitch()
 	{
-		view.refresh();
+		if (header != null)
+			header.refresh();
+
+		FlxG.camera.scroll.x = scrollX;
 	}
 
 	override public function create()
 	{
 		super.create();
 		view = new GameMapView(0, 0);
-		view.scrollFactor.set(0, 0);
 		add(view);
+
+		this.header = new Header();
+		header.scrollFactor.set(0, 0);
+		add(header);
 	}
 
 	function updateMovement()
 	{
-		var up:Bool = false;
-		var down:Bool = false;
 		var left:Bool = false;
 		var right:Bool = false;
 
-		up = FlxG.keys.anyPressed([UP, W]);
-		down = FlxG.keys.anyPressed([DOWN, S]);
 		left = FlxG.keys.anyPressed([LEFT, A]);
 		right = FlxG.keys.anyPressed([RIGHT, D]);
 
-		if (up && down)
-			up = down = false;
 		if (left && right)
 			left = right = false;
 
-		if (up)
-			FlxG.camera.scroll.y -= SCROLL_SPEED;
-		if (down)
-			FlxG.camera.scroll.y += SCROLL_SPEED;
 		if (left)
 			FlxG.camera.scroll.x -= SCROLL_SPEED;
 		if (right)
@@ -233,6 +231,8 @@ class MapSubState extends FlxSubState
 		{
 			FlxG.camera.scroll.x -= (FlxG.mouse.wheel * 100);
 		}
+
+		this.scrollX = FlxG.camera.scroll.x;
 	}
 
 	override function update(elapsed:Float)

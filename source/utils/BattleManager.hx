@@ -73,9 +73,6 @@ class BattleManager extends FlxBasic
 	/** The end turn button will flip this flag true when pressed. **/
 	public var endTurnFlag(null, set):Bool = false;
 
-	/** When an enemy char sprite dies, it should add to this number. **/
-	public var enemyDiscardCards:Int = 0;
-
 	public var context:BattleContext;
 	public var battleType:GameEventType;
 
@@ -102,8 +99,6 @@ class BattleManager extends FlxBasic
 
 	var winState:BattleManagerState;
 	var loseState:BattleManagerState;
-
-	public var turnCounter:Int;
 
 	/** Set this to true to signal the BM to end the turn.
 	 *
@@ -142,7 +137,7 @@ class BattleManager extends FlxBasic
 
 	public function canEndTurn()
 	{
-		return getState() == PLAYER_IDLE && canMoveToNextState();
+		return (getState() == PLAYER_IDLE) && canMoveToNextState();
 	}
 
 	// make all skill sprites visible and interactable,
@@ -217,6 +212,16 @@ class BattleManager extends FlxBasic
 		{
 			// playerIdleState.start();
 			// return your spent cards
+		}
+	}
+
+	/** Check if any characters are dead, and put the xCover over their avatar if so**/
+	function checkDead()
+	{
+		if (context != null)
+		{
+			context.pDeck.checkDead();
+			context.eDeck.checkDead();
 		}
 	}
 
@@ -296,9 +301,6 @@ class BattleManager extends FlxBasic
 
 		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, context);
 
-		turnCounter = 1;
-		enemyDiscardCards = 0;
-
 		playerStartState.start();
 	}
 
@@ -321,7 +323,7 @@ class BattleManager extends FlxBasic
 				state = playerStartState;
 
 				sounds.startPlayerTurn.play();
-				turnCounter++;
+				context.turnCounter++;
 
 				showAllSkillSprites();
 
@@ -369,6 +371,9 @@ class BattleManager extends FlxBasic
 						intent.skill.owner.addIntent(intent);
 				}
 
+				// mark any dead characters as dead, by putting the xCover over their avatar
+				checkDead();
+
 				// check if we've won or lost
 				if (context.areAllCharsDead(ENEMY))
 				{
@@ -381,23 +386,14 @@ class BattleManager extends FlxBasic
 			},
 			update: (elapsed:Float) ->
 			{
-				// check if something caused the enemy to discard cards
-				if (enemyDiscardCards > 0)
+				if (activeSkillSprite != null)
 				{
-					context.eDeck.discardRandomCards(enemyDiscardCards);
-					enemyDiscardCards = 0;
+					playerAnimatingPlayState.start();
 				}
-				else
+				else if (endTurnFlag && canEndTurn())
 				{
-					if (activeSkillSprite != null)
-					{
-						playerAnimatingPlayState.start();
-					}
-					else if (endTurnFlag && canEndTurn())
-					{
-						playerEndState.start();
-						endTurnFlag = false;
-					}
+					playerEndState.start();
+					endTurnFlag = false;
 				}
 			},
 		};
@@ -535,9 +531,25 @@ class BattleManager extends FlxBasic
 			},
 			update: (elapsed:Float) ->
 			{
-				if (canMoveToNextState()) // wait for animations to finish
+				// wait for animations to finish
+				if (canMoveToNextState())
 				{
-					enemyIdleState.start();
+					// mark any dead characters as dead, by putting the xCover over their avatar
+					checkDead();
+
+					// check if we've won or lost
+					if (context.areAllCharsDead(ENEMY))
+					{
+						winState.start();
+					}
+					else if (context.areAllCharsDead(PLAYER))
+					{
+						loseState.start();
+					}
+					else
+					{
+						enemyIdleState.start();
+					}
 				}
 			}
 		};
@@ -550,6 +562,9 @@ class BattleManager extends FlxBasic
 				state = enemyIdleState;
 
 				playAllCharIdle();
+
+				// mark any dead characters as dead, by putting the xCover over their avatar
+				checkDead();
 
 				activeSkillSprite = null;
 				activeTargets = null;
@@ -565,30 +580,22 @@ class BattleManager extends FlxBasic
 			},
 			update: (elapsed:Float) ->
 			{
-				if (enemyDiscardCards > 0)
+				if (currentIntents.length != 0) // there are still intents left in the decided intents. Play them out.
 				{
-					context.eDeck.discardRandomCards(enemyDiscardCards);
-					enemyDiscardCards = 0;
+					activeIntent = enemyAI.getNextIntent();
+					activeSkillSprite = activeIntent.skill;
+					enemyAnimatingPlayState.start();
 				}
-				else
+				else // there are no more decided intents. Try to create one more list of intents. If there's still nothing to do, give up and end turn.
 				{
-					if (currentIntents.length != 0) // there are still intents left in the decided intents. Play them out.
+					this.currentIntents = enemyAI.decideIntents();
+					if (this.currentIntents.length == 0)
+						enemyEndState.start();
+					else
 					{
 						activeIntent = enemyAI.getNextIntent();
 						activeSkillSprite = activeIntent.skill;
 						enemyAnimatingPlayState.start();
-					}
-					else // there are no more decided intents. Try to create one more list of intents. If there's still nothing to do, give up and end turn.
-					{
-						this.currentIntents = enemyAI.decideIntents();
-						if (this.currentIntents.length == 0)
-							enemyEndState.start();
-						else
-						{
-							activeIntent = enemyAI.getNextIntent();
-							activeSkillSprite = activeIntent.skill;
-							enemyAnimatingPlayState.start();
-						}
 					}
 				}
 			}
@@ -660,8 +667,26 @@ class BattleManager extends FlxBasic
 			},
 			update: (elapsed:Float) ->
 			{
-				if (canMoveToNextState()) // wait for animations to finish before player's turn start
-					playerStartState.start();
+				// wait for animations to finish before player's turn start
+				if (canMoveToNextState())
+				{
+					// mark any dead characters as dead, by putting the xCover over their avatar
+					checkDead();
+
+					// check if we've won or lost
+					if (context.areAllCharsDead(ENEMY))
+					{
+						winState.start();
+					}
+					else if (context.areAllCharsDead(PLAYER))
+					{
+						loseState.start();
+					}
+					else
+					{
+						playerStartState.start();
+					}
+				}
 			}
 		};
 

@@ -22,7 +22,9 @@ typedef TooltipOptions =
 {
 	?pos:TooltipPos,
 	?width:Float,
+	// if the text in the tooltip is centered, like the Draw and Discard pile tooltips
 	?centered:Bool,
+	// font size for the desc
 	?fontSize:Int
 }
 
@@ -62,8 +64,7 @@ class Tooltip extends FlxSpriteGroup
 	// If we are creating the tooltip with genericTooltip, its not centered so we have to center it onHover.
 	// If we are creating the skill tooltip, it is centered, so dont need to center it again, Just place it.
 
-	/** Pass in global coords. Meaning the parent must be added to its group already.
-	 */
+	/**  use this if both the parent and the hover sprite is not centered. **/
 	function centerAboveParent()
 	{
 		ViewUtils.centerSprite(this, parent.x + parent.width / 2, parent.y - this.height / 2 - 8);
@@ -74,6 +75,18 @@ class Tooltip extends FlxSpriteGroup
 		ViewUtils.centerSprite(this, parent.x + parent.width / 2, parent.y + this.height / 2 + 8);
 	}
 
+	// use these functions if the parent is centered (like a centered FlxSpriteGroup), and the tooltipSprite is not centered (so we have to center it)
+	function centerAboveCenteredParent()
+	{
+		ViewUtils.centerSprite(this, parent.x, parent.y - parent.height / 2 - this.height / 2 - 8);
+	}
+
+	function centerBelowCenteredParent()
+	{
+		ViewUtils.centerSprite(this, parent.x, parent.y + parent.height / 2 + this.height / 2 + 8);
+	}
+
+	// use these functions if the parent is centered, and the tooltip is centered.
 	function putAboveParent()
 	{
 		this.setPosition(parent.x, parent.y - this.height / 2 - parent.height / 2 - 8);
@@ -85,15 +98,22 @@ class Tooltip extends FlxSpriteGroup
 	}
 
 	/** Uses the mouseEventManager to set mouse in/out callbacks on the parent. Assumes you added the parent to the manager already. **/
-	function bindTo(parent:FlxObject)
+	function bindTo(parent:FlxObject, parentCentered:Bool = false)
 	{
 		this.parent = parent;
 		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
 		{
-			if (options.pos == TOP)
-				centerAboveParent();
-			else if (options.pos == BOTTOM)
-				centerBelowParent();
+			var canFit = parent.y > this.height + 16; // padding;
+			if (options.pos == TOP && canFit)
+				if (parentCentered)
+					centerAboveCenteredParent();
+				else
+					centerAboveParent();
+			else if (options.pos == BOTTOM || !canFit)
+				if (parentCentered)
+					centerBelowCenteredParent();
+				else
+					centerBelowParent();
 			else
 				trace('buggah, options.POS was nothing');
 
@@ -105,11 +125,12 @@ class Tooltip extends FlxSpriteGroup
 	function bindToPut(parent:FlxObject)
 	{
 		this.parent = parent;
+		var canFit = parent.y > this.height + 16; // padding;
 		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
 		{
-			if (options.pos == TOP)
+			if (options.pos == TOP && canFit)
 				putAboveParent();
-			else if (options.pos == BOTTOM)
+			else if (options.pos == BOTTOM || !canFit)
 				putBelowParent();
 			else
 				trace('buggah, options.POS was nothing');
@@ -158,8 +179,9 @@ class Tooltip extends FlxSpriteGroup
 			trace('tried to update a descText, but it was null!');
 	}
 
-	/** Create a generic tooltip object. You must register it ontop of an object by calling TooltipLayer.registerTooltip().
-	 * default width is 200. 
+	/** Create a generic tooltip sprite group. You must register it ontop of an object by calling TooltipLayer.registerTooltip().
+	 * default width is 200. If width is 0, we are "auto width" and will make it match the title length if there's no desc.
+	 * It's not centered, so we have to call centerAboveParent() or similar when registering it.
 	**/
 	public static function genericTooltip(name:Null<String>, desc:Null<String>, options:TooltipOptions)
 	{
@@ -174,10 +196,11 @@ class Tooltip extends FlxSpriteGroup
 		var bodyHeight:Float = 0;
 		group.add(body);
 
+		var nameText = null;
 		var descText = null;
 		if (name != null)
 		{
-			var nameText = new FlxText(paddingSide, paddingVertical, options.width, name);
+			nameText = new FlxText(paddingSide, paddingVertical, options.width, name);
 
 			nameText.setFormat(font, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, 'center');
 			bodyHeight += nameText.height;
@@ -185,7 +208,6 @@ class Tooltip extends FlxSpriteGroup
 		}
 		if (desc != null)
 		{
-			// descText = new FlxText(paddingSide, bodyHeight + spaceBetweenNameAndDesc, width, desc);
 			var options = {bodyWidth: options.width, centered: options.centered, fontSize: options.fontSize};
 			descText = new FlxTextWithReplacements(desc, null, null, options);
 			descText.setPosition(paddingSide, bodyHeight + spaceBetweenNameAndDesc);
@@ -193,8 +215,19 @@ class Tooltip extends FlxSpriteGroup
 			bodyHeight += descText.height + spaceBetweenNameAndDesc;
 			group.add(descText);
 		}
-		// adjust the body based on the height its content
-		body.makeGraphic(Std.int(options.width + paddingSide * 2), Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
+		// now that we have the content, we can set the body (ie. background's) width and height
+		var bodyWidth:Int;
+
+		// if the options width is 0, we auto calculate the width if there's just a name and no desc.
+		if (options.width == 0 && nameText != null && descText == null)
+		{
+			bodyWidth = Std.int(nameText.width + paddingSide * 2);
+		}
+		else
+		{
+			bodyWidth = Std.int(options.width + paddingSide * 2);
+		}
+		body.makeGraphic(bodyWidth, Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
 		// then make it slightly see-through
 		body.alpha = .7;
 
@@ -230,15 +263,17 @@ class TooltipLayer extends FlxSpriteGroup
 	/** Shows the passed in tooltip over the parent when you hover over the parent. Puts it in the global tooltip layer. 
 	 * use Tooltip.genericTooltip to create the tooltip.
 	 * DON'T add() the tooltip yourself in a group.
+	 * Make sure you added the parent to the mouse manager already.
 	**/
-	public function registerTooltip(tooltip:Tooltip, parent:FlxObject)
+	public function registerTooltip(tooltip:Tooltip, parent:FlxObject, parentCentered:Bool = false)
 	{
-		tooltip.bindTo(parent);
+		tooltip.bindTo(parent, parentCentered);
 
 		add(tooltip);
 		tooltips.push(tooltip);
 	}
 
+	/** Creates and reigsters tooltip for a skillSprite. **/
 	public function createTooltipForSkill(skillSprite:SkillSprite)
 	{
 		var tooltip = Tooltip.skillTooltip(skillSprite.skill);
@@ -247,9 +282,11 @@ class TooltipLayer extends FlxSpriteGroup
 		tooltips.push(tooltip);
 	}
 
+	/** Creates and reigsters tooltip for a skillTile. **/
 	public function createTooltipForSkillTile(skillTile:SkillTile)
 	{
 		var tooltip = Tooltip.skillTooltip(skillTile.skill);
+		// we use bindToPut because the skillCard hover is centered already, so we dont want to call centerOverParent. Instead we want putOverParent.
 		tooltip.bindToPut(skillTile);
 		add(tooltip);
 		tooltips.push(tooltip);

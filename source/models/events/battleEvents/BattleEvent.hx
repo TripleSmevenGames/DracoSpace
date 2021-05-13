@@ -10,6 +10,12 @@ class BattleEvent extends GameEvent
 	public var enemies:Array<CharacterInfo>;
 	public var eDeck:Deck;
 
+	/** additional enemy spots we would have to render that arent initially filled when the battle starts.
+	 * For example, a boss enemy might start with himself, so initially only he is in the battle
+	 * But he might summon a max of 4 minions, meaning the additional spots is 4.
+	**/
+	public var additionalSpots:Int = 0;
+
 	public function new(name:String, desc:String, enemies:Array<CharacterInfo>, eDeck:Deck, type:GameEventType)
 	{
 		switch (type)

@@ -4,8 +4,10 @@ import flixel.FlxG;
 import flixel.FlxState;
 import flixel.text.FlxText;
 import flixel.ui.FlxButton;
-import sys.io.File;
 import utils.GameController;
+#if sys
+import sys.io.File;
+#end
 
 class CrashState extends FlxState
 {
@@ -25,9 +27,11 @@ class CrashState extends FlxState
 			var stack = new FlxText(0, message.y + message.height, 0, e.details(), 12);
 			add(stack);
 
+			#if sys
 			var exit = () -> Sys.exit(0);
 			var exitButton = new FlxButton(FlxG.width - 200, FlxG.height - 100, 'EXIT', exit);
 			add(exitButton);
+			#end
 
 			#if sys
 			trace('tried writing crash to file sys');

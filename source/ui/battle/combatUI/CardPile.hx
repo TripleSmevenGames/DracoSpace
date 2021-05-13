@@ -145,11 +145,13 @@ class CardPile extends FlxSpriteGroup
 		var options:BattleIndicatorIconOptions = {
 			color: FlxColor.WHITE,
 			centered: true,
-			centerTooltip: true,
 			scale: 3,
 			fontSize: 20,
-			tooltipFontSize: 20,
-			width: 100,
+			tooltipOptions: {
+				width: 100,
+				fontSize: 20,
+				centered: true,
+			}
 		};
 		this.body = new BattleIndicatorIcon(spritePath, name, getDisplayString(), options);
 		add(body);

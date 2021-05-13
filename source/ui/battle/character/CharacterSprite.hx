@@ -7,8 +7,6 @@ import flixel.input.mouse.FlxMouse;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.FlxAssets.FlxSoundAsset;
-import flixel.system.FlxSound;
-import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
@@ -74,7 +72,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var timer:FlxTimer;
 
 	/** Array of sounds to play with this character takes damage. Should be assetPaths from the BattleSoundManager. **/
-	var hitSoundArray:Array<FlxSoundAsset>;
+	var hitSoundArray:Array<String>;
 
 	// target arrow X distance from char sprite.
 	public static inline final TARGET_ARROW_DISTANCE = 16;
@@ -120,7 +118,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (val)
 		{
 			disableAllSkills();
-			bm.enemyDiscardCards += info.draw;
 		}
 		return dead = val;
 	}
@@ -172,6 +169,10 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			spawnDamageNumber('MISS');
 			return;
 		}
+
+		// reduce damage for each stack of sturdy.
+		var sturdyVal = getStatus(STURDY);
+		val -= sturdyVal;
 
 		if (val == 0)
 		{

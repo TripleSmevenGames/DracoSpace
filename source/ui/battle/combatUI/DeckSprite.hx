@@ -16,6 +16,8 @@ import utils.BattleManager;
 import utils.GameController;
 import utils.battleManagerUtils.BattleContext;
 
+using utils.ViewUtils;
+
 /** DeckSprite builds the UI for a draw pile, hand and discard pile during battle.
  * Handles all interactions between hand, draw, and discard.
  *
@@ -31,6 +33,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var discardPile:CardPile;
 	var hand:Hand;
 	var endTurnBtn:BasicWhiteButton;
+	var skillLists:Array<CombatSkillList>;
 
 	var type:CharacterType;
 
@@ -200,14 +203,9 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function onPlayerStartTurn(context:BattleContext)
 	{
-		var cardsToDraw = 0;
-		for (char in chars) // this side draws cards equal to the sum of their characters' draw stat.
-		{
-			if (!char.dead)
-				cardsToDraw += char.info.draw;
-		}
+		var cardsToDraw = this.deck.draw + this.drawModifier;
 
-		cardsToDraw += this.drawModifier;
+		// reset the modifier since we used it this turn
 		this.drawModifier = 0;
 
 		drawCards(cardsToDraw);
@@ -244,6 +242,13 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return skillLists;
 	}
 
+	/** check if any chars are dead. If so, put the xCover on them to show they are dead. **/
+	public function checkDead()
+	{
+		for (skillList in this.skillLists)
+			skillList.checkDead();
+	}
+
 	function getCardPoolFromDeck(deck:Deck):Array<Card>
 	{
 		var cards = new Cards();
@@ -276,7 +281,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 
 		var cursor = new FlxPoint(0, 0);
-		// for the enemy UI, the stuff is rendered the opposite way
+		// for the enemy UI, the stuff is rendered the opposite way, so we have to subtract instead of add
 		var addToCursor = (x:Float, y:Float) ->
 		{
 			if (type == ENEMY)
@@ -303,8 +308,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		addToCursor(hand.width / 2 + 30, hand.height / 2 - 30); // 30 is approx half of avatar after scaling
 
-		// place bottom to top
-		var skillLists = getSkillLists();
+		// place the combat skill lists bottom to top
+		this.skillLists = getSkillLists();
 		for (skillList in skillLists)
 		{
 			skillList.setPosition(cursor.x, cursor.y);
@@ -319,7 +324,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (type == PLAYER)
 		{
 			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick);
-			endTurnBtn.setPosition(hand.width / 2, hand.height / 2 + 4);
+			// set the btn under-center the Hand
+			endTurnBtn.setPosition(hand.width / 2, hand.body.height / 2 + 4);
 			add(endTurnBtn);
 		}
 

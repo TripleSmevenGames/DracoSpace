@@ -32,7 +32,9 @@ class MenuState extends FlxState
 
 	function clickExit()
 	{
+		#if sys
 		Sys.exit(0);
+		#end
 	}
 
 	function setupScreen()
@@ -51,10 +53,12 @@ class MenuState extends FlxState
 		continueButton.y += 80;
 		add(continueButton);
 
+		#if sys
 		var exitButton = new MenuButton('Exit', clickExit);
 		exitButton.screenCenter();
 		exitButton.y += 160;
 		add(exitButton);
+		#end
 	}
 
 	override public function create()
@@ -62,8 +66,6 @@ class MenuState extends FlxState
 		super.create();
 		#if debug
 		trace('debug activated');
-		#else
-		trace('normal mode');
 		#end
 		setupScreen();
 

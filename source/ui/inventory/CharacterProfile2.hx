@@ -46,7 +46,7 @@ class CharacterProfile2 extends FlxSpriteGroup
 		// place skills after the character's image
 		for (skill in char.skills)
 		{
-			var skillCard = new SkillCard(skill, true);
+			var skillCard = new SkillCard(skill, NORMAL);
 			skillCards.push(skillCard);
 
 			skillCard.setPosition(cursor, yPos);

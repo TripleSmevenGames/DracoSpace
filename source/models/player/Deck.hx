@@ -9,6 +9,7 @@ typedef Cards = Array<Card>;
 class Deck
 {
 	public var hiddenCards:Int = 0;
+	public var draw:Int = 1;
 	public var cardMap:Map<SkillPointType, Int>;
 
 	public static function sample()
@@ -21,9 +22,10 @@ class Deck
 		return new Deck([POW => 6, AGI => 8, CON => 6]);
 	}
 
-	public function new(?map:Map<SkillPointType, Int>, ?hiddenCards:Int = 0)
+	public function new(?map:Map<SkillPointType, Int>, ?hiddenCards:Int = 0, ?draw:Int = 1)
 	{
 		this.hiddenCards = hiddenCards;
+		this.draw = draw;
 		for (type in SkillPointCombination.ARRAY)
 		{
 			if (!map.exists(type))

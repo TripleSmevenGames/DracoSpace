@@ -77,17 +77,20 @@ class SkillSprite extends FlxSpriteGroup
 		if (owner != null && owner.dead)
 			this.disabled = true;
 
+		// if we are disabling the skill, see if its the owner is stunned/dead,
+		// or because  of the skill going on cooldown,
 		if (val)
 		{
 			this.tile.color = FlxColor.GRAY;
 			this.tile.alpha = .5;
 			this.cooldownCountdownSprite.visible = true;
-			if (owner != null && owner.getStatus(STUN) > 0)
+
+			if (owner.getStatus(STUN) > 0 || owner.dead)
 				this.cooldownCountdownSprite.text = '/';
 			else
 				this.cooldownCountdownSprite.text = Std.string(cooldownTimer);
 		}
-		else
+		else // if we are enabling it, reset everything
 		{
 			this.tile.color = FlxColor.WHITE;
 			this.tile.alpha = 1;
@@ -96,9 +99,12 @@ class SkillSprite extends FlxSpriteGroup
 		return this.disabled = val;
 	}
 
+	/** Check if this skill should be disabled, and disable it if so.
+	 * Is automatically called at certain points, but can be manually called too.
+	**/
 	public function checkDisabled()
 	{
-		disabled = (currentCharges == 0) || owner.getStatus(STUN) != 0;
+		disabled = (currentCharges == 0) || owner.getStatus(STUN) != 0 || owner.dead;
 	}
 
 	/** Sets the click callback, which will fire when clicked if the skill is not disabled. **/

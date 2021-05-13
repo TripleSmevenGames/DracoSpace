@@ -23,7 +23,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			var status = statuses[i];
 			remove(status); // remove the status so that we can set its local coords.
-			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width, 4);
+			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width);
 			status.y = 0;
 			add(status);
 		}
@@ -47,9 +47,8 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 			if (status.type == type)
 			{
 				if (status.stacks == 0)
-				{
-					trace('getStatus returned a status with 0 stacks');
-				}
+					trace('getStatus returned a ${status.name} status with 0 stacks');
+
 				return status.stacks;
 			}
 		}

@@ -6,6 +6,7 @@ import flixel.FlxSubState;
 import flixel.addons.nape.FlxNapeSpace;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.math.FlxPoint;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -44,13 +45,37 @@ class BattleView extends FlxSpriteGroup
 	var enemyDeckSprite:DeckSprite;
 	var enemyChars:Array<CharacterSprite>;
 
+	var enemySpots:Array<FlxPoint>;
+
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
 
 	final PLAYER_X = FlxG.width * (1 / 4);
 	final ENEMY_X = FlxG.width * (3 / 4);
 
-	var wait:Bool;
+	function calculateEnemySpots(eChars:Array<CharacterSprite>, spots:Int):Array<FlxPoint>
+	{
+		// find the largest size we have to accomadate
+		var retVal = new Array<FlxPoint>();
+		var largestWidth:Float = 124;
+		var largestHeight:Float = 124;
+		for (char in eChars)
+		{
+			if (char.sprite.width > largestWidth)
+				largestWidth = char.sprite.width;
+
+			if (char.sprite.height > largestHeight)
+				largestHeight = char.sprite.height;
+		}
+		for (i in 0...spots)
+		{
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, largestWidth, 16);
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, largestHeight / 2);
+			retVal.push(new FlxPoint(xPos, yPos));
+		}
+
+		return retVal;
+	}
 
 	public function initBattle(event:BattleEvent)
 	{
@@ -82,17 +107,25 @@ class BattleView extends FlxSpriteGroup
 		for (i in 0...playerChars.length)
 		{
 			var char = playerChars[i];
-			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.width + 20);
+			// either the sprite's width or the hpbar's approx width
+			var effectiveWidth = Math.max(char.sprite.width, 124);
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, effectiveWidth + 16);
 			var yPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.height / 2);
 			char.setPosition(PLAYER_X + xPos, middleY - yPos);
 			add(char);
 		}
 
+		// calculate the spots where enemies can spawn.
+		// Normally if there are x enemies, we calculate x spots.
+		// But some battles might spawn more enemies, so we have to calculate those additional spots ahead of time.
+		var enemySpots = calculateEnemySpots(enemyChars, event.additionalSpots);
+
 		// render the enemy chars
 		for (i in 0...enemyChars.length)
 		{
 			var char = enemyChars[i];
-			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.width + 20);
+			var effectiveWidth = Math.max(char.sprite.width, 124);
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, effectiveWidth + 16);
 			var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.height / 2);
 			char.setPosition(ENEMY_X - xPos, middleY - yPos);
 			add(char);
@@ -144,6 +177,7 @@ class BattleSubState extends FlxSubState
 	public function initBattle(event:BattleEvent)
 	{
 		cleanup();
+		FlxG.camera.scroll.x = 0;
 		view = new BattleView();
 		view.scrollFactor.set(0, 0);
 		add(view);

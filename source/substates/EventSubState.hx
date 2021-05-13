@@ -117,7 +117,7 @@ class EventView extends FlxSpriteGroup
 		add(titleSprite);
 
 		descSprite = new FlxText(0, 0, windowWidth * (3 / 4), 'this is a sample desc. You should not see this in a real game');
-		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE, null, 'center');
+		descSprite.setFormat(Fonts.STANDARD_FONT, DESC_FONT_SIZE, FlxColor.WHITE, 'center');
 		add(descSprite);
 	}
 }
@@ -131,6 +131,7 @@ class EventSubState extends FlxSubState
 	/** Shows the GameEvent on the screen, along with choices for the player to choose. **/
 	public function showEvent(event:GameEvent)
 	{
+		FlxG.camera.scroll.x = 0;
 		view.showEvent(event);
 	}
 

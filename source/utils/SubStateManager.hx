@@ -39,7 +39,9 @@ class SubStateManager
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 				if (event != null)
 				{
+					// set this event as the "root"
 					ess.newRoot(event);
+					// show the event on the screen.
 					ess.showEvent(event);
 				}
 			}

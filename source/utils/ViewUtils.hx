@@ -5,6 +5,7 @@ import flixel.FlxSprite;
 import flixel.addons.display.FlxNestedSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.math.FlxPoint;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -49,6 +50,7 @@ class ViewUtils
 	/** move this sprite's bottom center to overlap the other sprite's bottom center. 
 	 *
 	 * Only works if both sprites are added, or if both sprites are un-added. Or if the parent is at 0, 0.
+	 * I think it also only works if both are not centered.
 	**/
 	public static function matchBottomCenter(sprite:FlxSprite, other:FlxSprite)
 	{
@@ -61,6 +63,12 @@ class ViewUtils
 	public static function scale3x(sprite:FlxSprite)
 	{
 		sprite.scale.set(3, 3);
+		sprite.updateHitbox();
+	}
+
+	public static function scale2x(sprite:FlxSprite)
+	{
+		sprite.scale.set(2, 2);
 		sprite.updateHitbox();
 	}
 
@@ -161,6 +169,18 @@ class ViewUtils
 
 	public static function addScaledToMouseManager(sprite:FlxSprite)
 	{
+		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
 		FlxMouseEventManager.add(sprite, null, null, null, null, false, true, false);
+	}
+
+	/** Helper function to get CENTERED sprites into a grid formation, where we assume 0 is the top left corner of the grid.
+	 * Returns an FlxPoint
+	 * Use inside a loop (hence the i param)
+	**/
+	public static function getCoordsForPlacingInGrid(sprite:FlxSprite, spritesPerRow:Int, i:Int, paddingX:Int = 0, paddingY:Int = 0)
+	{
+		var xPos = ((i % spritesPerRow) * sprite.width) + (sprite.width / 2) + paddingX;
+		var yPos = sprite.height / 2 + (sprite.width * Math.floor(i / spritesPerRow)) + paddingY;
+		return new FlxPoint(xPos, yPos);
 	}
 }

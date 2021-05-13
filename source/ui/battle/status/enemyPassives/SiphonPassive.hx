@@ -8,7 +8,7 @@ import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-class ObservationPassive extends Status
+class SiphonPassive extends Status
 {
 	override public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext)
 	{
@@ -20,9 +20,9 @@ class ObservationPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = OBSERVATION;
-		name = 'Observation';
-		var desc = 'Pin draws a card every time an enemy plays a skill. (You\'re his enemy!)';
+		type = SIPHON;
+		name = 'Siphon';
+		var desc = 'Yuyi draws a card every time an enemy plays a skill. (You\'re her enemy!)';
 		var options:BattleIndicatorIconOptions = {
 			outlined: true,
 		};
