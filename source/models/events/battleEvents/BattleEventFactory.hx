@@ -10,9 +10,9 @@ class BattleEventFactory
 	/** This is a queue of battle events that will be popped from every time the player encounters a battle.
 	 * It will be shuffled at the start of a run.
 	**/
-	static var battleQueueEnd = [twoSlimes, dogs, ghosts2, firewood, golem, dandelions];
+	static var battleQueueMed = [twoSlimes, ghosts2, firewood, golem, dandelions, ghostAndDandelion, stoneHexapod];
 
-	static var battleQueueStart = [greenSlime, dandelion, ghosts];
+	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
 
 	public static var battleQueue:Array<Void->BattleEvent> = [];
 
@@ -27,8 +27,8 @@ class BattleEventFactory
 	public static function init()
 	{
 		var random = new FlxRandom();
-		var start = battleQueueStart.copy();
-		var end = battleQueueEnd.copy();
+		var start = battleQueueEasy.copy();
+		var end = battleQueueMed.copy();
 		random.shuffle(start);
 		random.shuffle(end);
 		battleQueue = start.concat(end);
@@ -184,6 +184,17 @@ class BattleEventFactory
 	public static function ghosts2()
 	{
 		var name = 'Spooky Ghosts Round 2';
+		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
+		var enemies = [createGhostC(), createGhostC()];
+		var hiddenCards = 0;
+		var draw = 3;
+		var deck = new Deck([KNO => 10, POW => 4], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	public static function ghosts3()
+	{
+		var name = 'Spooky Ghosts Round 3';
 		var desc = 'Some more woodland ghosts float towards you. They look much stronger than usual ghosts.';
 		var enemies = [createGhostF(), createGhostF(), createGhostC(), createGhostC()];
 		var hiddenCards = 0;
@@ -226,7 +237,7 @@ class BattleEventFactory
 		};
 
 		var name = 'Golem';
-		var desc = 'A hulking creature made of soil and stone towers over you. Something awakened this ancient weapon of war.';
+		var desc = 'Something awakened this ancient weapon of war from the nearby ruins.';
 		var enemies = [createGolem()];
 		var hiddenCards = 0;
 		var draw = 4;
@@ -281,30 +292,48 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function rockAnt()
+	public static function ghostAndDandelion()
 	{
-		var createRockAnt = () ->
-		{
-			var skills = [SF.enemySkills.get(laserBolt)()];
-			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.rockAnt__png, 80, 50, 1);
+		var name = 'Ghosts and Dandelions';
+		var desc = 'A dandelion has teamed up with some ghosts to oppose you.';
+		var enemies = [createGreenDanelion(), createGhostF(), createGhostF()];
+		var hiddenCards = 0;
+		var draw = 3;
+		var deck = new Deck([KNO => 8, CON => 4], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
 
-			var rockAnt = CharacterInfo.createEnemy('Stone Hexapod', spriteSheetInfo, 25, skills);
-			rockAnt.avatarPath = AssetPaths.rockAntAvatar__png;
-			rockAnt.initialStatuses = [STURDY];
-			rockAnt.soundType = ROCK;
-			return rockAnt;
-		}
+	static var createStoneHexapod = () ->
+	{
+		var skills = [SF.enemySkills.get(laserBolt)(), SF.enemySkills.get(laserBlast)(1)];
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.rockAnt__png, 80, 50, 1);
+		var rockAnt = CharacterInfo.createEnemy('Stone Hexapod', spriteSheetInfo, 25, skills);
+		rockAnt.avatarPath = AssetPaths.rockAntAvatar__png;
+		rockAnt.initialStatuses = [STURDY];
+		rockAnt.soundType = ROCK;
+		return rockAnt;
+	}
 
-		var createStoneSentry = (type:Int = 0) ->
-		{
-			var skills = [];
-			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.stoneSentry50x50x2__png, 50, 50, 2);
-			var rockAnt = CharacterInfo.createEnemy('Stone Sentry', spriteSheetInfo, 10, skills);
-			rockAnt.avatarPath = AssetPaths.rockAntAvatar__png;
-			rockAnt.initialStatuses = [STURDY];
-			rockAnt.soundType = ROCK;
-			return rockAnt;
-		}
+	static var createStoneSentry = (type:Int = 0) ->
+	{
+		var skills = [SF.enemySkills.get(energize)(1)];
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.stoneSentry50x50x2__png, 50, 50, 2);
+		var stoneSentry = CharacterInfo.createEnemy('Stone Sentry', spriteSheetInfo, 10, skills);
+		stoneSentry.avatarPath = AssetPaths.stoneSentryAvatar__png;
+		stoneSentry.initialStatuses = [STURDY];
+		stoneSentry.soundType = ROCK;
+		return stoneSentry;
+	}
+
+	public static function stoneHexapod()
+	{
+		var name = 'Stone Hexapod';
+		var desc = 'Something awoke these ancient machines from the nearby ruins.';
+		var enemies = [createStoneHexapod(), createStoneSentry()];
+		var hiddenCards = 0;
+		var draw = 3;
+		var deck = new Deck([KNO => 10, WIS => 3], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
 	public static function bat()

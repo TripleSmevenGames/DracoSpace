@@ -2,6 +2,7 @@ package models.player;
 
 import models.skills.Skill;
 import models.skills.SkillFactory;
+import utils.battleManagerUtils.RewardHelper;
 
 /** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. **/
 class Player
@@ -11,7 +12,10 @@ class Player
 	public static var money:Int;
 	public static var inventory:Inventory;
 	public static var exp:Int;
-	public static var skillsBought:Int; // we scale the price of skills based on how many you've bought already
+	// we scale the price of skills based on how many you've bought already
+	public static var skillsBought:Int;
+	// We persist the skillShopChoices until the player buys one.
+	static var currentSkillShopChoices:Array<Skill>;
 
 	/** Get a list of all the skills the player has. **/
 	public static function getSkills()
@@ -29,6 +33,19 @@ class Player
 		inventory.unequippedSkills.push(skill);
 	}
 
+	public static function refreshSkillShopChoices()
+	{
+		currentSkillShopChoices = RewardHelper.getSkillShopChoices();
+	}
+
+	public static function getCurrentSkillShopChoices()
+	{
+		if (currentSkillShopChoices.length == 0)
+			refreshSkillShopChoices();
+
+		return currentSkillShopChoices;
+	}
+
 	public static function init()
 	{
 		chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
@@ -39,5 +56,6 @@ class Player
 		money = 0;
 		exp = 0;
 		skillsBought = 0;
+		currentSkillShopChoices = [];
 	}
 }

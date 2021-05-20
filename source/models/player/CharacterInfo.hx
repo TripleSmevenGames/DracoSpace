@@ -103,7 +103,7 @@ class CharacterInfo
 		ryder.name = 'Ryder';
 		ryder.category = Castle.SkillDataKind.ryder;
 		ryder.type = PLAYER;
-		ryder.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.ryderIdle66x82x1__png, 66, 82, 1);
+		ryder.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.RyderIdle74x79x16__png, 74, 79, 16);
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
 		ryder.maxHp = 30;
 		ryder.currHp = 30;

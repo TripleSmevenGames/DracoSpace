@@ -25,8 +25,9 @@ using utils.ViewUtils;
 class SkillSprite extends FlxSpriteGroup
 {
 	public var skill:Skill;
-	public var tile:FlxSprite;
+	public var tile:SkillTile;
 	public var cooldownCountdownSprite:FlxText;
+	public var disabledFilter:FlxSprite;
 	public var priority:Int = 0;
 	public var owner:CharacterSprite;
 
@@ -78,12 +79,11 @@ class SkillSprite extends FlxSpriteGroup
 			this.disabled = true;
 
 		// if we are disabling the skill, see if its the owner is stunned/dead,
-		// or because  of the skill going on cooldown,
+		// or because of the skill going on cooldown,
 		if (val)
 		{
-			this.tile.color = FlxColor.GRAY;
-			this.tile.alpha = .5;
 			this.cooldownCountdownSprite.visible = true;
+			disabledFilter.visible = true;
 
 			if (owner.getStatus(STUN) > 0 || owner.dead)
 				this.cooldownCountdownSprite.text = '/';
@@ -92,9 +92,8 @@ class SkillSprite extends FlxSpriteGroup
 		}
 		else // if we are enabling it, reset everything
 		{
-			this.tile.color = FlxColor.WHITE;
-			this.tile.alpha = 1;
 			this.cooldownCountdownSprite.visible = false;
+			disabledFilter.visible = false;
 		}
 		return this.disabled = val;
 	}
@@ -150,8 +149,15 @@ class SkillSprite extends FlxSpriteGroup
 		tile = new SkillTile(skill);
 		add(tile);
 
+		// setup a grey filter, which will be applied over the tile (but under the cooldown counter) when the skill is disabled.
+		disabledFilter = new FlxSprite();
+		disabledFilter.makeGraphic(Std.int(tile.width), Std.int(tile.height), FlxColor.fromRGB(0, 0, 0, 128));
+		disabledFilter.centerSprite();
+		add(disabledFilter);
+		disabledFilter.visible = false;
+
 		// setup the cooldown counter, which will appear on the tile when its on cooldown.
-		cooldownCountdownSprite = new FlxText(0, 0, 0, '0');
+		cooldownCountdownSprite = new FlxText(0, 0, 0, '/');
 		cooldownCountdownSprite.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
 		cooldownCountdownSprite.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		cooldownCountdownSprite.centerSprite();
@@ -163,7 +169,7 @@ class SkillSprite extends FlxSpriteGroup
 		this.priority = skill.priority;
 
 		// setup the cost indicator under the tile.
-		var costTextOptions = {bodyWidth: 72.0, fontSize: 12};
+		var costTextOptions = {bodyWidth: 72.0, fontSize: 12, font: Fonts.STANDARD_FONT2};
 		var costTextSprite = new FlxTextWithReplacements(skill.getCostStringCompact(), null, null, costTextOptions);
 		costTextSprite.centerSprite(0, tile.height / 2 + 8);
 		add(costTextSprite);

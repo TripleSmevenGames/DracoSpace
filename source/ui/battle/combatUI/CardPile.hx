@@ -9,7 +9,7 @@ import flixel.util.FlxColor;
 import models.cards.Card;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
@@ -29,7 +29,7 @@ class CardPile extends FlxSpriteGroup
 	public var cards(null, null):Cards;
 	public var hidden:Bool = false;
 
-	var body:BattleIndicatorIcon;
+	var body:IndicatorIcon;
 	var desc:String;
 	var type:CardPileType;
 	var deck:Deck;
@@ -142,7 +142,7 @@ class CardPile extends FlxSpriteGroup
 		else
 			trace('nani');
 
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			color: FlxColor.WHITE,
 			centered: true,
 			scale: 3,
@@ -153,7 +153,8 @@ class CardPile extends FlxSpriteGroup
 				centered: true,
 			}
 		};
-		this.body = new BattleIndicatorIcon(spritePath, name, getDisplayString(), options);
+		this.body = new IndicatorIcon(spritePath, name, getDisplayString(), options);
 		add(body);
+		body.registerTooltip();
 	}
 }

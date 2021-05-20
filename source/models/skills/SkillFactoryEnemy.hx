@@ -99,6 +99,25 @@ class SkillFactoryEnemy
 			skill.spritePath = AssetPaths.emptySkill__png;
 			return skill;
 		},
+		holoBarrier => (?priority:Int) ->
+		{
+			var skill = skillFromData(enemy, holoBarrier, priority);
+			skill.play = SkillAnimations.genericBlockPlay(skill.value);
+			skill.spritePath = AssetPaths.guard__png;
+			return skill;
+		},
+		energize => (?priority:Int) ->
+		{
+			var skill = skillFromData(enemy, energize, priority);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.addStatus(PLUSDRAW, 2);
+				context.eDeck.drawModifier += 2;
+			}
+			skill.play = SkillAnimations.genericBuffPlay(effect);
+			skill.spritePath = AssetPaths.emptySkill__png;
+			return skill;
+		},
 		howl => (?priority:Int) ->
 		{
 			var skill = skillFromData(enemy, howl, priority);

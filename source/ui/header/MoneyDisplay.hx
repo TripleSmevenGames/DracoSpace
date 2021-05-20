@@ -1,5 +1,6 @@
 package ui.header;
 
+import constants.Colors;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxSprite;
@@ -31,8 +32,8 @@ class MoneyDisplay extends FlxSpriteGroup
 		add(moneyIcon);
 
 		this.text = new FlxText(0, 0, 0, '0');
-		text.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, FlxColor.YELLOW, FlxTextAlign.CENTER);
-		text.setBorderStyle(FlxTextBorderStyle.SHADOW, FlxColor.BLACK, 3);
+		text.setFormat(Fonts.NUMBERS_FONT, UIMeasurements.MAP_UI_FONT_SIZE_MED, Colors.COIN_YELLOW, FlxTextAlign.CENTER);
+		text.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
 		text.setPosition(moneyIcon.width / 2, 0);
 		text.centerY();
 		add(text);

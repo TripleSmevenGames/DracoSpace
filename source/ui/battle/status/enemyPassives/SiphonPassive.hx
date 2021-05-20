@@ -2,7 +2,7 @@ package ui.battle.status.enemyPassives;
 
 import flixel.math.FlxRandom;
 import models.skills.SkillAnimations;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -23,10 +23,10 @@ class SiphonPassive extends Status
 		type = SIPHON;
 		name = 'Siphon';
 		var desc = 'Yuyi draws a card every time an enemy plays a skill. (You\'re her enemy!)';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 
 		this.stackable = false;
 

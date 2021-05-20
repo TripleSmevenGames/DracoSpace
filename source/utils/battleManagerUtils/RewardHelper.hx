@@ -103,7 +103,7 @@ class RewardHelper
 			return 0;
 	}
 
-	public static function getShopChoices()
+	public static function getSkillShopChoices()
 	{
 		var retVal = new Array<Skill>();
 

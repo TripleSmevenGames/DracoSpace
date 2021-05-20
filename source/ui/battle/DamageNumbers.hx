@@ -12,7 +12,10 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import utils.ViewUtils;
 
-// refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape
+/**refer to https://github.com/HaxeFlixel/flixel-demos/tree/master/Features/FlxNape 
+ * A single "damage number", or thing that pops out of a character when something happens to them.
+ * Doesn't have to be a number, could be a status like "STUN".
+**/
 class DamageNumber extends FlxSpriteGroup
 {
 	// the text object which follows the nape sprite
@@ -55,7 +58,7 @@ class DamageNumber extends FlxSpriteGroup
 	public function new()
 	{
 		super(0, 0);
-		referenceText = new FlxText(0, 0, 0, 'null');
+		referenceText = new FlxText(0, 0, 0, '');
 		referenceText.setFormat(Fonts.NUMBERS_FONT, BASE_FONT_SIZE);
 		referenceText.setBorderStyle(FlxTextBorderStyle.OUTLINE_FAST, FlxColor.fromRGB(0, 0, 0, 200), 3);
 

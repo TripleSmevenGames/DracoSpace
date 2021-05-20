@@ -64,7 +64,7 @@ class RewardsSprite extends FlxSpriteGroup
 		var cursor = titleSprite.y + titleSprite.height + 32;
 
 		// show the exp reward
-		var expItem = new RewardItemSprite(itemWidth, itemHeight, '+$expReward EXP');
+		var expItem = new RewardItemSprite(itemWidth, itemHeight, '+$expReward XP');
 		items.push(expItem);
 
 		// show the money reward

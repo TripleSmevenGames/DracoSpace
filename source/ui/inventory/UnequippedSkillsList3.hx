@@ -18,14 +18,65 @@ using utils.ViewUtils;
 class UnequippedSkillsList3 extends FlxSpriteGroup
 {
 	public var skillTiles:Array<SkillTile> = [];
-	public var bodyHeight = 60;
+	public final bodyHeight = 72;
+	public final bodyWidth = 180; // about 10 tiles?
+	public final maxTiles = 8;
+
+	var blankTiles:Array<SkillTileBlank> = [];
+
+	/** rerender the list to show the current unequipped skills.
+	 * Because we are removing the old tiles and calling setupHover() on the new tiles
+	 * without cleaning up the old tooltips, this is technically a memory leak.
+	 * We'll cleanup the tooltips when we switch states though.
+	**/
+	public function refresh()
+	{
+		// first, remove all the skill tiles
+		// maybe slow?
+		for (skillTile in skillTiles)
+		{
+			remove(skillTile);
+			skillTile.destroy();
+		}
+		for (blankTile in blankTiles)
+		{
+			remove(blankTile);
+			blankTile.destroy();
+		}
+		skillTiles = [];
+		blankTiles = [];
+
+		// then, re render them again according to the current data.
+		var numSkills = Player.inventory.unequippedSkills.length;
+		for (i in 0...maxTiles)
+		{
+			if (i < numSkills)
+			{
+				var skill = Player.inventory.unequippedSkills[i];
+				var skillTile = new SkillTile(skill, true, 'Equip');
+				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, skillTile.width, 4);
+				skillTile.setPosition(xPos, 0);
+				skillTiles.push(skillTile);
+				add(skillTile);
+				skillTile.setupHover(INV);
+			}
+			else
+			{
+				var skillTileBlank = new SkillTileBlank();
+				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, skillTileBlank.width, 4);
+				skillTileBlank.setPosition(xPos, 0);
+				blankTiles.push(skillTileBlank);
+				add(skillTileBlank);
+			}
+		}
+	}
 
 	public function new()
 	{
 		super();
 
 		var bodyWidth = FlxG.width / 2;
-		var body = new FlxUI9SliceSprite(0, 0, AssetPaths.brown__png, new Rectangle(0, 0, bodyWidth, bodyHeight), [8, 8, 40, 40]);
+		var body = ViewUtils.newSlice9(AssetPaths.greyBlue_dark__png, bodyWidth, bodyHeight, [8, 8, 40, 40]);
 		body.centerSprite();
 		add(body);
 
@@ -35,16 +86,7 @@ class UnequippedSkillsList3 extends FlxSpriteGroup
 		title.y -= (body.height + title.height) / 2;
 		add(title);
 
-		var numSkills = Player.inventory.unequippedSkills.length;
-		for (i in 0...numSkills)
-		{
-			var skill = Player.inventory.unequippedSkills[i];
-			var skillTile = new SkillTile(skill);
-			var xPos = ViewUtils.getXCoordForCenteringLR(i, numSkills, skillTile.width, 4);
-			skillTile.setPosition(xPos, 0);
-			skillTiles.push(skillTile);
-			add(skillTile);
-			skillTile.setupHover(INV);
-		}
+		// call this to initially render the unequipped skill tiles.
+		refresh();
 	}
 }

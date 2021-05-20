@@ -49,7 +49,7 @@ class PlayState extends FlxState
 		FlxG.camera.minScrollY = 0;
 		// FlxG.camera.maxScrollY = 1000;
 
-		FlxG.sound.volume = .7;
+		FlxG.sound.volume = .4;
 
 		#if debug
 		memIndicator = new MemIndicator();

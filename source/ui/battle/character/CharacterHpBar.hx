@@ -43,7 +43,7 @@ class CharacterHpBar extends FlxSpriteGroup
 {
 	var bar:HpBarSprite;
 	var numbers:FlxText;
-	var blockIndicator:BattleIndicatorIcon;
+	var blockIndicator:IndicatorIcon;
 	var character:CharacterSprite;
 
 	public function updateBlockIndicator(val:Int)
@@ -83,9 +83,10 @@ class CharacterHpBar extends FlxSpriteGroup
 				centered: true,
 				color: FlxColor.BLACK,
 			}
-			blockIndicator = new BattleIndicatorIcon(AssetPaths.Block__png, null, 'Block prevents damage until your next turn.', options);
+			blockIndicator = new IndicatorIcon(AssetPaths.Block__png, null, 'Block prevents damage until your next turn.', options);
 			blockIndicator.setPosition(bar.width / 2 + blockIndicator.icon.width / 2, 0);
 			add(blockIndicator);
+			blockIndicator.registerTooltip();
 		}
 	}
 }

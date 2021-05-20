@@ -194,6 +194,7 @@ class BattleManager extends FlxBasic
 		{
 			// pDeck.blinkSkillPointDisplay(); // warn the player they are short on points
 			// play some sound instead
+			sounds.error.play();
 			return;
 		}
 
@@ -451,6 +452,8 @@ class BattleManager extends FlxBasic
 					case ALL_ENEMY:
 						var aliveEnemies = context.getAliveEnemies();
 						activeTargets = aliveEnemies;
+					case RANDOM_ENEMY: // for a single random enemy. For multiple random enemies, make the skill ALL_ENEMY and calculate targets itself.
+						activeTargets = [context.getRandomTarget(ENEMY)];
 					case SINGLE_ALLY:
 						setTargetArrowsVisible(true, PLAYER);
 						hideAllSkillSprites();

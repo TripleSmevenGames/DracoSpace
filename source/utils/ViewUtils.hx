@@ -1,16 +1,23 @@
 package utils;
 
 import constants.Colors;
+import constants.Fonts;
 import flixel.FlxSprite;
 import flixel.addons.display.FlxNestedSprite;
+import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
+import flixel.system.FlxAssets.FlxGraphicAsset;
+import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import models.skills.Skill;
+import openfl.geom.Rectangle;
 import ui.battle.status.Status.StatusType;
+
+using utils.ViewUtils;
 
 // utils for handling sprites and views.
 class ViewUtils
@@ -167,10 +174,11 @@ class ViewUtils
 		FlxTween.tween(sprite, {y: sprite.y + distance}, duration, {type: PINGPONG, ease: ease});
 	}
 
-	public static function addScaledToMouseManager(sprite:FlxSprite)
+	public static function addScaledToMouseManager(sprite:FlxSprite, mouseChildren = false)
 	{
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
-		FlxMouseEventManager.add(sprite, null, null, null, null, false, true, false);
+		// Make mouse children true if you want other sprites under this to still get mouse events.
+		FlxMouseEventManager.add(sprite, null, null, null, null, mouseChildren, true, false);
 	}
 
 	/** Helper function to get CENTERED sprites into a grid formation, where we assume 0 is the top left corner of the grid.
@@ -179,8 +187,32 @@ class ViewUtils
 	**/
 	public static function getCoordsForPlacingInGrid(sprite:FlxSprite, spritesPerRow:Int, i:Int, paddingX:Int = 0, paddingY:Int = 0)
 	{
-		var xPos = ((i % spritesPerRow) * sprite.width) + (sprite.width / 2) + paddingX;
-		var yPos = sprite.height / 2 + (sprite.width * Math.floor(i / spritesPerRow)) + paddingY;
+		var widthWithPadding = sprite.width + paddingX;
+		var heightWithPadding = sprite.height + paddingY;
+		var xPos = ((i % spritesPerRow) * widthWithPadding) + (widthWithPadding / 2);
+		var yPos = heightWithPadding / 2 + (widthWithPadding * Math.floor(i / spritesPerRow));
 		return new FlxPoint(xPos, yPos);
+	}
+
+	public static function newSlice9(assetPath:FlxGraphicAsset, w:Float, h:Float, slice9Array:Array<Int>)
+	{
+		return new FlxUI9SliceSprite(0, 0, assetPath, new Rectangle(0, 0, w, h), slice9Array);
+	}
+
+	/** This gets the lmbIcon and the a text together. Not centered. **/
+	public static function getClickToSomethingText(something:String = '', fontSize = 24, padding = 4)
+	{
+		var group = new FlxSpriteGroup();
+
+		var lmbIcon = new FlxSprite(0, 0, AssetPaths.LMB__png);
+		lmbIcon.scale2x();
+		group.add(lmbIcon);
+
+		var buyText = new FlxText(0, 0, 0, something);
+		buyText.setFormat(Fonts.STANDARD_FONT, fontSize);
+		buyText.setPosition(lmbIcon.width + padding, 0);
+		group.add(buyText);
+
+		return group;
 	}
 }

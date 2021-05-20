@@ -36,7 +36,7 @@ class BossEventFactory
 		// his dogs' skills will have priority: 0
 		var skills = [SF.pinSkills.get(summonK9)(2), SF.pinSkills.get(commandGuard)(1),];
 		var hp = 100;
-		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.poochyena__png, 45, 42, 1);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.YellowSword__png, 45, 42, 1);
 		var pin = CharacterInfo.createEnemy('Pin', spriteSheetInfo, hp, skills);
 
 		var name = 'Dr. Pin, The Machinist';

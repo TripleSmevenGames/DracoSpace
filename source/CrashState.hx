@@ -34,7 +34,6 @@ class CrashState extends FlxState
 			#end
 
 			#if sys
-			trace('tried writing crash to file sys');
 			try
 			{
 				var date = Date.now().toString();

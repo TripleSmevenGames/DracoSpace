@@ -81,7 +81,7 @@ class SubStateManager
 			iss.openCallback = () ->
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
-				iss.initMenu();
+				iss.init();
 			}
 			playState.openSubState(iss);
 		};
@@ -129,6 +129,12 @@ class SubStateManager
 	public function returnToHome()
 	{
 		initEvent(new HomeEvent());
+	}
+
+	public function refreshISSHeader()
+	{
+		if (iss != null)
+			iss.refreshHeader();
 	}
 
 	// paranoid function to free up memory. Might be un-needed.

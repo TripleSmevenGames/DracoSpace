@@ -2,7 +2,7 @@ package ui.battle.status.enemyPassives;
 
 import flixel.math.FlxRandom;
 import models.skills.SkillAnimations;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -27,10 +27,10 @@ class DyingWishPassive extends Status
 		type = DYINGWISH;
 		name = 'Dying Wish';
 		var desc = 'When this character dies, all allies gain this character\'s Attack.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 
 		this.stackable = false;
 

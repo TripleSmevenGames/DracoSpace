@@ -232,7 +232,7 @@ class MapSubState extends FlxSubState
 			FlxG.camera.scroll.x -= (FlxG.mouse.wheel * 100);
 		}
 
-		this.scrollX = FlxG.camera.scroll.x;
+		this.scrollX = FlxG.camera.scroll.x; // recrod the scrollX so when we switch back to the map state, we can return to the scroll we were at.
 	}
 
 	override function update(elapsed:Float)

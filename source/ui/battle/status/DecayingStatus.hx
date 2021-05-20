@@ -18,7 +18,7 @@ class DecayingStatus extends Status
 			stacks -= 1;
 	}
 
-	public function new(owner:CharacterSprite, icon:BattleIndicatorIcon, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, icon:IndicatorIcon, initialStacks:Int = 1)
 	{
 		super(owner, icon);
 		stacks = initialStacks;

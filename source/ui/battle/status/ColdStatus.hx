@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import utils.BattleManager;
@@ -29,10 +29,10 @@ class ColdStatus extends DecayingStatus
 		type = COLD;
 		name = 'Cold';
 		var desc = 'Whenever this character plays a skill, they discard a card.' + '\n\nLose 1 stack at the end of turn.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

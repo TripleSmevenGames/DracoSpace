@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 
@@ -17,10 +17,10 @@ class AttackDownStatus extends Status
 		type = ATTACKDOWN;
 		name = 'Attack Down';
 		var desc = 'This character\'s skills deal $initialStacks less damage.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.AttackDown__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.AttackDown__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

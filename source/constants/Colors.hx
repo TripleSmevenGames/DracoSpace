@@ -17,6 +17,9 @@ class Colors
 	public static inline final STATIC_YELLOW = 0xFFffff00;
 	public static inline final COLD_BLUE = 0xFF7ae4ff;
 
-	public static inline final INVENTORY_GRADIENT_BOT = 0xFFf5b47a; // light tan
-	public static inline final INVENTORY_GRADIENT_TOP = 0xFFdb9d65; // slightly darker tan
+	public static inline final INVENTORY_GRADIENT_BOT = 0xFFb09780; // dark beige
+	public static inline final INVENTORY_GRADIENT_TOP = 0xFF9c8876; // darker beige
+
+	public static inline final COIN_YELLOW = 0xFFe6dc00;
+	public static inline final XP_PURPLE = 0xFFcf96d9; // light purple/pink
 }

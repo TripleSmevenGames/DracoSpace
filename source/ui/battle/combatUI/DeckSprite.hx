@@ -314,7 +314,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			skillList.setPosition(cursor.x, cursor.y);
 			add(skillList);
-			addToCursor(0, -skillList.height);
+			addToCursor(0, -(skillList.height - 16));
 		}
 
 		add(drawPile);

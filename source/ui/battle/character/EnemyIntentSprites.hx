@@ -56,7 +56,7 @@ class EnemyIntentSprites extends FlxSpriteGroup
 		// And when no more sprites exist in the group, it kills itself, or something. SO adding this dummy prevents all sprites from being removed.
 		// Looking into the code itself, I actually couldnt find proof if this being true. So idk.
 		var anchor = ViewUtils.newAnchor();
-		anchor.alpha = 1;
+		anchor.alpha = 0;
 		add(anchor);
 	}
 }

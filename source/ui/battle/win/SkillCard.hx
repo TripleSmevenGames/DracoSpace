@@ -28,6 +28,7 @@ class SkillCard extends FlxSpriteGroup
 {
 	public var skill:Skill;
 	public var highlight:FlxSprite;
+	public var shopCover:SkillShopChoiceCover;
 
 	public static var bodyWidth = UIMeasurements.SKILL_CARD_WIDTH;
 	public static var bodyHeight = UIMeasurements.SKILL_CARD_HEIGHT;
@@ -40,14 +41,23 @@ class SkillCard extends FlxSpriteGroup
 		Castle.SkillDataKind.generic => 0xFF333333,
 	];
 
+	public function setCanAfford(val:Bool)
+	{
+		if (shopCover == null)
+			trace('tried to set a canAfford on SkillCard with no shopCover.');
+		else
+			shopCover.canAfford = val;
+	}
+
 	public function new(skill:Skill, ?highlightType:HighlightType)
 	{
 		super();
 		this.skill = skill;
 
-		var padding = 8;
+		var padding = 4;
 		this.addScaledToMouseManager();
 
+		// make the card bg
 		this.body = new FlxSprite();
 		var color = colorMap.get(skill.category);
 		if (color == null)
@@ -57,13 +67,14 @@ class SkillCard extends FlxSpriteGroup
 
 		add(body);
 
+		// add the white frame
 		var frame = new FlxUI9SliceSprite(0, 0, AssetPaths.cardFrameGeneric__png, new Rectangle(0, 0, body.width, body.height), [5, 5, 15, 15]);
 		frame.centerSprite();
 		add(frame);
 
-		// centered, so just place it in the middle
+		// add the title. centered, so just place it in the middle near the top of the card
 		var skillCardTitle = new SkillCardTitle(skill.name, body.width - 16);
-		skillCardTitle.setPosition(0, -body.height / 2 + skillCardTitle.height);
+		skillCardTitle.setPosition(0, -body.height / 2 + skillCardTitle.height / 2 + 8);
 		add(skillCardTitle);
 
 		var parts = new Array<FlxSprite>();
@@ -72,7 +83,7 @@ class SkillCard extends FlxSpriteGroup
 		parts.push(icon);
 
 		var costString = skill.getCostString();
-		var costTextOptions = {bodyWidth: body.width, fontSize: UIMeasurements.BATTLE_UI_FONT_SIZE_LG};
+		var costTextOptions = {bodyWidth: body.width, fontSize: 24, font: Fonts.STANDARD_FONT2};
 		var costTextSprite = new FlxTextWithReplacements(costString, null, null, costTextOptions);
 		parts.push(costTextSprite);
 
@@ -86,19 +97,33 @@ class SkillCard extends FlxSpriteGroup
 			cursor += part.height + padding;
 		}
 
+		cursor -= 4; // bump the cursor upwards a bit to give the skill description more space.
+
 		// add the skill description background
-		var cbWidth = body.width - 24;
+		var cbWidth = body.width - 20;
 		var cbHeight = body.height / 2 - cursor - 24;
-		var contentBackground = new FlxUI9SliceSprite(0, 0, AssetPaths.skillCardTitle__png, new Rectangle(0, 0, cbWidth, cbHeight), [15, 15, 32, 32]);
+		var contentBackground = ViewUtils.newSlice9(AssetPaths.skillCardTitle__png, cbWidth, cbHeight, [15, 15, 32, 32]);
 		contentBackground.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2));
 		add(contentBackground);
 
 		// add the skill description
-		var descTextFontSize = skill.desc.length < 30 ? 20 : 18;
-		var descTextOptions = {bodyWidth: body.width - 8, fontSize: descTextFontSize};
+		var descTextFontSize:Int;
+		if (skill.desc.length < 40)
+			descTextFontSize = 20;
+		else if (skill.desc.length < 80)
+			descTextFontSize = 18;
+		else
+			descTextFontSize = 16;
+
+		var descTextLineHeight = skill.desc.length < 40 ? 1.1 : 1;
+		var descTextOptions = {
+			bodyWidth: body.width - 20,
+			fontSize: descTextFontSize,
+			lineHeightMultiplier: descTextLineHeight
+		};
 		var descTextSprite = new FlxTextWithReplacements(skill.desc, Std.string(skill.value), Std.string(skill.value2), descTextOptions);
 		// put the skill desc in the middle of the remaining space. Then bump it up a bit lol
-		descTextSprite.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2) - 16);
+		descTextSprite.centerSprite(0, cursor + ((body.height / 2 - cursor) / 2) - 8);
 		add(descTextSprite);
 
 		var cooldownSprite = new SkillCardCooldown(skill.cooldown);
@@ -116,7 +141,8 @@ class SkillCard extends FlxSpriteGroup
 			}
 			else if (highlightType == SHOPCOVER)
 			{
-				this.highlight = new SkillShopChoiceCover(); // dont need to center, it's already centered.
+				this.shopCover = new SkillShopChoiceCover();
+				this.highlight = shopCover;
 			}
 
 			if (highlight != null)
@@ -131,18 +157,19 @@ class SkillCard extends FlxSpriteGroup
 	}
 }
 
-/** Centered **/
+/** The title part of a skill card. Including the text itself and the background Centered/ **/
 class SkillCardTitle extends FlxSpriteGroup
 {
-	public function new(title:String, width:Float)
+	public function new(titleString:String, width:Float)
 	{
 		super();
-		var title = new FlxText(0, 0, 0, title);
-		title.setFormat(Fonts.STANDARD_FONT, UIMeasurements.BATTLE_UI_FONT_SIZE_LG);
-		var background = new FlxUI9SliceSprite(0, 0, AssetPaths.skillCardTitle__png, new Rectangle(0, 0, width, title.height + 4), [15, 15, 32, 32]);
-		// the title font is kinda wonky so to match it, we move the background up a teeny bit
-		background.centerSprite(0, -2);
-		title.centerSprite();
+		var title = new FlxText(0, 0, 0, titleString);
+		var fontSize = titleString.length > 16 ? UIMeasurements.BATTLE_UI_FONT_SIZE_LG - 2 : UIMeasurements.BATTLE_UI_FONT_SIZE_LG;
+		title.setFormat(Fonts.STANDARD_FONT, fontSize);
+		var background = ViewUtils.newSlice9(AssetPaths.skillCardTitle__png, width, title.height + 4, [15, 15, 32, 32]);
+		background.centerSprite();
+		// the title is slightly off center, so just bump it upwards a teeny bit.
+		title.centerSprite(0, -2);
 		add(background);
 		add(title);
 	}
@@ -155,7 +182,7 @@ class SkillCardCooldown extends FlxSpriteGroup
 	{
 		super();
 		var string = '${cooldown} ' + "$cd";
-		var options = {fontSize: 22};
+		var options = {fontSize: 22, font: Fonts.STANDARD_FONT2};
 		var textSprite = new FlxTextWithReplacements(string, null, null, options);
 		var background = new FlxUI9SliceSprite(0, 0, AssetPaths.greyBlue_dark__png, new Rectangle(0, 0, textSprite.width + 4, textSprite.height + 4),
 			[3, 3, 40, 40]);

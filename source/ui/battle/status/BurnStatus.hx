@@ -3,7 +3,7 @@ package ui.battle.status;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
@@ -43,10 +43,10 @@ class BurnStatus extends DecayingStatus
 		type = BURN;
 		name = 'Burn';
 		var desc = 'At the end of turn, take X damage and lose 1 stack.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Burn1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Burn1__png, name, desc, options);
 
 		sounds.push(FlxG.sound.load(AssetPaths.burn1__wav));
 		sounds.push(FlxG.sound.load(AssetPaths.burn2__wav));

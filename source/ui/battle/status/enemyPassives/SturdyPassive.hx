@@ -1,6 +1,6 @@
 package ui.battle.status.enemyPassives;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 
@@ -17,10 +17,10 @@ class SturdyPassive extends Status
 		type = STURDY;
 		name = 'Sturdy';
 		var desc = 'This character takes $initialStacks less damage from all sources.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.sturdy__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.sturdy__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

@@ -308,6 +308,8 @@ class Hand extends FlxSpriteGroup
 		card.visible = false;
 		card.hidden = hidden;
 		card.setPosition(drawX, drawY);
+		card.scale.set(.5, .5);
+		card.alpha = .5;
 
 		var destinationX = getCardXCoordInHand(i, i) + this.x; // this is the ith card drawn among cards we are drawing in a row.
 		var destinationY = this.y;
@@ -317,13 +319,15 @@ class Hand extends FlxSpriteGroup
 			addCard(card);
 			card.resetLook();
 		}
+		// some changes inside onStart dont get reflected, like changing the cards scale or alpha
+		// but some do (seemingly), like setting visible.
+		// not sure why, I think the tween implicitely "resets" certain attributes after onStart.
+		// So make sure to set scale and alpha outside of onStart (like we do above);
 		var onStart = (_) ->
 		{
 			card.visible = true;
 			card.highlight.visible = false;
 			card.setPosition(drawX, drawY);
-			card.scale.set(.5, .5);
-			card.alpha = .5;
 		}
 
 		var tween = FlxTween.tween(card, {

@@ -102,7 +102,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(ryder, protect);
 			skill.play = SkillAnimations.genericBlockPlay(skill.value);
-			skill.spritePath = AssetPaths.guard__png;
+			skill.spritePath = AssetPaths.protect__png;
 			return skill;
 		},
 	];
@@ -204,7 +204,7 @@ class SkillFactory
 			{
 				var animSprite = SkillAnimations.getFastHitAnim();
 				SkillAnimations.genericAttackPlay(skill.value, animSprite)(targets, owner, context);
-				if (targets[0].currBlock <= skill.value)
+				if (targets[0].currBlock >= skill.value)
 				{
 					SkillAnimations.genericAttackPlay(skill.value, animSprite)(targets, owner, context);
 				}
@@ -328,7 +328,7 @@ class SkillFactory
 				SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
 				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
 			}
-			skill.spritePath = kiwiPlaceholder;
+			skill.spritePath = AssetPaths.swipe__png;
 			return skill;
 		},
 		electricSurge => (?priority:Int) ->
@@ -392,7 +392,7 @@ class SkillFactory
 				}
 			};
 			skill.play = SkillAnimations.getCustomPlay(animSprite, effect);
-			skill.spritePath = kiwiPlaceholder;
+			skill.spritePath = AssetPaths.disarm__png;
 			return skill;
 		},
 		// sabatoge => (?priority:Int) -> {},
@@ -412,7 +412,7 @@ class SkillFactory
 		{
 			var skill = skillFromData(kiwi, blindThrow);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = kiwiPlaceholder;
+			skill.spritePath = AssetPaths.blindThrow__png;
 			return skill;
 		},
 		endlessShuriken => (?priority:Int) ->

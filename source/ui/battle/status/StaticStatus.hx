@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 
@@ -28,10 +28,10 @@ class StaticStatus extends Status
 		name = 'Static';
 
 		var desc = 'The first time this character plays a skill each turn, each party member gains 1 Static.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Static1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Static1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

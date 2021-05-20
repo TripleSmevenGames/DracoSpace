@@ -8,6 +8,7 @@ class BattleUISounds
 {
 	public var startPlayerTurn:FlxSound;
 	public var endPlayerTurn:FlxSound;
+	public var error:FlxSound;
 	public var win:FlxSound;
 	public var lose:FlxSound;
 
@@ -20,5 +21,6 @@ class BattleUISounds
 	{
 		startPlayerTurn = load(AssetPaths.startTurn1__wav);
 		endPlayerTurn = load(AssetPaths.endTurn1__wav);
+		error = load(AssetPaths.error__wav);
 	}
 }

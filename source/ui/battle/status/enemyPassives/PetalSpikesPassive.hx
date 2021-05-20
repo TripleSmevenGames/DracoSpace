@@ -1,7 +1,7 @@
 package ui.battle.status.enemyPassives;
 
 import models.skills.SkillAnimations;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -25,10 +25,10 @@ class PetalSpikesPassive extends Status
 		type = PETALSPIKES;
 		name = 'Petal Spikes';
 		var desc = 'Upon taking damage, deal $damage to all enemies.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 
 		this.stackable = false;
 

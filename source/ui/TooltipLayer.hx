@@ -260,6 +260,16 @@ class TooltipLayer extends FlxSpriteGroup
 {
 	var tooltips:Array<Tooltip> = [];
 
+	public function cleanUpTooltips()
+	{
+		for (tooltip in tooltips)
+		{
+			remove(tooltip);
+			tooltip.destroy();
+		}
+		tooltips = [];
+	}
+
 	/** Shows the passed in tooltip over the parent when you hover over the parent. Puts it in the global tooltip layer. 
 	 * use Tooltip.genericTooltip to create the tooltip.
 	 * DON'T add() the tooltip yourself in a group.

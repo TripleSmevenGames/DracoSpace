@@ -2,11 +2,8 @@ package ui.battle.combatUI;
 
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-import models.player.CharacterInfo.CharacterType;
-import ui.TooltipLayer.Tooltip;
 import ui.battle.character.CharacterAvatar;
 import ui.battle.character.CharacterSprite;
-import utils.GameController;
 
 using utils.ViewUtils;
 
@@ -42,6 +39,7 @@ class CombatSkillList extends FlxSpriteGroup
 
 		// create the x-cover
 		this.xCover = new FlxSprite(0, 0, AssetPaths.xCover__png);
+		xCover.scale3x();
 		xCover.centerSprite();
 		add(xCover);
 		xCover.visible = false;
@@ -56,7 +54,7 @@ class CombatSkillList extends FlxSpriteGroup
 		{
 			skillSprite.setPosition(cursor, 0);
 			add(skillSprite);
-			addToCursor(skillSprite.tile.width); // no padding cuz sprite has padding inside somehow?
+			addToCursor(skillSprite.tile.width + 2); // small bit of padding.
 		}
 	}
 }

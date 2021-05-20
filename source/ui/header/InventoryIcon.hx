@@ -7,7 +7,7 @@ import utils.GameController;
 
 using utils.ViewUtils;
 
-/** The header icon. Click on it to access the inventory.**/
+/** The header icon. Click on it to access the inventory. Centered on the icon.**/
 class InventoryIcon extends FlxSpriteGroup
 {
 	var openSprite:FlxSprite;

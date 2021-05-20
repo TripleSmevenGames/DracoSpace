@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 
 // Exhaust usage is defined in onDraw somewhere
@@ -11,10 +11,10 @@ class ExhaustStatus extends DecayingStatus
 		type = EXHAUST;
 		name = 'Exhaust';
 		var desc = 'Lose 1 Draw for each stack. Lose 1 stack at the end of turn.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

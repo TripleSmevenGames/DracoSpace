@@ -14,6 +14,7 @@ using StringTools;
 typedef FlxTextWithReplacementsOptions =
 {
 	?bodyWidth:Float,
+	?font:String,
 	?fontSize:Int,
 	?border:Bool,
 	?centered:Bool,
@@ -32,6 +33,8 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 			options.bodyWidth = 200;
 		if (options.fontSize == null)
 			options.fontSize = 16;
+		if (options.font == null)
+			options.font = AssetPaths.blrrpixs__ttf;
 		if (options.border == null)
 			options.border = false;
 		if (options.centered == null)
@@ -75,26 +78,29 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 			return sprite;
 		}
 
+		var textSprite:FlxText;
+
 		// see if the word is a StatusType. If so, color it.
 		try
 		{
 			var status = StatusType.createByName(word.toUpperCase());
-			var textSprite = new FlxText(0, 0, 0, word);
-			textSprite.setFormat(Fonts.STANDARD_FONT, fontSize);
+			textSprite = new FlxText(0, 0, 0, word);
+			textSprite.setFormat(options.font, fontSize);
 			textSprite.color = ViewUtils.getColorForStatus(status);
-			return textSprite;
 		}
-		catch (e) {} // no-op
-
-		var textSprite = new FlxText(0, 0);
-		textSprite.setFormat(Fonts.STANDARD_FONT, fontSize);
-		// see if its an x or x2 value;
-		if (word == "$x" || word == "%x")
-			textSprite.text = this.xReplacement
-		else if (word == "$x2" || word == "%x2")
-			textSprite.text = this.x2Replacement;
-		else
-			textSprite.text = word;
+		// if we are catching an error, its because the word is not a StatusType
+		catch (e)
+		{
+			textSprite = new FlxText(0, 0);
+			textSprite.setFormat(options.font, fontSize);
+			// see if its an x or x2 value;
+			if (word == "$x" || word == "%x")
+				textSprite.text = this.xReplacement
+			else if (word == "$x2" || word == "%x2")
+				textSprite.text = this.x2Replacement;
+			else
+				textSprite.text = word;
+		}
 
 		// add back the punctuation
 		if (punctuation != null)

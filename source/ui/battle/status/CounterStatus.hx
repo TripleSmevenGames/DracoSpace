@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 
@@ -33,10 +33,10 @@ class CounterStatus extends Status
 		name = 'Counter';
 
 		var desc = 'This turn, this character deals $initialStacks damage back to attackers.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Static1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Static1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

@@ -34,7 +34,7 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 {
 	public var type:StatusType;
 	public var name:String;
-	public var icon:BattleIndicatorIcon;
+	public var icon:IndicatorIcon;
 	public var stacks(default, set):Int = 1;
 	public var stackable:Bool = true;
 
@@ -100,7 +100,7 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 	/** Override this to do something when the stack changes, like update the tooltip for example. **/
 	public function onSetStacks(valBefore:Int, valAfter:Int) {}
 
-	public function new(owner:CharacterSprite, icon:BattleIndicatorIcon, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, icon:IndicatorIcon, initialStacks:Int = 1)
 	{
 		super(0, 0);
 		this.icon = icon;

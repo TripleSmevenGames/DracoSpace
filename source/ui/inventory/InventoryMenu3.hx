@@ -8,6 +8,7 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import models.player.Player;
+import ui.battle.IndicatorIcon;
 import ui.battle.SkillTile;
 
 using utils.ViewUtils;
@@ -19,6 +20,7 @@ class InventoryMenu3 extends FlxSpriteGroup
 
 	var profiles:Array<CharacterProfile3> = [];
 	var unequippedSkillsList:UnequippedSkillsList3;
+	var infoIcon:IndicatorIcon;
 
 	var equippedSkillTiles:Array<SkillTile> = [];
 	var unequippedSkillTiles:Array<SkillTile> = [];
@@ -75,14 +77,24 @@ class InventoryMenu3 extends FlxSpriteGroup
 	}
 
 	// maybe slow
+	// call this when the Player's data changes, so the view can reflect the current state.
 	public function refresh()
 	{
-		forEach((sprite:FlxSprite) ->
-		{
-			remove(sprite);
-			sprite.destroy();
-		});
+		for (profile in profiles)
+			profile.refresh();
 
+		unequippedSkillsList.refresh();
+
+		setupSkillTileHandlers();
+	}
+
+	public function new(headerHeight:Float)
+	{
+		super();
+		this.clickSound = FlxG.sound.load(AssetPaths.pickCard1__wav);
+		this.headerHeight = headerHeight;
+
+		// make all the elements first.
 		profiles = [];
 		for (i in 0...Player.chars.length)
 		{
@@ -93,27 +105,28 @@ class InventoryMenu3 extends FlxSpriteGroup
 
 		unequippedSkillsList = new UnequippedSkillsList3();
 
-		// put the two profiles side by side right under the header, in the middle of the screen.
+		// put the two profiles side by side under the header, in the middle of the screen.
 		// then put the unequipped list under it.
 		// profiles are not centered at all. The unequipped list is centered on its body.
 		var centerX = FlxG.width / 2;
-		profiles[0].setPosition(centerX - profiles[0].width - 4, headerHeight + 16);
+		profiles[0].setPosition(centerX - profiles[0].width - 4, headerHeight + 32);
 		add(profiles[0]);
 		profiles[1].setPosition(centerX + 4, headerHeight + 16);
 		add(profiles[1]);
 
-		var unequippedY = profiles[0].y + profiles[0].height + unequippedSkillsList.bodyHeight / 2 + 32;
+		var unequippedY = profiles[0].y + profiles[0].height + unequippedSkillsList.bodyHeight / 2 + 72;
 		unequippedSkillsList.setPosition(centerX, unequippedY);
 		add(unequippedSkillsList);
 
-		setupSkillTileHandlers();
-	}
+		// small help tooltip icon in the corner.
+		var infoText = 'Click on skills to equip or unequip them on your characters. '
+			+ 'Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
+		this.infoIcon = IndicatorIcon.createInfoIndicator('Party Skill Equipment', infoText);
+		infoIcon.setPosition(FlxG.width - 200, FlxG.height - 150);
+		add(infoIcon);
 
-	public function new(headerHeight:Float)
-	{
-		super();
-		this.clickSound = FlxG.sound.load(AssetPaths.pickCard1__wav);
-		this.headerHeight = headerHeight;
-		refresh();
+		infoIcon.registerTooltip();
+
+		setupSkillTileHandlers();
 	}
 }

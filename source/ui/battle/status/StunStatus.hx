@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -13,10 +13,10 @@ class StunStatus extends DecayingStatus
 		type = TAUNT;
 		name = 'Stun';
 		var desc = 'All skills are disabled this turn. Lose 1 stack at the end of turn.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

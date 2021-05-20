@@ -273,7 +273,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 9,
+							"value": 8,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
@@ -296,7 +296,7 @@
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 7
+							"value": 5
 						},
 						{
 							"id": "bladeDance",
@@ -312,7 +312,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 9,
+							"value": 7,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -347,7 +347,7 @@
 								}
 							],
 							"targetMethod": 2,
-							"value": 6,
+							"value": 5,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -400,7 +400,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 16,
+							"value": 14,
 							"value2": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -417,10 +417,10 @@
 								}
 							],
 							"targetMethod": 7,
-							"value": 8,
+							"value": 7,
 							"cooldown": 1,
 							"maxCharges": 2,
-							"chargesPerCD": 1
+							"chargesPerCD": 2
 						},
 						{
 							"id": "riskyManeuver",
@@ -449,7 +449,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 11,
+							"value": 10,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -736,7 +736,7 @@
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 8,
+							"value": 6,
 							"value2": 1
 						},
 						{
@@ -769,7 +769,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 14,
+							"value": 10,
 							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -805,7 +805,7 @@
 								}
 							],
 							"targetMethod": 1,
-							"value": 11,
+							"value": 9,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1085,7 +1085,7 @@
 						{
 							"id": "idle",
 							"name": "Idle",
-							"desc": "Gain 1 block.",
+							"desc": "Gain 1 Block.",
 							"rarity": 0,
 							"costs": [
 								{
@@ -1142,7 +1142,7 @@
 									"CON": 1
 								}
 							],
-							"targetMethod": 5,
+							"targetMethod": 3,
 							"value": 8,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -1200,14 +1200,14 @@
 						{
 							"id": "laserBolt",
 							"name": "Laser Bolt",
-							"desc": "Deal $x damage to 2 random targets.",
+							"desc": "Deal $x damage to a random target.",
 							"rarity": 0,
 							"costs": [
 								{
 									"KNO": 1
 								}
 							],
-							"targetMethod": 2,
+							"targetMethod": 1,
 							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
@@ -1215,35 +1215,63 @@
 						},
 						{
 							"id": "laserBlast",
-							"name": "laserBlast",
-							"desc": "Deal $x damage.",
+							"name": "Laser Blast",
+							"desc": "Deal $x damage to a random target.",
 							"rarity": 0,
 							"costs": [
 								{
-									"KNO": 2
+									"KNO": 3
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 1,
 							"value": 15,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						},
 						{
-							"id": "holoBarrier",
-							"name": "Holo Barrier",
-							"desc": "All allies gain $x block.",
+							"id": "laserBarrage",
+							"name": "Laser Barrage",
+							"desc": "Deal $x damage to a random target. Holds 5 charges.",
 							"rarity": 0,
 							"costs": [
 								{
-									"CON": 1,
-									"KNO": 1
+									"KNO": 2
 								}
 							],
-							"targetMethod": 6,
+							"targetMethod": 1,
+							"value": 4,
+							"cooldown": 1,
+							"maxCharges": 5,
+							"chargesPerCD": 5
+						},
+						{
+							"id": "holoBarrier",
+							"name": "Holo Barrier",
+							"desc": "An ally gaines $x Block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 3,
 							"value": 8,
-							"cooldown": 3,
-							"maxCharges": 1
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "energize",
+							"name": "Energize",
+							"desc": "Draw 2 more card next turn.",
+							"rarity": 0,
+							"costs": [
+								{
+									"WIS": 1
+								}
+							],
+							"targetMethod": 7
 						},
 						{
 							"id": "howl",

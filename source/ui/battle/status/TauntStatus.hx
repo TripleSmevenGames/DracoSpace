@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -18,10 +18,10 @@ class TauntStatus extends BuffStatus
 		type = TAUNT;
 		name = 'Taunt';
 		var desc = 'Enemies are more likely to target this character for the next $initialStacks turn(s).';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

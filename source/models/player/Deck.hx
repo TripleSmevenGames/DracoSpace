@@ -19,7 +19,7 @@ class Deck
 
 	public static function ryderKiwiDeck()
 	{
-		return new Deck([POW => 6, AGI => 8, CON => 6]);
+		return new Deck([POW => 6, AGI => 8, CON => 6], 0, 2);
 	}
 
 	public function new(?map:Map<SkillPointType, Int>, ?hiddenCards:Int = 0, ?draw:Int = 1)

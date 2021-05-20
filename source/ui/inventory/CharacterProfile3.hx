@@ -2,8 +2,10 @@ package ui.inventory;
 
 import constants.Fonts;
 import constants.UIMeasurements;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
@@ -23,6 +25,8 @@ class CharacterProfile3 extends FlxSpriteGroup
 	public var skillTiles:Array<SkillTile>;
 	public var blankSkillTiles:Array<SkillTileBlank>;
 	public var lockedSkillTiles:Array<SkillTileLocked>;
+
+	var skillList:FlxSprite;
 
 	// not centered
 	function getCharHpSprite(fontSize:Int = 24)
@@ -45,7 +49,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		var group = new FlxSpriteGroup();
 
 		var titleText = new FlxText(0, 0, 0, 'Skills:');
-		titleText.setFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.BLACK);
+		titleText.setFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.WHITE);
 		group.add(titleText);
 
 		// create the tiles. There are skill tiles, open slot tiles, and locked slot tiles.
@@ -58,7 +62,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 
 			if (i < numSkills)
 			{
-				var skillTile = new SkillTile(char.skills[i]);
+				var skillTile = new SkillTile(char.skills[i], true, 'Unequip');
 				tiles.push(skillTile);
 				skillTiles.push(skillTile);
 				skillTile.setupHover(INV);
@@ -82,13 +86,34 @@ class CharacterProfile3 extends FlxSpriteGroup
 		for (i in 0...tiles.length)
 		{
 			var tile = tiles[i];
-			var coords = tile.getCoordsForPlacingInGrid(3, i, 8);
+			var coords = tile.getCoordsForPlacingInGrid(3, i, 4);
 			tile.setPosition(coords.x + titleText.width, coords.y);
 
 			group.add(tile);
 		}
 
 		return group;
+	}
+
+	/** Rerender the profile to reflect current data. 
+	 * It removes and destroys the old skillList, and creates a new one in the same spot.
+	**/
+	public function refresh()
+	{
+		if (skillList == null)
+			return;
+
+		var xPos = skillList.x;
+		var yPos = skillList.y;
+		remove(skillList);
+		skillList.destroy();
+
+		// because this calls setupHover on the tiles, and we aren't cleaning up old tooltips,
+		// technically this is causing a memory leak.
+		// We'll cleanup the tooltips when we switch states though.
+		skillList = getCharSkillList();
+		add(skillList);
+		skillList.setPosition(xPos, yPos);
 	}
 
 	public function new(char:CharacterInfo)
@@ -122,7 +147,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		add(charHpSprite);
 
 		cursor.y += charHpSprite.height + 4;
-		var skillList = getCharSkillList();
+		this.skillList = getCharSkillList();
 		skillList.setPosition(cursor.x, cursor.y);
 		add(skillList);
 	}

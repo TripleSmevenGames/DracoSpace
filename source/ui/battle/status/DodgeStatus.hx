@@ -1,6 +1,6 @@
 package ui.battle.status;
 
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -18,10 +18,10 @@ class DodgeStatus extends BuffStatus
 		type = DODGE;
 		name = 'Dodge';
 		var desc = 'Completely evade the next $initialStacks attack(s). Lose 1 stack per turn.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
 
 		super(owner, icon, initialStacks);
 	}

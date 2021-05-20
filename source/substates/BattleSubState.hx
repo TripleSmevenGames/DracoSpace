@@ -214,6 +214,8 @@ class BattleSubState extends FlxSubState
 		}
 
 		remove(GameController.battleTooltipLayer);
+		// destroys all tooltips to cleanup memory. Might cause crashes if we try to reference a destroyed tooltip, so watch out here.
+		GameController.battleTooltipLayer.cleanUpTooltips();
 		GameController.battleTooltipLayer.kill();
 		remove(GameController.battleSpriteAnimsLayer);
 		GameController.battleSpriteAnimsLayer.kill();

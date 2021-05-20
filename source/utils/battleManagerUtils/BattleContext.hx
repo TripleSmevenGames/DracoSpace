@@ -7,6 +7,8 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status.StatusType;
 
+using utils.GameUtils;
+
 /** Hopefully encapsulates everything you would need to know about the current state of battle.**/
 class BattleContext
 {
@@ -93,7 +95,7 @@ class BattleContext
 		{
 			throw new Exception('tried to get random target, but chars.length was 0');
 		}
-		return chars[new FlxRandom().int(0, chars.length - 1)];
+		return chars.getRandomChoice();
 	}
 
 	/** Get a living enemy with the lowest hp. Returns null if there are no more enemies. **/

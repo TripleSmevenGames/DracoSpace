@@ -15,7 +15,7 @@ class Header extends FlxSpriteGroup
 {
 	var body:FlxSprite;
 	var displays:Array<CharacterDisplay> = [];
-	// var expBarDisplay:ExpBarDisplay;
+	var xpDisplay:XPDisplay;
 	var moneyDisplay:MoneyDisplay;
 
 	var cursor:Float = 100;
@@ -28,6 +28,7 @@ class Header extends FlxSpriteGroup
 			display.refresh();
 
 		moneyDisplay.refresh();
+		xpDisplay.refresh();
 	}
 
 	function addToView(sprite:FlxSprite)
@@ -51,13 +52,16 @@ class Header extends FlxSpriteGroup
 		var charDisplay2 = new CharacterDisplay(Player.chars[1]);
 		addToView(charDisplay2);
 
+		displays.push(charDisplay1);
+		displays.push(charDisplay2);
+
+		this.xpDisplay = new XPDisplay();
+		addToView(xpDisplay);
+
 		this.moneyDisplay = new MoneyDisplay();
 		addToView(moneyDisplay);
 
 		var inventoryIcon = new InventoryIcon();
 		addToView(inventoryIcon);
-
-		displays.push(charDisplay1);
-		displays.push(charDisplay2);
 	}
 }

@@ -21,9 +21,9 @@ class MenuButton extends FlxUIButton
 
 		var slice9 = [8, 8, 40, 40];
 		var slice9Array = [slice9, slice9, slice9];
-		loadGraphicSlice9(graphicArray, 350, 50, slice9Array);
+		loadGraphicSlice9(graphicArray, 350, 64, slice9Array);
 
-		setLabelFormat(Fonts.STANDARD_FONT, FONT_SIZE, FlxColor.BLACK);
+		setLabelFormat(Fonts.STANDARD_FONT2, FONT_SIZE, FlxColor.BLACK);
 		autoCenterLabel();
 	}
 }

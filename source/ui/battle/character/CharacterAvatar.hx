@@ -2,7 +2,7 @@ package ui.battle.character;
 
 import flixel.FlxSprite;
 import ui.TooltipLayer.Tooltip;
-import ui.battle.BattleIndicatorIcon.TooltipPlace;
+import ui.battle.IndicatorIcon.TooltipPlace;
 import utils.GameController;
 
 using utils.ViewUtils;

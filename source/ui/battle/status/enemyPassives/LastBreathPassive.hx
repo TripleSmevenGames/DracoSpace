@@ -2,7 +2,7 @@ package ui.battle.status.enemyPassives;
 
 import flixel.math.FlxRandom;
 import models.skills.SkillAnimations;
-import ui.battle.BattleIndicatorIcon.BattleIndicatorIconOptions;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.BattleManager;
 import utils.ViewUtils;
@@ -34,10 +34,10 @@ class LastBreathPassive extends Status
 		type = LASTBREATH;
 		name = 'Last Breath';
 		var desc = 'When this character dies, an ally gains 10 Block is healed for 15 hp.';
-		var options:BattleIndicatorIconOptions = {
+		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new BattleIndicatorIcon(AssetPaths.lastBreath__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.lastBreath__png, name, desc, options);
 
 		this.stackable = false;
 
