@@ -2,6 +2,7 @@ package models.player;
 
 import models.skills.Skill;
 import models.skills.SkillFactory;
+import ui.MapTile;
 import utils.battleManagerUtils.RewardHelper;
 
 /** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. **/
@@ -12,10 +13,17 @@ class Player
 	public static var money:Int;
 	public static var inventory:Inventory;
 	public static var exp:Int;
+
 	// we scale the price of skills based on how many you've bought already
 	public static var skillsBought:Int;
 	// We persist the skillShopChoices until the player buys one.
 	static var currentSkillShopChoices:Array<Skill>;
+
+	// count how many battles the player has fought so far. Used to scale the battles.
+	public static var battlesFought:Int;
+	public static var currentMapTile:MapTile;
+
+	public static var maxSkillSlots = 6;
 
 	/** Get a list of all the skills the player has. **/
 	public static function getSkills()
@@ -51,11 +59,17 @@ class Player
 		chars = [CharacterInfo.sampleRyder(), CharacterInfo.sampleKiwi()];
 		deck = Deck.ryderKiwiDeck();
 		inventory = new Inventory();
-		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
 
 		money = 0;
 		exp = 0;
 		skillsBought = 0;
 		currentSkillShopChoices = [];
+
+		// https://haxe.org/manual/lf-condition-compilation.html
+		#if godmode
+		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
+		money = 1000;
+		exp = 1000;
+		#end
 	}
 }

@@ -18,10 +18,12 @@ class Node
 	public var id:Int;
 	public var connectedNodesId:Array<Int> = new Array<Int>();
 	public var eventType:GameEventType;
+	public var column:Int;
 
-	public function new(id:Int, ?eventType:GameEventType)
+	public function new(id:Int, column:Int, ?eventType:GameEventType)
 	{
 		this.id = id;
+		this.column = column;
 		this.eventType = eventType;
 	}
 }
@@ -68,7 +70,6 @@ class GameMap
 		// now add the variable events to the pool, based on their weight;
 		while (eventTypePool.length < length)
 		{
-			var event:GameEvent;
 			var type = nodeTypeWeightedPick();
 			eventTypePool.push(type);
 		}
@@ -85,14 +86,16 @@ class GameMap
 	function fillVariableNodes(variableNodes:Array<Node>)
 	{
 		var nodeInd:Int = 0;
-		// add treasures somewhere in the first half.
+		// add treasures in a random node in the first half of the map.
+		// Then remove the node from the list (so we won't override it)
 		for (i in 0...MapGenConsts.TREASURES_IN_FIRST_HALF)
 		{
 			var nodeInd = random.int(0, Math.round(variableNodes.length / 2) - 1);
 			variableNodes[nodeInd].eventType = TREASURE;
 			variableNodes.splice(nodeInd, 1);
 		}
-		// add a treasure somewhere in the second half.
+		// add a treasure random node in the second half of the map.
+		// Then again, remove those nodes from the list.
 		for (i in 0...MapGenConsts.TREASURES_IN_SECOND_HALF)
 		{
 			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
@@ -100,7 +103,7 @@ class GameMap
 			variableNodes.splice(nodeInd, 1);
 		}
 
-		// add 2 elites to the second half.
+		// add 2 elites to the second half. Remove them from the list as always.
 		for (i in 0...MapGenConsts.ELITES_IN_SECOND_HALF)
 		{
 			nodeInd = random.int(Math.round(variableNodes.length / 2), variableNodes.length - 1);
@@ -111,7 +114,7 @@ class GameMap
 		// now, create a pool of events to be assigned to the rest nodes
 		var eventTypePool = createEventTypePool(variableNodes.length);
 
-		// for each of these nodes, assign a random event from the pool to it and remove the event from the pool
+		// for each of the remaining nodes, assign a random event from the pool to it and remove the event from the pool
 		for (i in 0...variableNodes.length)
 		{
 			var eventInd = random.int(0, eventTypePool.length - 1);
@@ -190,7 +193,7 @@ class GameMap
 		}
 	}
 
-	public function new(numColumns:Int = 18)
+	public function new(numColumns:Int = 16)
 	{
 		this.random = GameController.rng;
 
@@ -199,7 +202,7 @@ class GameMap
 		GameController.save.flush();
 
 		// nodes that are empty until the end. We will fill them with an event after we
-		// fill in the pre determined nodes (e.g. the starting home node)
+		// fill in the pre determined nodes (e.g. the starting home node, boss at the end)
 		var variableNodes = new Array<Node>();
 		var idCounter = 0;
 
@@ -208,44 +211,45 @@ class GameMap
 		{
 			var column = new Column();
 
-			// create the initial "home" node in first column
+			// if we're making the first column, just make it 1 HOME node.
 			if (i == 0)
 			{
-				var node = new Node(0, HOME);
+				var node = new Node(0, i, HOME);
 				column.push(node);
 			}
-			// create the boss node in the last column
+			// If we're making the last column, just make it 1 BOSS node.
 			else if (i == numColumns - 1)
 			{
-				var node = new Node(++idCounter, BOSS);
+				var node = new Node(++idCounter, i, BOSS);
 				column.push(node);
 			}
-			// for all the nodes in between, create empty ones to be filled in later.
+			// If we're making the middle column, just make it 1 CAMP node.
+			else if (i == Math.round(numColumns / 2))
+			{
+				var node = new Node(++idCounter, i, CAMP);
+				column.push(node);
+			}
 			else
 			{
+				// for all other columns, create empty ones to be filled in later.
+				// columns can have 2-4 nodes.
 				var nodesInColumn = numNodesWeightedPick();
 
 				for (j in 0...nodesInColumn)
 				{
-					var node = new Node(++idCounter);
-					// if we're at the halfway point, make them Camp nodes.
-					if (i == Math.round(numColumns / 2))
-					{
-						node.eventType = CAMP;
-					}
-					else
-					{
-						variableNodes.push(node);
-					}
+					var node = new Node(++idCounter, i);
 					column.push(node);
+					variableNodes.push(node);
 				}
 			}
 
 			// finally, add this column to the map
 			this.columns.push(column);
 		}
-		// now that we've filled in the fixed nodes with their events, let's fill in the rest of them.
+		// remember those empty nodes we made? Now we have to assign them an event.
 		fillVariableNodes(variableNodes);
+
+		// finally, we have to calculate how the nodes are connected.
 		connectNodes();
 	}
 }

@@ -316,9 +316,9 @@ class SkillFactory
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			return skill;
 		},
-		pawsUp => (?priority:Int) ->
+		staticShield => (?priority:Int) ->
 		{
-			var skill = skillFromData(kiwi, pawsUp);
+			var skill = skillFromData(kiwi, staticShield);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.addStatus(STATIC, skill.value2);
@@ -331,9 +331,9 @@ class SkillFactory
 			skill.spritePath = AssetPaths.swipe__png;
 			return skill;
 		},
-		electricSurge => (?priority:Int) ->
+		surgingFist => (?priority:Int) ->
 		{
-			var skill = skillFromData(kiwi, electricSurge);
+			var skill = skillFromData(kiwi, surgingFist);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.addStatus(STATIC, skill.value2);

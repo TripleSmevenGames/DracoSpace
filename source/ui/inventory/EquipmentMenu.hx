@@ -13,8 +13,8 @@ import ui.battle.SkillTile;
 
 using utils.ViewUtils;
 
-/** The menu that shows up when youre enter the inventory ss. NOT Centered. Place at 0, 0**/
-class InventoryMenu3 extends FlxSpriteGroup
+/** The character equipment menu. Equip skills and items. NOT Centered. Place at 0, 0**/
+class EquipmentMenu extends FlxSpriteGroup
 {
 	static inline final PADDING = 32;
 

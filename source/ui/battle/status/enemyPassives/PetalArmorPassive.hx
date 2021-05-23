@@ -20,7 +20,7 @@ class PetalArmorPassive extends Status
 		}
 	}
 
-	public function new(owner:CharacterSprite, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite)
 	{
 		type = PETALARMOR;
 		name = 'Petal Armor';
@@ -28,9 +28,11 @@ class PetalArmorPassive extends Status
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.petalArmor__png, name, desc, options);
 
 		this.stackable = false;
+
+		var initialStacks = 2;
 
 		super(owner, icon, initialStacks);
 	}

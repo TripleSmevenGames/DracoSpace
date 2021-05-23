@@ -28,7 +28,7 @@ class ColdStatus extends DecayingStatus
 	{
 		type = COLD;
 		name = 'Cold';
-		var desc = 'Whenever this character plays a skill, they discard a card.' + '\n\nLose 1 stack at the end of turn.';
+		var desc = 'Whenever ${owner.info.name} plays a skill, they discard a card.' + '\n\nLose 1 stack at the end of turn.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

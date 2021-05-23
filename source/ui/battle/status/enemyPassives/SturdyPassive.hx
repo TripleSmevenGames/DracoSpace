@@ -9,14 +9,14 @@ class SturdyPassive extends Status
 {
 	override public function onSetStacks(valBefore:Int, valAfter:Int)
 	{
-		updateTooltip('This character takes $valAfter less damage from all sources.');
+		updateTooltip('${owner.info.name} takes $valAfter less damage from all sources.');
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = STURDY;
 		name = 'Sturdy';
-		var desc = 'This character takes $initialStacks less damage from all sources.';
+		var desc = '${owner.info.name} takes $initialStacks less damage from all sources.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

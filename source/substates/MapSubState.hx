@@ -14,6 +14,7 @@ import models.GameMap;
 import models.events.*;
 import models.events.GameEvent.GameEventType;
 import models.events.battleEvents.*;
+import models.player.Player;
 import ui.MapTile;
 import ui.header.Header;
 import utils.GameController;
@@ -68,7 +69,7 @@ class GameMapView extends FlxSpriteGroup
 			case BATTLE:
 				return BattleEventFactory.getNextBattleEvent();
 			case ELITE:
-				return BattleEventFactory.ghosts2();
+				return BattleEventFactory.ghostsElite();
 			case BOSS:
 				return BossEventFactory.rattle();
 			case CHOICE:
@@ -90,6 +91,7 @@ class GameMapView extends FlxSpriteGroup
 		if (currentTile.connectedNodesId.contains(mapTile.id))
 		{
 			currentTile = mapTile;
+			Player.currentMapTile = mapTile;
 			markHere(mapTile);
 			footstepSound.play();
 
@@ -148,17 +150,9 @@ class GameMapView extends FlxSpriteGroup
 				var yCoord = (COL_HEIGHT / (column.length + 1) * (j + 1)) + yRandom + yOffset;
 				var mapTile = new MapTile(node, xCoord, Std.int(yCoord));
 
-				mapTile.addClickListener(function(_)
-				{
-					visit(mapTile);
-				});
-				mapTile.addHoverListener(function(_)
-				{
-					mapTile.highlighted = true;
-				}, function(_)
-				{
-					mapTile.highlighted = false;
-				});
+				mapTile.addClickListener((_) -> visit(mapTile));
+				mapTile.addHoverListener((_) -> mapTile.highlighted = true, (_) -> mapTile.highlighted = false);
+
 				columnSprite.push(mapTile);
 				mapTiles.push(mapTile);
 

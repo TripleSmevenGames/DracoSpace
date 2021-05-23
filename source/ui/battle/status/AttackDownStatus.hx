@@ -9,14 +9,14 @@ class AttackDownStatus extends Status
 {
 	override public function onSetStacks(valBefore:Int, valAfter:Int)
 	{
-		updateTooltip('This character\'s skills deal $valAfter less damage');
+		updateTooltip('${owner.info.name}\'s skills deal $valAfter less damage');
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = ATTACKDOWN;
 		name = 'Attack Down';
-		var desc = 'This character\'s skills deal $initialStacks less damage.';
+		var desc = '${owner.info.name}\'s skills deal $initialStacks less damage.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

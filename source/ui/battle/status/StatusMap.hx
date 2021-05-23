@@ -16,10 +16,11 @@ class StatusMap
 		COUNTER => (owner:CharacterSprite) -> new CounterStatus(owner),
 		DODGE => (owner:CharacterSprite) -> new DodgeStatus(owner),
 		STUN => (owner:CharacterSprite) -> new StunStatus(owner),
-		EXHAUST => (owner:CharacterSprite) -> new ExhaustStatus(owner),
-		// EXPOSED => () -> new TauntStatus(owner),
+		EXPOSED => (owner:CharacterSprite) -> new ExposedStatus(owner),
+		//
 		LASTBREATH => (owner:CharacterSprite) -> new LastBreathPassive(owner),
 		DYINGWISH => (owner:CharacterSprite) -> new DyingWishPassive(owner),
+		HAUNT => (owner:CharacterSprite) -> new HauntPassive(owner),
 		CUNNING => (owner:CharacterSprite) -> new CunningPassive(owner),
 		SIPHON => (owner:CharacterSprite) -> new SiphonPassive(owner),
 		PETALARMOR => (owner:CharacterSprite) -> new PetalArmorPassive(owner),

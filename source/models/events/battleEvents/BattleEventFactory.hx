@@ -3,6 +3,7 @@ package models.events.battleEvents;
 import flixel.math.FlxRandom;
 import models.player.CharacterInfo;
 import models.player.Deck;
+import models.skills.Skill;
 import models.skills.SkillFactory as SF;
 
 class BattleEventFactory
@@ -10,7 +11,16 @@ class BattleEventFactory
 	/** This is a queue of battle events that will be popped from every time the player encounters a battle.
 	 * It will be shuffled at the start of a run.
 	**/
-	static var battleQueueMed = [twoSlimes, ghosts2, firewood, golem, dandelions, ghostAndDandelion, stoneHexapod];
+	static var battleQueueMed = [
+		twoSlimes,
+		ghostsC,
+		ghostsF,
+		firewood,
+		golem,
+		dandelions,
+		ghostAndDandelion,
+		stoneHexapod
+	];
 
 	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
 
@@ -147,25 +157,34 @@ class BattleEventFactory
 			return new BattleEvent(name, desc, enemies, deck, BATTLE);
 		}
 	**/
-	static var createGhostF = (weak:Bool = false) ->
+	static var createGhostF = (level = 0) ->
 	{
-		var skills = [SF.enemySkills.get(spook)()];
+		var skills = new Array<Skill>();
+		if (level == 0)
+			skills.push(SF.enemySkills.get(spook)());
+		else
+			skills.push(SF.enemySkills.get(spook2)());
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost2__png, 32, 40, 1);
-		var hp = weak ? 8 : 10;
+		var hp = 8 + (level * 4);
 		var ghost = CharacterInfo.createEnemy('Ghost Type F', spriteSheetInfo, hp, skills);
 		ghost.avatarPath = AssetPaths.ghost2Avatar__png;
-		ghost.initialStatuses = weak ? [] : [LASTBREATH];
+		ghost.initialStatuses = level == 0 ? [] : [HAUNT];
 		ghost.soundType = GHOST;
 		return ghost;
 	}
 
-	static var createGhostC = () ->
+	static var createGhostC = (level = 0) ->
 	{
-		var skills = [SF.enemySkills.get(spook)(), SF.enemySkills.get(ghostlyStrength)(1)];
+		var skills = new Array<Skill>();
+		if (level == 0)
+			skills.push(SF.enemySkills.get(spook)());
+		else
+			skills.push(SF.enemySkills.get(spook2)());
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost3__png, 32, 40, 1);
-		var ghost = CharacterInfo.createEnemy('Ghost Type C', spriteSheetInfo, 15, skills);
+		var hp = 8 + (level * 4);
+		var ghost = CharacterInfo.createEnemy('Ghost Type C', spriteSheetInfo, hp, skills);
 		ghost.avatarPath = AssetPaths.ghost3Avatar__png;
-		ghost.initialStatuses = [ATTACK, DYINGWISH];
+		ghost.initialStatuses = level == 0 ? [] : [ATTACK, DYINGWISH];
 		ghost.soundType = GHOST;
 		return ghost;
 	}
@@ -174,29 +193,40 @@ class BattleEventFactory
 	{
 		var name = 'Spooky Ghosts';
 		var desc = 'Whatever\'s been going on in the forest has awakened the local spirits. These aren\'t the friendly kind. ';
-		var enemies = [createGhostF(true), createGhostF(true)];
+		var enemies = [createGhostF(0), createGhostC(0)];
 		var hiddenCards = 0;
 		var draw = 2;
 		var deck = new Deck([KNO => 6, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghosts2()
+	public static function ghostsC()
 	{
-		var name = 'Spooky Ghosts Round 2';
+		var name = 'Spooky Ghosts';
 		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
-		var enemies = [createGhostC(), createGhostC()];
+		var enemies = [createGhostC(1), createGhostC(1)];
 		var hiddenCards = 0;
-		var draw = 3;
-		var deck = new Deck([KNO => 10, POW => 4], hiddenCards, draw);
+		var draw = 2;
+		var deck = new Deck([KNO => 8, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghosts3()
+	public static function ghostsF()
 	{
-		var name = 'Spooky Ghosts Round 3';
+		var name = 'Spooky Ghosts';
+		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
+		var enemies = [createGhostC(1), createGhostC(1)];
+		var hiddenCards = 0;
+		var draw = 2;
+		var deck = new Deck([KNO => 8, CON => 2], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	public static function ghostsElite()
+	{
+		var name = 'Spooky Ghosts Elite';
 		var desc = 'Some more woodland ghosts float towards you. They look much stronger than usual ghosts.';
-		var enemies = [createGhostF(), createGhostF(), createGhostC(), createGhostC()];
+		var enemies = [createGhostF(2), createGhostF(2), createGhostC(2), createGhostC(2)];
 		var hiddenCards = 0;
 		var draw = 4;
 		var deck = new Deck([KNO => 10, POW => 6, CON => 2], hiddenCards, draw);

@@ -194,7 +194,7 @@ class SkillFactoryEnemy
 		{
 			var skill = skillFromData(enemy, golemSmash, priority);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = AssetPaths.golemSmash__png;
 			return skill;
 		},
 		petalShield => (?priority:Int) ->
@@ -208,7 +208,7 @@ class SkillFactoryEnemy
 		{
 			var skill = skillFromData(enemy, petalBlade, priority);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
-			skill.spritePath = AssetPaths.emptySkill__png;
+			skill.spritePath = AssetPaths.petalBlade__png;
 			return skill;
 		},
 	];

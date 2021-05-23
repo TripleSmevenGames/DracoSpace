@@ -9,14 +9,14 @@ class AttackStatus extends Status
 {
 	override public function onSetStacks(valBefore:Int, valAfter:Int)
 	{
-		updateTooltip('This character\'s skills deal $valAfter more damage');
+		updateTooltip('${owner.info.name}\'s skills deal $valAfter more damage');
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		type = ATTACK;
-		name = 'Attack';
-		var desc = 'This character\'s skills deal $initialStacks more damage.';
+		name = 'Attack Up';
+		var desc = '${owner.info.name}\'s skills deal $initialStacks more damage.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

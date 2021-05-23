@@ -28,7 +28,7 @@ class PetalSpikesPassive extends Status
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.petalSpikes__png, name, desc, options);
 
 		this.stackable = false;
 

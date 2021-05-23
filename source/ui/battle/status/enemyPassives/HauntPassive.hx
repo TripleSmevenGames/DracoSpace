@@ -8,25 +8,24 @@ import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-class DyingWishPassive extends Status
+class HauntPassive extends Status
 {
 	override public function onDead(context:BattleContext)
 	{
-		var attackValue = owner.getStatus(ATTACK);
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
-			target.addStatus(ATTACK, attackValue);
+			target.addStatus(EXPOSED, 2);
 		}
 		// create a 'play', then call it immediately.
 		// this will add the animation to the queue.
-		SkillAnimations.genericBuffPlay(effect)(context.getAliveEnemies(), this.owner, context);
+		SkillAnimations.genericBuffPlay(effect)(context.getAlivePlayers(), this.owner, context);
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = DYINGWISH;
-		name = 'Dying Wish';
-		var desc = 'When ${owner.info.name} dies, all allies gain ${owner.info.name}\'s Attack.';
+		type = HAUNT;
+		name = 'Haunt';
+		var desc = 'When ${owner.info.name} dies, all its enemies gain 2 Exposed.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

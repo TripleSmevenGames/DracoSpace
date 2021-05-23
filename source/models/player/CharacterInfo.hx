@@ -44,7 +44,7 @@ class CharacterInfo
 	public var maxHp:Int = 1;
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
-	public var numSkillSlots:Int = 2;
+	public var numSkillSlots:Int = 1; // for Player chars only
 
 	public var initialStatuses:Array<StatusType> = [];
 

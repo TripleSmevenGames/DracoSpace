@@ -13,6 +13,7 @@ import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import models.player.Player;
 import models.skills.Skill;
 import openfl.geom.Rectangle;
 import ui.battle.status.Status.StatusType;
@@ -200,7 +201,7 @@ class ViewUtils
 	}
 
 	/** This gets the lmbIcon and the a text together. Not centered. **/
-	public static function getClickToSomethingText(something:String = '', fontSize = 24, padding = 4)
+	public static function getClickToSomethingText(something:String = '', fontSize = 22, padding = 4)
 	{
 		var group = new FlxSpriteGroup();
 
@@ -214,5 +215,17 @@ class ViewUtils
 		group.add(buyText);
 
 		return group;
+	}
+
+	public static function getPriceColor(price:Int, sale:Bool = false)
+	{
+		var color = FlxColor.WHITE;
+		var canAfford = Player.exp >= price;
+		if (!canAfford)
+			color = FlxColor.fromString('#ff3d3d'); // a pink
+		else if (sale)
+			color = FlxColor.YELLOW;
+
+		return color;
 	}
 }

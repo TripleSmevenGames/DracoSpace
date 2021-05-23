@@ -27,7 +27,7 @@ class StaticStatus extends Status
 		type = STATIC;
 		name = 'Static';
 
-		var desc = 'The first time this character plays a skill each turn, each party member gains 1 Static.';
+		var desc = 'The first time ${owner.info.name} plays a skill each turn, each ally gains 1 Static. Some skills Dicharge all Static.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

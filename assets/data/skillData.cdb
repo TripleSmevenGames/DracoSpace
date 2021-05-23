@@ -703,16 +703,16 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "pawsUp",
-							"name": "Paws Up",
-							"desc": "Gain $x Block and $x2 Static.",
+							"id": "staticShield",
+							"name": "Static Shield",
+							"desc": "An ally gains $x Block. This turn, they gain $x2 Static everytime they take damage.",
 							"rarity": 1,
 							"costs": [
 								{
 									"CON": 1
 								}
 							],
-							"targetMethod": 7,
+							"targetMethod": 3,
 							"value": 7,
 							"value2": 1,
 							"cooldown": 1,
@@ -720,23 +720,23 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "electricSurge",
-							"name": "Electric Surge",
+							"id": "surgingFist",
+							"name": "Surging Fist",
 							"desc": "Deal $x damage and gain $x2 Static.",
 							"rarity": 1,
 							"costs": [
 								{
-									"AGI": 1
+									"POW": 1
 								},
 								{
 									"ANY": 2
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 1,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 6,
+							"value": 8,
 							"value2": 1
 						},
 						{
@@ -770,7 +770,7 @@
 							],
 							"targetMethod": 0,
 							"value": 10,
-							"cooldown": 3,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						},
@@ -1337,7 +1337,25 @@
 							"flavor": "There's something strange...",
 							"value": 3,
 							"cooldown": 1,
-							"maxCharges": 1
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "spook2",
+							"name": "Spook",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"KNO": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 5,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1,
+							"flavor": "...in the neighborhood..."
 						},
 						{
 							"id": "ghostlyStrength",

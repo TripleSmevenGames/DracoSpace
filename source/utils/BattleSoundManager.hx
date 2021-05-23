@@ -16,7 +16,7 @@ enum SoundType
 
 /** Instead of each sprite creating/saving its own sound files to play, have this manager hold and play them instead.
  * You must create an instance of the manager everytime you start the battle.
- * And destroy the instance (to free up memory help by the sounds) at the end.
+ * And destroy the instance (to free up memory held by the sounds) at the end.
 **/
 class BattleSoundManager extends FlxGroup
 {
@@ -60,10 +60,10 @@ class BattleSoundManager extends FlxGroup
 		{
 			var sound = FlxG.sound.load(assetPath);
 			cache.set(assetPath, sound);
-			add(sound); // adding this sound means it will be destroyed when the group is destroyed.
+			add(sound); // adding this sound means it will be destroyed when the group is destroyed, freeing up memory.
 		}
 
-		// actually play the sound
+		// finally, play the sound
 		cache.get(assetPath).play(true);
 	}
 

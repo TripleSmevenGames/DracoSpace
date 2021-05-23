@@ -24,7 +24,7 @@ class CounterStatus extends Status
 
 	override public function onSetStacks(valBefore:Int, valAfter:Int)
 	{
-		updateTooltip('This turn, this character deals $valAfter damage back to attackers.');
+		updateTooltip('This turn, ${owner.info.name} deals $valAfter damage back to attackers.');
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
@@ -32,7 +32,7 @@ class CounterStatus extends Status
 		type = COUNTER;
 		name = 'Counter';
 
-		var desc = 'This turn, this character deals $initialStacks damage back to attackers.';
+		var desc = 'This turn, ${owner.info.name} deals $initialStacks damage back to attackers.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

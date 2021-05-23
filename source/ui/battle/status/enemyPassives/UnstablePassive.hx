@@ -11,7 +11,7 @@ class UnstablePassive extends DecayingStatus
 	{
 		type = UNSTABLE;
 		name = 'Unstable';
-		var desc = 'If this character starts its turn below 30% hp, it will explode, dealing $damage damage to all enemies. When killed by an '
+		var desc = 'If ${owner.info.name} starts its turn below 30% hp, it will explode, dealing $damage damage to all enemies. When killed by an '
 			+ ' enemy, it will deal $damage damage to all allies instead.';
 		var options:IndicatorIconOptions = {
 			outlined: true,

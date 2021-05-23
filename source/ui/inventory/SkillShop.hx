@@ -31,8 +31,15 @@ class SkillShop extends FlxSpriteGroup
 	public var skillShopChoiceSprites:Array<SkillShopChoiceSprite>;
 
 	var infoIcon:IndicatorIcon;
+	var titleText:FlxText;
 
 	static var random:FlxRandom = new FlxRandom();
+
+	// "hard-code" the height because of the FlxSpriteGroup dimension measurement bug.
+	override public function get_height()
+	{
+		return titleText.height + SkillCard.bodyHeight;
+	}
 
 	// rerender everything according to current state
 	public function refresh()
@@ -54,7 +61,7 @@ class SkillShop extends FlxSpriteGroup
 		super();
 		skillShopChoiceSprites = [];
 
-		var titleText = new FlxText(0, 0, 0, 'SKILL SHOP');
+		this.titleText = new FlxText(0, 0, 0, 'SKILL SHOP');
 		titleText.setFormat(Fonts.STANDARD_FONT, UIMeasurements.MENU_FONT_SIZE_TITLE, FlxColor.YELLOW);
 		titleText.centerX();
 		add(titleText);
@@ -106,14 +113,6 @@ class SkillShop extends FlxSpriteGroup
 		infoIcon.setPosition(FlxG.width - 200 - this.x, FlxG.height - 150 - this.y);
 		infoIcon.registerTooltip();
 	}
-
-	override public function revive()
-	{
-		// When we revive this, we don't actually want to revive _everything_, since some sprites need to be hidden.
-		// calling refresh ensures the sprites that need to stay kill()'d are still kill()'d.
-		super.revive();
-		refresh();
-	}
 }
 
 /** A group representing a skill to buy in the shop. Really just a SkillCard and a FlxText for the price. Centered on the SkillCard. **/
@@ -152,22 +151,10 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 			string = '${Std.string(price)} XP';
 
 		var priceSprite = new FlxText(0, 0, 0, string);
-		var color = getPriceColor(price, sale);
+		var color = ViewUtils.getPriceColor(price, sale);
 
 		priceSprite.setFormat(Fonts.STANDARD_FONT, 32, color);
 		return priceSprite;
-	}
-
-	static function getPriceColor(price:Int, sale:Bool)
-	{
-		var color = FlxColor.WHITE;
-		var canAfford = Player.exp >= price;
-		if (!canAfford)
-			color = FlxColor.fromString('#ff3d3d'); // a pink
-		else if (sale)
-			color = FlxColor.YELLOW;
-
-		return color;
 	}
 
 	public function setOnClick(onClick:SkillShopChoiceSprite->Void)
@@ -179,7 +166,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 	/** rerender the price sprite to reflect the player's current XP.**/
 	public function refresh()
 	{
-		var color = getPriceColor(price, sale);
+		var color = ViewUtils.getPriceColor(price, sale);
 		priceSprite.setFormat(Fonts.STANDARD_FONT, 32, color);
 
 		var canAfford = Player.exp >= price;
@@ -204,7 +191,10 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 	}
 }
 
-/** A highlight cover that shows either "LMB to buy" or "Not enough XP" over a skill card choice in the shop. Centered. **/
+/** A highlight cover that shows either "LMB to buy" or "Not enough XP" over a skill card choice in the shop. Centered.
+ *
+ * Go to SkillCard.hx to see how this is attached on top of a skillcard.
+**/
 class SkillShopChoiceCover extends FlxSpriteGroup
 {
 	var clickToBuyText:FlxSprite;
@@ -236,12 +226,12 @@ class SkillShopChoiceCover extends FlxSpriteGroup
 		return text;
 	}
 
-	public function new(canAfford:Bool = true)
+	public function new(canAfford:Bool = true, w:Int = 200, h:Int = 270)
 	{
 		super();
 
 		var body = new FlxSprite(0, 0);
-		body.makeGraphic(SkillCard.bodyWidth, SkillCard.bodyHeight, FlxColor.fromRGB(0, 0, 0, 128));
+		body.makeGraphic(w, h, FlxColor.fromRGB(0, 0, 0, 128));
 		body.centerSprite();
 		add(body);
 
@@ -253,10 +243,5 @@ class SkillShopChoiceCover extends FlxSpriteGroup
 		add(notEnoughXpText);
 
 		this.canAfford = canAfford;
-	}
-
-	override public function revive()
-	{
-		super.revive();
 	}
 }

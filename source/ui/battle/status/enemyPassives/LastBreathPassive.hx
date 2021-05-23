@@ -33,7 +33,7 @@ class LastBreathPassive extends Status
 	{
 		type = LASTBREATH;
 		name = 'Last Breath';
-		var desc = 'When this character dies, an ally gains 10 Block is healed for 15 hp.';
+		var desc = 'When ${owner.info.name} dies, an ally gains 10 Block is healed for 15 hp.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

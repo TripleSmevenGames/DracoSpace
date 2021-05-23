@@ -44,6 +44,7 @@ class SkillTile extends FlxSpriteGroup
 	public function setupHover(?place:TooltipPlace)
 	{
 		// set mouseChildren to true so that we can trigger the skillcard hover and the equip hover
+		// this means that the hover's mousChildren MUST be true also!
 		this.addScaledToMouseManager(true);
 		if (place == BATTLE || place == null)
 			GameController.battleTooltipLayer.createTooltipForSkillTile(this);
@@ -179,6 +180,7 @@ class SkillTileEquipCover extends FlxSpriteGroup
 		var body = new FlxSprite();
 		body.makeGraphic(w, h, FlxColor.TRANSPARENT, true);
 		// make mouseChildren true, so that you can trigger this hover AND the skillTile's hover at the same time.
+		// this means that the skillTiles mousChildren MUST be true also!
 		body.addScaledToMouseManager(true);
 		body.centerSprite();
 		add(body);
