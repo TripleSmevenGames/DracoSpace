@@ -1,9 +1,9 @@
 package models.events;
 
+import managers.GameController;
 import models.events.GameEvent.GameEventType;
 import models.items.Item;
 import models.player.Player;
-import utils.GameController;
 
 class TreasureEvent extends GameEvent
 {

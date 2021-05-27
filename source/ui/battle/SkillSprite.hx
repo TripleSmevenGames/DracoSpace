@@ -7,11 +7,11 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.BattleManager;
+import managers.GameController;
 import models.skills.Skill;
 import ui.TooltipLayer;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
-import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -78,14 +78,14 @@ class SkillSprite extends FlxSpriteGroup
 		if (owner != null && owner.dead)
 			this.disabled = true;
 
-		// if we are disabling the skill, see if its the owner is stunned/dead,
-		// or because of the skill going on cooldown,
+		// depending on why we are disabling the skill, we might show a number (cooldown),
+		// or just a slash (stunned/dead);
 		if (val)
 		{
 			this.cooldownCountdownSprite.visible = true;
 			disabledFilter.visible = true;
 
-			if (owner.getStatus(STUN) > 0 || owner.dead)
+			if (owner.getStatus(STUN) > 0 || owner.dead || (currentCharges == 0 && skill.chargesPerCD == 0))
 				this.cooldownCountdownSprite.text = '/';
 			else
 				this.cooldownCountdownSprite.text = Std.string(cooldownTimer);

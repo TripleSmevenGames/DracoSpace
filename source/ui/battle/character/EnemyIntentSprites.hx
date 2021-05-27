@@ -2,10 +2,11 @@ package ui.battle.character;
 
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import managers.GameController;
 import models.ai.EnemyIntentMaker.Intent;
 import models.skills.Skill;
 import ui.TooltipLayer.Tooltip;
-import utils.GameController;
+import utils.DebugUtils;
 
 using utils.ViewUtils;
 
@@ -40,7 +41,7 @@ class EnemyIntentSprites extends FlxSpriteGroup
 		for (i in 0...intentSprites.length)
 		{
 			var sprite = intentSprites[i];
-			var yPos = ViewUtils.getXCoordForCenteringLR(i, intentSprites.length, sprite.height, 8);
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, intentSprites.length, sprite.height, 2);
 			sprite.setPosition(0, yPos);
 			add(sprite);
 		}
@@ -55,7 +56,7 @@ class EnemyIntentSprites extends FlxSpriteGroup
 		// I SUSPECT it's because when I call resetIntents, it removes ever sprite from the group.
 		// And when no more sprites exist in the group, it kills itself, or something. SO adding this dummy prevents all sprites from being removed.
 		// Looking into the code itself, I actually couldnt find proof if this being true. So idk.
-		var anchor = ViewUtils.newAnchor();
+		var anchor = DebugUtils.newAnchor();
 		anchor.alpha = 0;
 		add(anchor);
 	}

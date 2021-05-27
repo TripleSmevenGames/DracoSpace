@@ -2,9 +2,9 @@ package models.skills;
 
 import Castle;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import managers.BattleManager;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
-import utils.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 
 enum SkillPointType

@@ -3,7 +3,7 @@ package ui.battle.status.enemyPassives;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 
-class UnstablePassive extends DecayingStatus
+class UnstablePassive extends DebuffStatus
 {
 	static inline final damage = 10;
 

@@ -9,11 +9,12 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.GameController;
 import models.player.Player;
 import models.skills.Skill;
 import ui.battle.IndicatorIcon;
 import ui.battle.win.SkillCard;
-import utils.GameController;
+import utils.GameUtils;
 
 using utils.ViewUtils;
 
@@ -28,10 +29,11 @@ using utils.ViewUtils;
 class SkillShop extends FlxSpriteGroup
 {
 	// array of the skill card SPRITES themselves. Not the skill object themselves.
-	public var skillShopChoiceSprites:Array<SkillShopChoiceSprite>;
+	var skillShopChoiceSprites:Array<SkillShopChoiceSprite>;
 
 	var infoIcon:IndicatorIcon;
 	var titleText:FlxText;
+	var refreshShopMenu:Void->Void;
 
 	static var random:FlxRandom = new FlxRandom();
 
@@ -47,50 +49,51 @@ class SkillShop extends FlxSpriteGroup
 		for (skillShopChoiceSprite in skillShopChoiceSprites)
 			skillShopChoiceSprite.refresh();
 
-		// refresh the header because it shows the XP
+		// refresh the header because it shows the XP, which can change if the player spends XP.
 		GameController.subStateManager.refreshISSHeader();
 	}
 
-	function refreshChoices()
+	/** define what happens when you click a choice in the shop **/
+	function onClick(skillShopChoiceSprite:SkillShopChoiceSprite)
 	{
-		Player.refreshSkillShopChoices();
+		if (Player.exp >= skillShopChoiceSprite.price && Player.inventory.unequippedSkills.length < Player.MAX_UNEQUIPPED_SKILLS)
+		{
+			Player.exp -= skillShopChoiceSprite.price;
+			Player.gainSkill(skillShopChoiceSprite.skill);
+			remove(skillShopChoiceSprite);
+
+			var sound = FlxG.sound.load(AssetPaths.purchase__wav);
+			sound.play();
+
+			Player.rerollSkillShopChoices();
+			renderSkillShopChoiceSprites();
+
+			// trigger a refresh of the entire ShopMenu (almost like a React state change)
+			refreshShopMenu();
+		}
+		else
+		{
+			var sound = FlxG.sound.load(AssetPaths.error__wav);
+			sound.play();
+		}
 	}
 
-	public function new()
+	/** Looks directly at the Player's saved skillshop choices, and renders the sprites for each. **/
+	function renderSkillShopChoiceSprites()
 	{
-		super();
+		// remove the existing sprites first, before rendering the new ones.
+		for (sprite in skillShopChoiceSprites)
+		{
+			remove(sprite);
+			sprite.destroy();
+		}
+
 		skillShopChoiceSprites = [];
 
-		this.titleText = new FlxText(0, 0, 0, 'SKILL SHOP');
-		titleText.setFormat(Fonts.STANDARD_FONT, UIMeasurements.MENU_FONT_SIZE_TITLE, FlxColor.YELLOW);
-		titleText.centerX();
-		add(titleText);
-
-		// array of SKILLS, not the sprite representation of them in the shop!!
-
+		// array of SKILL objects, not the sprite representation of them in the shop!!
+		// the sprite representation of them in the shop is SkillShopChoiceSprite.
+		// These skills are grabbed from the saved static variable in Player.
 		var skillChoices = Player.getCurrentSkillShopChoices();
-
-		// define what happens when you click a choice in the shop
-		var onClick = (skillShopChoiceSprite:SkillShopChoiceSprite) ->
-		{
-			if (Player.exp >= skillShopChoiceSprite.price)
-			{
-				Player.exp -= skillShopChoiceSprite.price;
-				Player.gainSkill(skillShopChoiceSprite.skill);
-				remove(skillShopChoiceSprite);
-				refresh();
-
-				var sound = FlxG.sound.load(AssetPaths.purchase__wav);
-				sound.play();
-
-				// refreshChoices();
-			}
-			else
-			{
-				var sound = FlxG.sound.load(AssetPaths.error__wav);
-				sound.play();
-			}
-		}
 
 		// render the row of shop choices, which are skills the player can buy.
 		var centerY = titleText.height + 4 + SkillCard.bodyHeight / 2;
@@ -105,12 +108,26 @@ class SkillShop extends FlxSpriteGroup
 			skillShopChoiceSprite.setOnClick(onClick);
 			add(skillShopChoiceSprite);
 		}
+	}
+
+	public function new(refreshShopMenu:Void->Void)
+	{
+		super();
+		this.refreshShopMenu = refreshShopMenu;
+		skillShopChoiceSprites = [];
+
+		this.titleText = new FlxText(0, 0, 0, 'SKILL SHOP');
+		titleText.setFormat(Fonts.STANDARD_FONT, UIMeasurements.MENU_FONT_SIZE_TITLE, FlxColor.YELLOW);
+		titleText.centerX();
+		add(titleText);
+
+		renderSkillShopChoiceSprites();
 
 		// small help tooltip icon in the corner.
 		var infoText = 'Spend XP earned from battles to buy new skills. Remember to equip them. ' + 'When you buy a skill, the shop refreshes. Choose wisely!';
 		this.infoIcon = IndicatorIcon.createInfoIndicator('Skill Shop', infoText);
+		infoIcon.setPosition(titleText.width / 2 + 4, titleText.height / 2);
 		add(infoIcon);
-		infoIcon.setPosition(FlxG.width - 200 - this.x, FlxG.height - 150 - this.y);
 		infoIcon.registerTooltip();
 	}
 }
@@ -126,20 +143,6 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 	var skillCard:SkillCard;
 
 	static var random:FlxRandom = new FlxRandom();
-
-	/** Get the actual number price for a skill. **/
-	static function getSkillPrice(sale = false):Int
-	{
-		var basePrice = 10;
-		var multiplier = (Player.skillsBought + 1) * (sale ? 1 / 2 : 1); // sales give half off
-		var modifier = random.int(-3, 3);
-		var finalPrice = (basePrice * multiplier) + modifier;
-
-		if (finalPrice < 5)
-			finalPrice = 5;
-
-		return Std.int(finalPrice);
-	}
 
 	/** Get the sprite showing this price. Basically a number + 'XP' sprite. Not centered **/
 	static function getSkillPriceSprite(price:Int = 0, sale:Bool = false)
@@ -184,7 +187,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 
 		// now create the price sprite underneath. 20% chance to be on sale.
 		this.sale = random.int(1, 5) == 1;
-		this.price = getSkillPrice(sale);
+		this.price = GameUtils.getSkillPrice(sale);
 		this.priceSprite = getSkillPriceSprite(price, sale);
 		priceSprite.centerSprite(0, SkillCard.bodyHeight / 2 + 16);
 		add(priceSprite);
@@ -222,7 +225,8 @@ class SkillShopChoiceCover extends FlxSpriteGroup
 	static function getNotEnoughXpText()
 	{
 		var text = new FlxText(0, 0, 0, 'Not enough XP');
-		text.setFormat(Fonts.STANDARD_FONT, 24);
+		text.setFormat(Fonts.STANDARD_FONT, 24, FlxColor.RED);
+		text.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.WHITE, 2);
 		return text;
 	}
 

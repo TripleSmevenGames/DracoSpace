@@ -1,4 +1,4 @@
-package utils;
+package managers;
 
 import flixel.FlxG;
 import flixel.FlxSubState;
@@ -46,6 +46,7 @@ class SubStateManager
 				}
 			}
 			playState.openSubState(ess);
+			MusicManager.switchToMap();
 		}
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
@@ -60,6 +61,7 @@ class SubStateManager
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
 				bss.initBattle(event);
+				MusicManager.switchToBattle();
 			};
 			playState.openSubState(bss);
 		};
@@ -123,6 +125,7 @@ class SubStateManager
 		};
 
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
+		MusicManager.switchToMap();
 	}
 
 	/** Call this to return to this map tile's event after the tutorial, instead of going back to the map. **/

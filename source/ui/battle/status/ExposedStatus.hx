@@ -4,7 +4,7 @@ import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 
 // Exposed usage is defined in set_block somewhere
-class ExposedStatus extends DecayingStatus
+class ExposedStatus extends DebuffStatus
 {
 	override public function onSetStacks(valBefore:Int, valAfter:Int)
 	{

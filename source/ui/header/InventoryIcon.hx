@@ -3,7 +3,7 @@ package ui.header;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import utils.GameController;
+import managers.GameController;
 
 using utils.ViewUtils;
 

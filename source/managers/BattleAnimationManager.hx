@@ -1,9 +1,7 @@
-package utils;
+package managers;
 
 import flixel.FlxBasic;
-import flixel.addons.nape.FlxNapeSprite;
 import flixel.animation.FlxAnimation;
-import flixel.group.FlxGroup.FlxTypedGroup;
 import flixel.tweens.FlxTween;
 
 enum BattleAnimationGroupState
@@ -135,7 +133,7 @@ class BattleAnimationGroup
  *
  * Each group is played at the same time. The next group in line is played after all the animations in the current group are done.
 **/
-@:access(utils.BattleAnimationGroup)
+@:access(managers.BattleAnimationGroup)
 class BattleAnimationManager extends FlxBasic
 {
 	var queue:Array<BattleAnimationGroup> = [];

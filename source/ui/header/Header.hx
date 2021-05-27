@@ -6,8 +6,8 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.util.FlxColor;
+import managers.GameController;
 import models.player.Player;
-import utils.GameController;
 
 using utils.ViewUtils;
 

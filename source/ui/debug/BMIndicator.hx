@@ -1,9 +1,9 @@
 package ui.debug;
 
 import flixel.text.FlxText;
-import utils.BattleManager;
+import managers.BattleManager;
 
-@:access(utils.BattleManager)
+@:access(managers.BattleManager)
 class BMIndicator extends FlxText
 {
 	var BM:BattleManager;

@@ -23,9 +23,10 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			var status = statuses[i];
 			remove(status); // remove the status so that we can set its local coords.
-			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width);
+			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.width - 4);
 			status.y = 0;
 			add(status);
+			status.registerTooltip();
 		}
 	}
 
@@ -57,6 +58,10 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function addStatusByType(type:StatusType, stacks:Int = 1)
 	{
+		if (stacks == 0)
+			return;
+
+		// first, if this status already exists, just add to the stacks of the existing status.
 		for (status in statuses)
 		{
 			if (status.type == type)
@@ -65,6 +70,8 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 				return;
 			}
 		}
+
+		// if not, then add it as a new status.
 		var status = StatusMap.map.get(type)(this.owner);
 		if (status != null)
 		{

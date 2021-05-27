@@ -9,7 +9,7 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import models.player.CharacterInfo;
+import models.CharacterInfo;
 import ui.battle.SkillTile.SkillTileBlank;
 import ui.battle.SkillTile.SkillTileLocked;
 import ui.battle.SkillTile;

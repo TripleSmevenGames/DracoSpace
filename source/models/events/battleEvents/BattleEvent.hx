@@ -1,8 +1,8 @@
 package models.events.battleEvents;
 
 import haxe.Exception;
+import models.CharacterInfo;
 import models.events.GameEvent.GameEventType;
-import models.player.CharacterInfo;
 import models.player.Deck;
 
 class BattleEvent extends GameEvent

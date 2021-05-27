@@ -1,8 +1,8 @@
 package ui.battle.status;
 
+import managers.BattleManager;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 
 // Dodge usage is defined in CharacterSprite's takeDamage.

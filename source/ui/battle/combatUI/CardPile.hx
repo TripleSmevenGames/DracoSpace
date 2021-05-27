@@ -6,11 +6,11 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.GameController;
 import models.cards.Card;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
-import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 
@@ -114,7 +114,7 @@ class CardPile extends FlxSpriteGroup
 				if (!hidden)
 					thisVal = Std.string(makeUp.get(type));
 				var totalVal = Std.string(deck.cardMap.get(type));
-				string += '${type.getName()} : ${thisVal}/${totalVal} \n '; // spaces are so replacement text can find the \n
+				string += '${type.getName()} : ${thisVal}/${totalVal} \n '; // spaces are so replacement text can find the \n, since it splits by ' '.
 			}
 		}
 		return string;

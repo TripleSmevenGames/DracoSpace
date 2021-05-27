@@ -8,6 +8,7 @@ import flixel.FlxSubState;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import managers.GameController;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.IndicatorIcon;
 import ui.buttons.BasicWhiteButton;
@@ -16,7 +17,6 @@ import ui.inventory.EquipmentMenu;
 import ui.inventory.InventoryMenu2;
 import ui.inventory.ShopMenu;
 import ui.inventory.SkillShop;
-import utils.GameController;
 
 using utils.ViewUtils;
 
@@ -135,11 +135,11 @@ class InventorySubState extends FlxSubState
 		add(header);
 
 		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.toggleInventory());
-		backBtn.centerSprite(FlxG.width - 200, FlxG.height - 100);
+		backBtn.centerSprite(FlxG.width - 200, FlxG.height - 150);
 		add(backBtn);
 
 		this.toggleButton = new BasicWhiteButton('Shop', toggleScreens);
-		toggleButton.centerSprite(FlxG.width - 200, FlxG.height - 50);
+		toggleButton.centerSprite(FlxG.width - 200, FlxG.height - 100);
 		add(toggleButton);
 	}
 }

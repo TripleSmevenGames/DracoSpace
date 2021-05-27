@@ -6,14 +6,14 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
+import managers.BattleManager;
+import managers.GameController;
+import models.CharacterInfo.CharacterType;
 import models.cards.Card;
-import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
 import ui.buttons.BasicWhiteButton;
-import utils.BattleManager;
-import utils.GameController;
 import utils.battleManagerUtils.BattleContext;
 
 using utils.ViewUtils;

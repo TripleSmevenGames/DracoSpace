@@ -80,15 +80,6 @@ class ViewUtils
 		sprite.updateHitbox();
 	}
 
-	// quick way to make a tiny white dot, good for marking a spot during debug mode.
-	public static function newAnchor(?parent:FlxSprite, invisible:Bool = false)
-	{
-		if (parent == null)
-			return new FlxSprite(0, 0).makeGraphic(4, 4, invisible ? FlxColor.TRANSPARENT : FlxColor.WHITE);
-		else
-			return new FlxSprite(parent.width, parent.height).makeGraphic(4, 4, FlxColor.WHITE);
-	}
-
 	public static final typeColorMap = [
 		POW => Colors.POWER_RED,
 		AGI => Colors.AGILITY_YELLOW,
@@ -201,17 +192,19 @@ class ViewUtils
 	}
 
 	/** This gets the lmbIcon and the a text together. Not centered. **/
-	public static function getClickToSomethingText(something:String = '', fontSize = 22, padding = 4)
+	public static function getClickToSomethingText(something:String = '', fontSize = 24, padding = 4)
 	{
 		var group = new FlxSpriteGroup();
 
 		var lmbIcon = new FlxSprite(0, 0, AssetPaths.LMB__png);
 		lmbIcon.scale2x();
+		lmbIcon.centerY();
 		group.add(lmbIcon);
 
 		var buyText = new FlxText(0, 0, 0, something);
 		buyText.setFormat(Fonts.STANDARD_FONT, fontSize);
 		buyText.setPosition(lmbIcon.width + padding, 0);
+		buyText.centerY();
 		group.add(buyText);
 
 		return group;

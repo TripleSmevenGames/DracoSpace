@@ -4,10 +4,10 @@ import flixel.FlxSprite;
 import flixel.animation.FlxAnimation;
 import flixel.group.FlxSpriteGroup;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import managers.BattleAnimationManager.BattleAnimationGroupOptions;
+import managers.BattleManager;
+import managers.GameController;
 import models.skills.Skill.Effect;
-import utils.BattleAnimationManager.BattleAnimationGroupOptions;
-import utils.BattleManager;
-import utils.GameController;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 

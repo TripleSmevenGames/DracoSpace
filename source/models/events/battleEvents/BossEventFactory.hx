@@ -1,6 +1,6 @@
 package models.events.battleEvents;
 
-import models.player.CharacterInfo;
+import models.CharacterInfo;
 import models.player.Deck;
 
 class BossEventFactory

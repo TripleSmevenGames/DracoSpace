@@ -122,7 +122,7 @@ class EquipmentMenu extends FlxSpriteGroup
 		var infoText = 'Click on skills to equip or unequip them on your characters. '
 			+ 'Only equipped skills can be used during battle. Most skills, but not all, are character-specific.';
 		this.infoIcon = IndicatorIcon.createInfoIndicator('Party Skill Equipment', infoText);
-		infoIcon.setPosition(FlxG.width - 200, FlxG.height - 150);
+		infoIcon.setPosition(FlxG.width - 200, FlxG.height - 200);
 		add(infoIcon);
 
 		infoIcon.registerTooltip();

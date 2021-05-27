@@ -1,8 +1,8 @@
 package ui.battle.status;
 
 import flixel.group.FlxSpriteGroup;
+import managers.BattleManager;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 
 enum StatusType
@@ -16,7 +16,6 @@ enum StatusType
 	COUNTER;
 	DODGE;
 	STUN;
-	EXHAUST;
 	EXPOSED;
 	LASTBREATH;
 	DYINGWISH;
@@ -29,6 +28,8 @@ enum StatusType
 	UNSTABLE;
 	PLUSDRAW;
 	MINUSDRAW;
+	WOUNDED;
+	WEAK;
 }
 
 class Status extends FlxSpriteGroup implements ITurnTriggerable
@@ -41,6 +42,8 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 
 	/** The character this status is on. **/
 	public var owner:CharacterSprite;
+
+	var isTooltipRegistered:Bool = false;
 
 	public function set_stacks(val:Int)
 	{
@@ -71,6 +74,16 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 		icon.updateTooltipDesc(val);
 	}
 
+	/** Registers the icon's tooltip. **/
+	public function registerTooltip()
+	{
+		if (isTooltipRegistered || icon == null)
+			return;
+
+		icon.registerTooltip();
+		isTooltipRegistered = true;
+	}
+
 	// some of these functions are just dummies. The status classes need to override these to provide functionality.
 	public function onPlayerStartTurn(context:BattleContext) {}
 
@@ -81,12 +94,13 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 	public function onEnemyEndTurn(context:BattleContext) {}
 
 	/** dont modify damage here
-		*This is called AFTER the character has taken damage.
+	 * This is called AFTER the character has taken damage.
 	**/
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	public function onTakeUnblockedDamage() {}
 
+	/** This is called BEFORE The skill's play() is called, but after the skill has been "counted" for skills played this turn. **/
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}
 
 	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}

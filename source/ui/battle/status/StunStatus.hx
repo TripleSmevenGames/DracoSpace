@@ -1,12 +1,12 @@
 package ui.battle.status;
 
+import managers.BattleManager;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 
 // stun usage is defined in skillSprite/status display.
-class StunStatus extends DecayingStatus
+class StunStatus extends DebuffStatus
 {
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{

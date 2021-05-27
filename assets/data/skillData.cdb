@@ -243,7 +243,7 @@
 						{
 							"id": "distract",
 							"name": "Distract",
-							"desc": "Gain $x Taunt and draw a card.",
+							"desc": "Gain $x Block and $x2 Taunt.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -257,7 +257,8 @@
 							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 3
+							"value": 8,
+							"value2": 2
 						},
 						{
 							"id": "aggravate",
@@ -320,18 +321,19 @@
 						{
 							"id": "adrenaline",
 							"name": "Adrenaline",
-							"desc": "All allies gain $x Attack.",
+							"desc": "Take $x damage and gain $x2 Attack.",
 							"rarity": 1,
 							"costs": [
 								{
 									"POW": 1
 								}
 							],
-							"targetMethod": 6,
-							"value": 1,
+							"targetMethod": 7,
+							"value": 2,
 							"cooldown": 5,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 2
 						},
 						{
 							"id": "wideSwing",
@@ -383,7 +385,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 8,
+							"value": 6,
 							"flavor": "Ryder prefers Sprite.",
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -392,7 +394,7 @@
 						{
 							"id": "recklessSwing",
 							"name": "Reckless Swing",
-							"desc": "Deal $x damage and take $x2 damage.",
+							"desc": "Take $x2 damage and deal $x damage.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -400,7 +402,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 14,
+							"value": 11,
 							"value2": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -409,7 +411,7 @@
 						{
 							"id": "unyielding",
 							"name": "Unyielding",
-							"desc": "Gain $x Block. Holds 2 charges.",
+							"desc": "Gain $x Block. Gains 2 charges per turn.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -439,8 +441,8 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "expose",
-							"name": "Expose",
+							"id": "hideBreaker",
+							"name": "Hide Breaker",
 							"desc": "Deal $x damage. The target can't gain Block this turn.",
 							"rarity": 2,
 							"costs": [
@@ -457,7 +459,7 @@
 						{
 							"id": "steadfast",
 							"name": "Steadfast",
-							"desc": "Gain $x Block and draw a card.",
+							"desc": "An ally gains $x Block. Draw a card.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -467,7 +469,7 @@
 									"ANY": 4
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 3,
 							"value": 14,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -486,7 +488,7 @@
 									"ANY": 4
 								}
 							],
-							"targetMethod": 0,
+							"targetMethod": 7,
 							"value": 18,
 							"value2": 9,
 							"cooldown": 3,
@@ -496,7 +498,7 @@
 						{
 							"id": "staticAura",
 							"name": "Static Aura",
-							"desc": "Gain $x Counter per Static on Ryder.",
+							"desc": "Expend Static: gain 1 Counter per Static.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -527,28 +529,25 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "blitzkreig",
-							"name": "Blitzkrieg",
+							"id": "blitzAttack",
+							"name": "Blitz Attack",
 							"desc": "Deal $x damage and gain $x2 Attack.",
 							"rarity": 2,
 							"costs": [
 								{
 									"POW": 2
-								},
-								{
-									"ANY": 4
 								}
 							],
 							"targetMethod": 0,
-							"value": 17,
+							"value": 15,
 							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value2": 2
 						},
 						{
-							"id": "matchDefence",
-							"name": "Match Defence",
+							"id": "matchDefense",
+							"name": "Match Defense",
 							"desc": "Gain $x Block. Next turn, gain $x2 Block.",
 							"rarity": 2,
 							"costs": [
@@ -583,12 +582,11 @@
 						{
 							"id": "discipline",
 							"name": "Discipline",
-							"desc": "Gain Status: At the start of turn, double this character's Counter.",
+							"desc": "Gain Status: Every turn, increase Counter by 50%.",
 							"rarity": 3,
 							"costs": [
 								{
-									"POW": 2,
-									"CON": 2
+									"CON": 3
 								}
 							],
 							"targetMethod": 7,
@@ -603,7 +601,7 @@
 							"rarity": 3,
 							"costs": [
 								{
-									"POW": 3
+									"POW": 2
 								}
 							],
 							"targetMethod": 8,
@@ -631,11 +629,11 @@
 						{
 							"id": "revenge",
 							"name": "Revenge",
-							"desc": "Deal damage equal to Ryder's missing health.",
+							"desc": "Deal damage equal to double Ryder's missing health.",
 							"rarity": 3,
 							"costs": [
 								{
-									"POW": 3
+									"POW": 2
 								}
 							],
 							"targetMethod": 0,
@@ -643,6 +641,21 @@
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"flavor": "Also best served cold."
+						},
+						{
+							"id": "champion",
+							"name": "Champion",
+							"desc": "Gain $x Taunt and double your Attack.",
+							"rarity": 3,
+							"costs": [
+								{
+									"POW": 1,
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"cooldown": 3,
+							"value": 2
 						}
 					]
 				},
@@ -733,16 +746,16 @@
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 2,
+							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value": 8,
+							"value": 6,
 							"value2": 1
 						},
 						{
 							"id": "shockShield",
 							"name": "Shock Shield",
-							"desc": "Expend all Static. An ally gains $x block per Static expended.",
+							"desc": "Expend Static: Allies gain $x Block per Static.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -752,15 +765,15 @@
 									"ANY": 2
 								}
 							],
-							"targetMethod": 0,
-							"cooldown": 1,
+							"targetMethod": 6,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 3
 						},
 						{
-							"id": "surpriseAttack",
-							"name": "Surprise Attack",
+							"id": "swordCutter",
+							"name": "Sword Cutter",
 							"desc": "If the target has no Block, deal $x damage.",
 							"rarity": 1,
 							"costs": [
@@ -830,6 +843,39 @@
 							"chargesPerCD": 2
 						},
 						{
+							"id": "discharge",
+							"name": "Discharge",
+							"desc": "Deal $x damage to all enemies. Expend 5 Static: Deal $x2 damage instead.",
+							"rarity": 1,
+							"costs": [
+								{
+									"AGI": 1
+								}
+							],
+							"targetMethod": 2,
+							"value": 3,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1,
+							"value2": 8
+						},
+						{
+							"id": "cripple",
+							"name": "Cripple",
+							"desc": "Deal $x damage and apply 1 Weak.",
+							"rarity": 1,
+							"costs": [
+								{
+									"ANY": 1
+								}
+							],
+							"targetMethod": 0,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1,
+							"value": 4
+						},
+						{
 							"id": "sabatoge",
 							"name": "Sabatoge",
 							"desc": "Add 2 Cooldown to one of the target's skills, chosen randomly.",
@@ -892,7 +938,7 @@
 								}
 							],
 							"targetMethod": 2,
-							"value": 5,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -900,7 +946,7 @@
 						{
 							"id": "freeRunning",
 							"name": "Free Running",
-							"desc": "Deal $x damage and gain 1 Dodge for each previously played skill this turn.",
+							"desc": "Deal $x damage and gain 1 Dodge for each skill Kiwi played previously this turn.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -928,25 +974,6 @@
 							"cooldown": 99,
 							"maxCharges": 1,
 							"chargesPerCD": 0
-						},
-						{
-							"id": "discharge",
-							"name": "Discharge",
-							"desc": "Expend all Static. Deal $x damage to all enemies per Static expended.",
-							"rarity": 2,
-							"costs": [
-								{
-									"AGI": 1
-								},
-								{
-									"ANY": 2
-								}
-							],
-							"targetMethod": 2,
-							"value": 1,
-							"cooldown": 1,
-							"maxCharges": 1,
-							"chargesPerCD": 1
 						},
 						{
 							"id": "followUp",
@@ -993,7 +1020,7 @@
 								}
 							],
 							"targetMethod": 1,
-							"value": 8,
+							"value": 5,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1041,14 +1068,14 @@
 								}
 							],
 							"targetMethod": 0,
-							"cooldown": 99,
+							"cooldown": 5,
 							"maxCharges": 1,
-							"chargesPerCD": 0
+							"chargesPerCD": 1
 						},
 						{
 							"id": "rewind",
 							"name": "Rewind",
-							"desc": "Set the cooldown of all allies skills to 0.",
+							"desc": "Set the cooldown of all allies' skills to 0.",
 							"rarity": 3,
 							"costs": [
 								{
@@ -1063,7 +1090,7 @@
 						{
 							"id": "fullyPrepared",
 							"name": "Fully Prepared",
-							"desc": "If Kiwi has Dodge, gain $x Block.",
+							"desc": "If Kiwi has Dodge, gain $x Block. Else, gain 2 Dodge.",
 							"rarity": 3,
 							"costs": [
 								{
@@ -1073,9 +1100,24 @@
 							],
 							"targetMethod": 7,
 							"value": 30,
-							"cooldown": 2,
+							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1
+						},
+						{
+							"id": "bodyMastery",
+							"name": "Body Mastery",
+							"desc": "Gain Status: On every 5th skill played, gain 1 Dodge.",
+							"rarity": 0,
+							"costs": [
+								{
+									"AGI": 3
+								}
+							],
+							"targetMethod": 7,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 0
 						}
 					]
 				},
@@ -1335,7 +1377,7 @@
 							],
 							"targetMethod": 0,
 							"flavor": "There's something strange...",
-							"value": 3,
+							"value": 2,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1351,7 +1393,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 5,
+							"value": 4,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
@@ -1401,8 +1443,25 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 3,
-							"value2": 3,
+							"value": 2,
+							"value2": 2,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "cursedHands",
+							"name": "Cursed Hands",
+							"desc": "Take 2 damage. Deal $x damage and apply $x2 Burn.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 4,
+							"value2": 4,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1417,9 +1476,26 @@
 									"CON": 1
 								}
 							],
-							"targetMethod": 2,
+							"targetMethod": 7,
 							"value": 5,
 							"value2": 1,
+							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "cursedFlame",
+							"name": "Cursed Flame",
+							"desc": "Take 2 damage. Gain $x Block and apply $x2 Burn to all enemies.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 10,
+							"value2": 2,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1468,6 +1544,54 @@
 							],
 							"targetMethod": 2,
 							"value": 3,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "grow",
+							"name": "Grow",
+							"desc": "Gain $x Attack and $x2 Block.",
+							"rarity": 0,
+							"costs": [
+								{
+									"CON": 1
+								}
+							],
+							"targetMethod": 7,
+							"value": 2,
+							"value2": 5,
+							"cooldown": 1,
+							"maxCharges": 1
+						},
+						{
+							"id": "shroomSpines",
+							"name": "Shroom Spines",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 5,
+							"cooldown": 1,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "acornShot",
+							"name": "Acorn Shot",
+							"desc": "Deal $x damage.",
+							"rarity": 0,
+							"costs": [
+								{
+									"POW": 1
+								}
+							],
+							"targetMethod": 0,
+							"value": 7,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1

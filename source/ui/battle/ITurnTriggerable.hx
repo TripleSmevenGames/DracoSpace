@@ -1,6 +1,6 @@
 package ui.battle;
 
-import utils.BattleManager;
+import managers.BattleManager;
 import utils.battleManagerUtils.BattleContext;
 
 /** Can be triggered at moments during a turn. **/

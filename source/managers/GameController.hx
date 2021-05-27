@@ -1,4 +1,4 @@
-package utils;
+package managers;
 
 import flixel.FlxG;
 import flixel.math.FlxRandom;
@@ -40,8 +40,6 @@ class GameController
 	 * The bss needs to set this variable so its easily accessible by its children.
 	**/
 	public static var battleSoundManager:BattleSoundManager;
-
-	public static var player:Player;
 
 	public static var latestException:haxe.Exception;
 

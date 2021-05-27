@@ -4,10 +4,10 @@ import constants.MapGeneration as MapGenConsts;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
 import haxe.Exception;
+import managers.GameController;
 import models.events.*;
 import models.events.GameEvent.GameEventType;
 import models.events.battleEvents.*;
-import utils.GameController;
 import utils.GameUtils;
 
 typedef Column = Array<Node>;

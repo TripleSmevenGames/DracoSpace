@@ -8,7 +8,8 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import models.player.CharacterInfo;
+import managers.GameController;
+import models.CharacterInfo;
 import models.player.Player;
 import ui.inventory.SkillShop.SkillShopChoiceCover;
 import utils.ViewUtils;
@@ -22,13 +23,15 @@ class UpgradeShop extends FlxSpriteGroup
 	public static var drawUpgradePrice = [0, 0, 20, 40, 60, 80];
 
 	var items:Array<UpgradeShopItem>;
+	var refreshShopMenu:Void->Void;
 
 	public function refresh()
 	{
 		for (item in items)
-		{
 			item.refresh();
-		}
+
+		// refresh the header because it shows the XP, which can change if the player spends XP.
+		GameController.subStateManager.refreshISSHeader();
 	}
 
 	static function getSkillSlotUpgradePrice(char:CharacterInfo)
@@ -47,26 +50,28 @@ class UpgradeShop extends FlxSpriteGroup
 			return drawUpgradePrice[drawUpgradePrice.length - 1];
 	}
 
-	static function createSkillSlotUpgradeItem(char:CharacterInfo)
+	function createSkillSlotUpgradeItem(char:CharacterInfo)
 	{
 		var avatar = new FlxSprite(char.avatarPath);
 		avatar.scale3x();
 		var title = 'Upgrade Skill Slots';
-		var subtitle = '${char.numSkillSlots}/${Player.maxSkillSlots}';
+		var subtitle = '${char.numSkillSlots}/${Player.MAX_SKILL_SLOTS}';
 		var price = getSkillSlotUpgradePrice(char);
 		var onClick = (item:UpgradeShopItem) ->
 		{
-			if (Player.exp >= item.price)
+			if (Player.exp >= item.price && char.numSkillSlots < Player.MAX_SKILL_SLOTS)
 			{
-				Player.exp -= price;
+				Player.exp -= item.price;
 				char.numSkillSlots += 1;
 
 				var sound = FlxG.sound.load(AssetPaths.purchase__wav);
 				sound.play();
 
 				var newPrice = getSkillSlotUpgradePrice(char);
-				var newSubtitle = '${char.numSkillSlots}/${Player.maxSkillSlots}';
+				var newSubtitle = '${char.numSkillSlots}/${Player.MAX_SKILL_SLOTS}';
 				item.updatePriceAndSubtitle(newPrice, newSubtitle);
+				// trigger a refresh of the entire ShopMenu (almost like a React state change)
+				refreshShopMenu();
 			}
 			else
 			{
@@ -77,17 +82,17 @@ class UpgradeShop extends FlxSpriteGroup
 		return new UpgradeShopItem(avatar, title, subtitle, price, onClick);
 	}
 
-	static function createDrawUpgradeItem()
+	function createDrawUpgradeItem()
 	{
 		var icon = new FlxSprite(AssetPaths.plusDraw__png);
 		icon.scale3x();
-		var title = 'Upgrade Skill Slots';
+		var title = 'Upgrade Deck Draw';
 		var subtitle = '${Player.deck.draw}';
 		var price = getDrawUpgradePrice();
 
 		var onClick = (item:UpgradeShopItem) ->
 		{
-			if (Player.exp >= item.price)
+			if (Player.exp >= item.price && Player.deck.draw < 8)
 			{
 				Player.exp -= price;
 				Player.deck.draw += 1;
@@ -98,6 +103,8 @@ class UpgradeShop extends FlxSpriteGroup
 				var newPrice = getDrawUpgradePrice();
 				var newSubtitle = '${Player.deck.draw}';
 				item.updatePriceAndSubtitle(newPrice, newSubtitle);
+				// trigger a refresh of the entire ShopMenu (almost like a React state change)
+				refreshShopMenu();
 			}
 			else
 			{
@@ -108,9 +115,10 @@ class UpgradeShop extends FlxSpriteGroup
 		return new UpgradeShopItem(icon, title, subtitle, price, onClick);
 	}
 
-	public function new()
+	public function new(refreshShopMenu:Void->Void)
 	{
 		super();
+		this.refreshShopMenu = refreshShopMenu;
 
 		var titleText = new FlxText(0, 0, 0, 'UPGRADE SHOP');
 		titleText.setFormat(Fonts.STANDARD_FONT, UIMeasurements.MENU_FONT_SIZE_TITLE, FlxColor.YELLOW);
@@ -149,7 +157,7 @@ class UpgradeShopItem extends FlxSpriteGroup
 	var priceSprite:FlxText;
 
 	public var price:Int;
-	public var subtitle:FlxText;
+	public var subtitleText:FlxText;
 
 	override public function get_width()
 	{
@@ -164,13 +172,14 @@ class UpgradeShopItem extends FlxSpriteGroup
 	public function updatePriceAndSubtitle(price:Int, subtitle:String)
 	{
 		this.price = price;
-		this.subtitle.text = subtitle;
+		this.subtitleText.text = subtitle;
 		refresh();
 	}
 
 	public function refresh()
 	{
 		var color = ViewUtils.getPriceColor(price);
+		priceSprite.text = '${Std.string(price)} XP';
 		priceSprite.setFormat(Fonts.STANDARD_FONT, 32, color);
 
 		var canAfford = Player.exp >= price;
@@ -184,7 +193,7 @@ class UpgradeShopItem extends FlxSpriteGroup
 
 		var titleText = new FlxText(0, 0, body.width, title);
 		titleText.setFormat(Fonts.STANDARD_FONT, 32, FlxColor.WHITE, 'center');
-		var subtitleText = new FlxText(0, 0, body.width, subtitle);
+		this.subtitleText = new FlxText(0, 0, body.width, subtitle);
 		subtitleText.setFormat(Fonts.STANDARD_FONT, 28, FlxColor.WHITE, 'center');
 
 		var sprites = [icon, titleText, subtitleText];
@@ -234,6 +243,7 @@ class UpgradeShopItem extends FlxSpriteGroup
 
 		// add the price under the box
 		var color = ViewUtils.getPriceColor(price);
+		this.price = price;
 		this.priceSprite = getPriceSprite(price);
 		priceSprite.setFormat(Fonts.STANDARD_FONT, 32, color);
 		priceSprite.centerSprite(0, body.height / 2 + 16);
@@ -244,7 +254,8 @@ class UpgradeShopItem extends FlxSpriteGroup
 		FlxMouseEventManager.setMouseClickCallback(body, (_) -> onClick(this));
 
 		// add a highlight effect that says "LMB to  buy" or "Not enough xp" on it when you hover over it.
-		this.highlight = new SkillShopChoiceCover(false, bodyWidth, bodyHeight);
+		// this.highlight = new SkillShopChoiceCover(false, bodyWidth, bodyHeight);
+		this.highlight = new SkillShopChoiceCover(true, bodyWidth, bodyHeight);
 		add(highlight);
 		highlight.visible = false;
 		FlxMouseEventManager.setMouseOverCallback(body, (_) -> highlight.visible = true);

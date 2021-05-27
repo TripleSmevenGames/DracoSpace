@@ -2,7 +2,7 @@ package utils.battleManagerUtils;
 
 import flixel.math.FlxRandom;
 import haxe.Exception;
-import models.player.CharacterInfo.CharacterType;
+import models.CharacterInfo.CharacterType;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status.StatusType;

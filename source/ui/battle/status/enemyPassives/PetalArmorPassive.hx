@@ -1,9 +1,9 @@
 package ui.battle.status.enemyPassives;
 
+import managers.BattleManager;
 import models.skills.SkillAnimations;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 

@@ -1,11 +1,11 @@
-package utils;
+package managers;
 
 import flixel.FlxBasic;
 import haxe.Exception;
+import models.CharacterInfo;
 import models.ai.BaseAI;
 import models.ai.EnemyIntentMaker;
 import models.events.GameEvent;
-import models.player.CharacterInfo.CharacterType;
 import models.player.Player;
 import models.skills.Skill.SkillPointCombination;
 import substates.BattleSubState;
@@ -50,7 +50,7 @@ typedef BattleManagerState =
  * This manager shouldn't try to do something that an object could just do itself, i.e. things that
  * do not involve outside objects.
 **/
-@:access(utils.SubStateManager)
+@:access(managers.SubStateManager)
 class BattleManager extends FlxBasic
 {
 	var state:BattleManagerState;
@@ -342,7 +342,8 @@ class BattleManager extends FlxBasic
 			}
 		};
 
-		// Do some checks. Otherwise, player can pick cards, play skills, or end their turn.
+		// Do some checks like if characters are dead or not.
+		// Otherwise, player can pick cards, play skills, or end their turn.
 		this.playerIdleState = {
 			name: PLAYER_IDLE,
 			turn: PLAYER,

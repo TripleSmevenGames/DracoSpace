@@ -3,10 +3,10 @@ package models.skills;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.system.FlxSound;
+import managers.GameController;
 import models.skills.Skill.Effect;
 import ui.battle.SpriteAnimsLayer;
 import ui.battle.character.CharacterSprite;
-import utils.GameController;
 import utils.GameUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -21,6 +21,9 @@ typedef CustomPlayOptions =
 /** Used as a helper to create "play" functions for skills. **/
 class SkillAnimations
 {
+	// maybe slow, because everytime we want a new animation, we are creating a new sprite.
+	// For an optimization, we can create a pool for these animations and reuse the same sprites from the pool
+	// when we need them.
 	public static function getHitAnim()
 	{
 		return SpriteAnimsLayer.createStandardAnim(AssetPaths.weaponhit_spritesheet__png, 100, 100, 30, 2);
@@ -47,9 +50,12 @@ class SkillAnimations
 	}
 
 	/** Create a play that will run ONE bam animation group with 1 effect.
-	 * The play is a function that, when run, adds an animation to the BAM and a sprite to the BSAL.
+	 * Calling the created play() DOES NOT run the effect at that time.
+	 * The play is a function that, when run, adds an animation to the BAM queue and a sprite to the BSAL.
 	 * To actually call the play, pass in the targets, owner and context.
 	 * You can combine multiple "play" calls in a single skill's play to create complicated and chaining effects.
+	 * Look at the SkillFactory for examples.
+	 * Remember that the effect is called once on EACH target.
 	**/
 	public static function getCustomPlay(animSprite:FlxSprite, effect:Effect, effectFrame:Int = 0, ?sound:FlxSound, ?options:CustomPlayOptions)
 	{
@@ -97,23 +103,27 @@ class SkillAnimations
 	}
 
 	/** Create a generic attack play. */
-	public static function genericAttackPlay(damage:Int, ?customAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound)
+	public static function genericAttackPlay(damage:Int, ?customAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound, ?extraEffect:Effect)
 	{
 		var animSprite:FlxSprite = customAnimSprite != null ? customAnimSprite : getHitAnim();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
 			owner.dealDamageTo(damage, target, context);
+			if (extraEffect != null)
+				extraEffect(target, owner, context);
 		};
 		return getCustomPlay(animSprite, effect, effectFrame, sound);
 	}
 
 	/** Create a generic block play. **/
-	public static function genericBlockPlay(block:Int)
+	public static function genericBlockPlay(block:Int, ?extraEffect:Effect)
 	{
 		var animSprite = getBlockAnim();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
 			target.currBlock += block;
+			if (extraEffect != null)
+				extraEffect(target, owner, context);
 		}
 		var effectFrame = 10;
 		var sound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
@@ -128,7 +138,9 @@ class SkillAnimations
 		return getCustomPlay(animSprite, effect, 0, soundToPlay, {touchBase: true});
 	}
 
-	/** Create a screenAnimSprite with SAL.createScreenAnim first. **/
+	/** Create a play where the animation is a screenAnim.
+	 * Make sure you create a screenAnimSprite with SAL.createScreenAnim first.
+	**/
 	public static function screenAnimPlay(effect:Effect, screenAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound)
 	{
 		return getCustomPlay(screenAnimSprite, effect, effectFrame, sound, {screenAnim: true});

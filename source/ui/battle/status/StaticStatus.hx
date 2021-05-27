@@ -15,6 +15,7 @@ class StaticStatus extends Status
 		else if (skillSprite.owner.info.type == ENEMY)
 			allies = context.eChars;
 
+		// if this skill is the first skill played by this character...
 		if (skillSprite.owner.skillsPlayedThisTurn == 1)
 		{
 			for (ally in allies)
@@ -27,7 +28,7 @@ class StaticStatus extends Status
 		type = STATIC;
 		name = 'Static';
 
-		var desc = 'The first time ${owner.info.name} plays a skill each turn, each ally gains 1 Static. Some skills Dicharge all Static.';
+		var desc = 'The first time ${owner.info.name} plays a skill each turn, each ally gains 1 Static. Some skills Expend all Static.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

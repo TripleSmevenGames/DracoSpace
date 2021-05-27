@@ -1,14 +1,17 @@
 package models.events.battleEvents;
 
 import flixel.math.FlxRandom;
-import models.player.CharacterInfo;
+import models.CharacterInfo;
 import models.player.Deck;
+import models.player.Player;
 import models.skills.Skill;
 import models.skills.SkillFactory as SF;
 
+using utils.GameUtils;
+
 class BattleEventFactory
 {
-	/** This is a queue of battle events that will be popped from every time the player encounters a battle.
+	/** This is a queue of battle events that will be used from every time the player encounters a battle.
 	 * It will be shuffled at the start of a run.
 	**/
 	static var battleQueueMed = [
@@ -16,32 +19,65 @@ class BattleEventFactory
 		ghostsC,
 		ghostsF,
 		firewood,
-		golem,
+		bush,
 		dandelions,
 		ghostAndDandelion,
-		stoneHexapod
+		mushroom,
 	];
 
-	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
+	static var battleQueueMedCounter = 0;
 
-	public static var battleQueue:Array<Void->BattleEvent> = [];
+	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
+	static var battleQueueEasyCounter = 0;
+
+	static var battleQueueElite = [ghostsF, darkFirewood];
+	static var battleQueueEliteCounter = 0;
+
+	static function getBattleFromQueue(queue:Array<Void->BattleEvent>, counter:Int)
+	{
+		if (counter < queue.length)
+		{
+			return queue[counter]();
+		}
+		else
+		{
+			// somehow the counter grew past the queue's length. Shouldn't happen, but if it does,
+			// just return something random.
+			return queue.getRandomChoice()();
+		}
+	}
 
 	public static function getNextBattleEvent():BattleEvent
 	{
-		if (battleQueue.length == 0)
-			init();
-		return battleQueue.shift()();
+		var retVal:BattleEvent;
+		if (Player.battlesFought < 4 || Player.getColumn() < 4)
+		{
+			retVal = getBattleFromQueue(battleQueueEasy, battleQueueEasyCounter);
+			battleQueueEasyCounter += 1;
+		}
+		else
+		{
+			retVal = getBattleFromQueue(battleQueueMed, battleQueueMedCounter);
+			battleQueueMedCounter += 1;
+		}
+		return retVal;
 	}
 
-	/** init the factory's battle queue, so it can start serving the battle events. **/
+	public static function getNextEliteEvent():BattleEvent
+	{
+		var retVal = getBattleFromQueue(battleQueueElite, battleQueueEliteCounter);
+		battleQueueEliteCounter += 1;
+
+		return retVal;
+	}
+
+	/** randomize the factory's battle queues, so every playthrough is different. **/
 	public static function init()
 	{
 		var random = new FlxRandom();
-		var start = battleQueueEasy.copy();
-		var end = battleQueueMed.copy();
-		random.shuffle(start);
-		random.shuffle(end);
-		battleQueue = start.concat(end);
+		random.shuffle(battleQueueEasy);
+		random.shuffle(battleQueueMed);
+		random.shuffle(battleQueueElite);
 	}
 
 	public static function trainingDummy()
@@ -67,7 +103,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(tackle)(1)];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.greenSlime60x60x12__png, 60, 60, 12);
-		var slime = CharacterInfo.createEnemy('Green Slime', spriteSheetInfo, 15, skills);
+		var slime = CharacterInfo.createEnemy('Green Slime', spriteSheetInfo, 12, skills);
 		slime.avatarPath = AssetPaths.SlimeAvatar__png;
 		slime.soundType = SLIME;
 		return slime;
@@ -77,24 +113,24 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(waterBlast)(), SF.enemySkills.get(springWater)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.blueSlime60x60x12__png, 60, 60, 12);
-		var slime = CharacterInfo.createEnemy('Blue Slime', spriteSheetInfo, 20, skills);
+		var slime = CharacterInfo.createEnemy('Blue Slime', spriteSheetInfo, 14, skills);
 		slime.avatarPath = AssetPaths.SlimeAvatar__png;
 		slime.soundType = SLIME;
 		return slime;
 	};
 
-	public static function greenSlime()
+	static function greenSlime()
 	{
 		var name = 'Green Slime';
 		var desc = 'There\'s a giant slime in your path. It\'s cute. It attacks.';
 		var enemies = [createGreenSlime()];
 		var hiddenCards = 0;
 		var draw = 1;
-		var deck = new Deck([POW => 4, CON => 2], hiddenCards, draw);
+		var deck = new Deck([POW => 3, CON => 3], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function twoSlimes()
+	static function twoSlimes()
 	{
 		var name = 'Two Slimes';
 		var desc = 'Now two slimes are in your way. This is getting out of control!';
@@ -114,7 +150,7 @@ class BattleEventFactory
 		return dog;
 	};
 
-	public static function dog()
+	static function dog()
 	{
 		var name = 'A Robotic Dog';
 		var desc = 'You stumble upon a hostile mechanical dog. It clearly doesn\'t belong in the forest. Who made this?';
@@ -126,7 +162,7 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function dogs()
+	static function dogs()
 	{
 		var name = 'Pack of Robtic Dogs';
 		var desc = 'You stumble upon a group of those robotic attack dogs. Someone must be manufacturing them.';
@@ -136,27 +172,6 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	/**
-		public static function drones()
-			{
-				var createDrone = () ->
-				{
-					var skills = [SF.enemySkills.get(laserBolt)(1), SF.enemySkills.get(selfDestruct)()];
-					var spriteSheetInfo = {
-						spritePath: AssetPaths.trainingDummy__png,
-					};
-					var drone = CharacterInfo.createEnemy('Drone', AssetPaths.magnemite__png, 12, skills);
-					return drone;
-				}
-			
-			var name = 'Drone Swarm';
-			var desc = 'There\'s a swarm of drones up ahead. A few of them break off and attack your party.';
-			var enemies = [createDrone(), createDrone(), createDrone()];
-			var hiddenCards = 0;
-			var deck = new Deck([KNO => 14, WIS => 1], hiddenCards);
-			return new BattleEvent(name, desc, enemies, deck, BATTLE);
-		}
-	**/
 	static var createGhostF = (level = 0) ->
 	{
 		var skills = new Array<Skill>();
@@ -189,18 +204,18 @@ class BattleEventFactory
 		return ghost;
 	}
 
-	public static function ghosts()
+	static function ghosts()
 	{
 		var name = 'Spooky Ghosts';
 		var desc = 'Whatever\'s been going on in the forest has awakened the local spirits. These aren\'t the friendly kind. ';
 		var enemies = [createGhostF(0), createGhostC(0)];
 		var hiddenCards = 0;
 		var draw = 2;
-		var deck = new Deck([KNO => 6, CON => 2], hiddenCards, draw);
+		var deck = new Deck([KNO => 4, CON => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghostsC()
+	static function ghostsC()
 	{
 		var name = 'Spooky Ghosts';
 		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
@@ -211,7 +226,7 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghostsF()
+	static function ghostsF()
 	{
 		var name = 'Spooky Ghosts';
 		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
@@ -222,7 +237,7 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghostsElite()
+	static function ghostsElite()
 	{
 		var name = 'Spooky Ghosts Elite';
 		var desc = 'Some more woodland ghosts float towards you. They look much stronger than usual ghosts.';
@@ -233,27 +248,47 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function firewood()
+	static function firewood()
 	{
-		var createFireWood = () ->
+		var createFirewood = () ->
 		{
 			var skills = [SF.enemySkills.get(hotHands)(), SF.enemySkills.get(flameShield)()];
-			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.firewood__png, 75, 55, 1);
-			var firewood = CharacterInfo.createEnemy('Firewood', spriteSheetInfo, 30, skills);
+			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.firewood80x60x12__png, 80, 60, 12);
+			var firewood = CharacterInfo.createEnemy('Firewood', spriteSheetInfo, 25, skills);
 			firewood.avatarPath = AssetPaths.firewoodAvatar__png;
 			return firewood;
 		};
 
 		var name = 'Flaming Wood Sprite';
 		var desc = 'Something ghastly is burning over there.';
-		var enemies = [createFireWood()];
+		var enemies = [createFirewood()];
 		var hiddenCards = 0;
 		var draw = 2;
-		var deck = new Deck([POW => 10, CON => 10], hiddenCards, draw);
+		var deck = new Deck([POW => 10, CON => 8], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function golem()
+	static function darkFirewood()
+	{
+		var createDarkFirewood = () ->
+		{
+			var skills = [SF.enemySkills.get(cursedHands)(), SF.enemySkills.get(cursedFlame)()];
+			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.darkFirewood80x60x12__png, 80, 60, 12);
+			var darkFirewood = CharacterInfo.createEnemy('Cursed Firewood', spriteSheetInfo, 35, skills);
+			darkFirewood.avatarPath = AssetPaths.darkFirewoodAvatar__png;
+			return darkFirewood;
+		};
+
+		var name = 'Dark Flaming Wood Sprite';
+		var desc = 'Something ghastly is burning over there.';
+		var enemies = [createDarkFirewood()];
+		var hiddenCards = 0;
+		var draw = 2;
+		var deck = new Deck([POW => 10, CON => 8], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	static function golem()
 	{
 		var createGolem = () ->
 		{
@@ -300,7 +335,7 @@ class BattleEventFactory
 		return rd;
 	};
 
-	public static function dandelion()
+	static function dandelion()
 	{
 		var name = 'Dandelion';
 		var desc = 'Dandelions normally aren\'t hostile. But the disturbance in the forest must be agitating them. One of them attacks you!';
@@ -311,7 +346,7 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function dandelions()
+	static function dandelions()
 	{
 		var name = 'Dandelions';
 		var desc = 'Dandelions normally aren\'t hostile. But the disturbance in the forest must be agitating them. ' + 'A group of them attack you!';
@@ -322,7 +357,7 @@ class BattleEventFactory
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
-	public static function ghostAndDandelion()
+	static function ghostAndDandelion()
 	{
 		var name = 'Ghosts and Dandelions';
 		var desc = 'A dandelion has teamed up with some ghosts to oppose you.';
@@ -330,6 +365,60 @@ class BattleEventFactory
 		var hiddenCards = 0;
 		var draw = 3;
 		var deck = new Deck([KNO => 8, CON => 4], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	static var createMushroom = () ->
+	{
+		var skills = [SF.enemySkills.get(shroomSpines)(), SF.enemySkills.get(grow)(1)];
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.mushroom50x72x1__png, 50, 72, 1);
+		var mushroom = CharacterInfo.createEnemy('Mushroom', spriteSheetInfo, 20, skills);
+		mushroom.avatarPath = AssetPaths.SlimeAvatar__png;
+		mushroom.soundType = PLANT;
+		return mushroom;
+	}
+
+	static function mushroom()
+	{
+		var name = 'Mushroom';
+		var desc = 'A mushroom pops out of the ground and glares at you. It\'s probably not edible. ';
+		var enemies = [createMushroom()];
+		var hiddenCards = 0;
+		var draw = 1;
+		var deck = new Deck([POW => 6, CON => 4], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	static var createBush = () ->
+	{
+		var skills = [SF.enemySkills.get(acornShot)()];
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.bush64x64x1__png, 64, 64, 1);
+		var bush = CharacterInfo.createEnemy('Bush', spriteSheetInfo, 20, skills);
+		bush.avatarPath = AssetPaths.SlimeAvatar__png;
+		bush.soundType = PLANT;
+		// bush.initialStatuses = [REGENERATE];
+		return bush;
+	}
+
+	static function bush()
+	{
+		var name = 'Bush';
+		var desc = 'That is not a tree!';
+		var enemies = [createBush()];
+		var hiddenCards = 0;
+		var draw = 1;
+		var deck = new Deck([POW => 6, CON => 4], hiddenCards, draw);
+		return new BattleEvent(name, desc, enemies, deck, BATTLE);
+	}
+
+	static function mushroomBush()
+	{
+		var name = 'Mushroom and Bush';
+		var desc = 'The forest is really trying to stop you. A mushroom and tree monster both appear!';
+		var enemies = [createBush(), createMushroom()];
+		var hiddenCards = 0;
+		var draw = 2;
+		var deck = new Deck([POW => 10, CON => 4], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -355,7 +444,7 @@ class BattleEventFactory
 		return stoneSentry;
 	}
 
-	public static function stoneHexapod()
+	static function stoneHexapod()
 	{
 		var name = 'Stone Hexapod';
 		var desc = 'Something awoke these ancient machines from the nearby ruins.';

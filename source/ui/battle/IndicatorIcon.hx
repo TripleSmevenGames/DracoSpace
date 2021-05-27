@@ -8,8 +8,8 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.GameController;
 import ui.TooltipLayer;
-import utils.GameController;
 import utils.ViewUtils;
 
 using utils.ViewUtils;
@@ -80,7 +80,9 @@ class IndicatorIcon extends FlxSpriteGroup
 			tooltip.updateDesc(val);
 	}
 
-	/** Register the tooltip for the iconduring creation, or re-register the tooltip if it got destroyed (by say a cleanup function of a state)**/
+	/** Register the tooltip after its made, re-register the tooltip if it got destroyed (by say a cleanup function of a state). 
+	 * Keep in mind this makes a new tooltip sprite every time, so calling this many times is going to create a memory leak.
+	**/
 	public function registerTooltip()
 	{
 		icon.addScaledToMouseManager();
@@ -120,7 +122,11 @@ class IndicatorIcon extends FlxSpriteGroup
 		}
 	}
 
-	// helper functions below
+	/* helper functions below */
+	//
+	//
+
+	/** Create an small info indicator. It has a blue sprite with an 'i', and is good for showing a small hint. **/
 	public static function createInfoIndicator(infoTitle = '', infoText = '', place:TooltipPlace = INV, width = 350)
 	{
 		var options:IndicatorIconOptions = {

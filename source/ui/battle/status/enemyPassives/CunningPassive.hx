@@ -1,10 +1,10 @@
 package ui.battle.status.enemyPassives;
 
 import flixel.math.FlxRandom;
+import managers.BattleManager;
 import models.skills.SkillAnimations;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
@@ -25,7 +25,7 @@ class CunningPassive extends Status
 	{
 		type = CUNNING;
 		name = 'Cunning';
-		var desc = 'Rattle doesn\'t discard Wisdom cards at the end of turn.';
+		var desc = 'Rattle doesn\'t discard Wisdom cards at the end of her turn.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

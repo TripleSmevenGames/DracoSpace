@@ -6,10 +6,10 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.GameController;
 import models.skills.Skill;
 import ui.TooltipLayer.Tooltip;
 import ui.battle.IndicatorIcon.TooltipPlace;
-import utils.GameController;
 import utils.ViewUtils;
 
 using utils.ViewUtils;
@@ -78,7 +78,6 @@ class SkillTile extends FlxSpriteGroup
 		realWidth = border.width;
 		realHeight = border.height;
 
-		// hasEquipCover = false;
 		if (equipCoverText != null)
 		{
 			equipCover = new SkillTileEquipCover(equipCoverText);

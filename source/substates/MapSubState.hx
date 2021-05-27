@@ -10,6 +10,8 @@ import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
+import managers.GameController;
+import managers.SubStateManager;
 import models.GameMap;
 import models.events.*;
 import models.events.GameEvent.GameEventType;
@@ -17,8 +19,6 @@ import models.events.battleEvents.*;
 import models.player.Player;
 import ui.MapTile;
 import ui.header.Header;
-import utils.GameController;
-import utils.SubStateManager;
 import utils.ViewUtils;
 
 using flixel.util.FlxSpriteUtil;
@@ -69,7 +69,7 @@ class GameMapView extends FlxSpriteGroup
 			case BATTLE:
 				return BattleEventFactory.getNextBattleEvent();
 			case ELITE:
-				return BattleEventFactory.ghostsElite();
+				return BattleEventFactory.getNextEliteEvent();
 			case BOSS:
 				return BossEventFactory.rattle();
 			case CHOICE:
@@ -120,7 +120,7 @@ class GameMapView extends FlxSpriteGroup
 	{
 		super(x, y);
 
-		this.gameMap = new GameMap(18);
+		this.gameMap = new GameMap(16);
 		this.ssm = GameController.subStateManager;
 
 		// add the background

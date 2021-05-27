@@ -1,11 +1,11 @@
 package ui.battle.status;
 
+import managers.BattleManager;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 
-// taunts usage is defined in BattleManager's target state.
+// taunts usage is defined in EnemyIntentMaker's logic.
 class TauntStatus extends BuffStatus
 {
 	override public function onSetStacks(valBefore:Int, valAfter:Int)

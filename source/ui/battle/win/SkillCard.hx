@@ -23,7 +23,9 @@ enum HighlightType
 	SHOPCOVER;
 }
 
-/** Informational card describing a skill. Centered. Added to MouseManager.**/
+/** Informational card describing a skill. It can appear as a tooltip of a skillsprite, or inside the shop as an item to purchase.
+ * Centered. Added to MouseManager.
+**/
 class SkillCard extends FlxSpriteGroup
 {
 	public var skill:Skill;
@@ -157,7 +159,7 @@ class SkillCard extends FlxSpriteGroup
 	}
 }
 
-/** The title part of a skill card. Including the text itself and the background Centered/ **/
+/** The title part of a skill card. Including the text itself and the background. Centered **/
 class SkillCardTitle extends FlxSpriteGroup
 {
 	public function new(titleString:String, width:Float)
@@ -181,8 +183,20 @@ class SkillCardCooldown extends FlxSpriteGroup
 	public function new(cooldown:Int)
 	{
 		super();
-		var string = '${cooldown} ' + "$cd";
-		var options = {fontSize: 22, font: Fonts.STANDARD_FONT2};
+		var string:String;
+		var fontSize:Int;
+		if (cooldown >= 99)
+		{
+			string = '1 USE';
+			fontSize = 18;
+		}
+		else
+		{
+			string = '${cooldown} ' + "$cd";
+			fontSize = 22;
+		}
+
+		var options = {fontSize: fontSize, font: Fonts.STANDARD_FONT2};
 		var textSprite = new FlxTextWithReplacements(string, null, null, options);
 		var background = new FlxUI9SliceSprite(0, 0, AssetPaths.greyBlue_dark__png, new Rectangle(0, 0, textSprite.width + 4, textSprite.height + 4),
 			[3, 3, 40, 40]);

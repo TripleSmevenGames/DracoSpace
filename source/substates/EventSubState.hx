@@ -9,13 +9,13 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import flixel.util.FlxGradient;
+import managers.GameController;
+import managers.SubStateManager;
 import models.events.GameEvent;
 import models.events.battleEvents.BattleEvent;
 import openfl.geom.Rectangle;
 import ui.buttons.EventChoiceButton;
 import ui.header.Header;
-import utils.GameController;
-import utils.SubStateManager;
 import utils.ViewUtils;
 
 using utils.ViewUtils;

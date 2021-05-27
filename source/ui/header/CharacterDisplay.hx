@@ -6,11 +6,11 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import models.player.CharacterInfo;
+import models.CharacterInfo;
 
 using utils.ViewUtils;
 
-/** Centered on Y only, x starts at the left side. 
+/** Centered on Y only, x starts at the left side.
  * Shows something like 20/30, coloring the numbers based on % hp.
 **/
 class HpDisplay extends FlxSpriteGroup

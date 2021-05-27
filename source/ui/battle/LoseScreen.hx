@@ -8,9 +8,9 @@ import flixel.system.FlxSound;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import managers.GameController;
+import managers.SubStateManager;
 import ui.buttons.BasicWhiteButton;
-import utils.GameController;
-import utils.SubStateManager;
 import utils.ViewUtils;
 
 class LoseScreen extends FlxSpriteGroup

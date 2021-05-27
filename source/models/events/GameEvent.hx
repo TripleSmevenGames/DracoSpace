@@ -1,7 +1,7 @@
 package models.events;
 
+import managers.GameController;
 import models.events.Choice;
-import utils.GameController;
 
 enum GameEventType
 {

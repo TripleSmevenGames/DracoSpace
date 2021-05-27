@@ -8,7 +8,7 @@ import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-class BurnStatus extends DecayingStatus
+class BurnStatus extends DebuffStatus
 {
 	var sounds:Array<FlxSound> = [];
 
@@ -16,6 +16,11 @@ class BurnStatus extends DecayingStatus
 	{
 		var random = new FlxRandom();
 		return sounds[random.int(0, sounds.length - 1)];
+	}
+
+	override public function onSetStacks(valBefore:Int, valAfter:Int)
+	{
+		updateTooltip('At the end of turn, take $valAfter damage and lose 1 stack.');
 	}
 
 	override function onPlayerEndTurn(context:BattleContext)
@@ -42,7 +47,7 @@ class BurnStatus extends DecayingStatus
 	{
 		type = BURN;
 		name = 'Burn';
-		var desc = 'At the end of turn, take X damage and lose 1 stack.';
+		var desc = 'At the end of turn, take $initialStacks damage and lose 1 stack.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

@@ -36,6 +36,8 @@ class BaseAI
 
 	/** Decide the enemy's intents. Re call this every time we transition to the player idle state, because we may need to
 	 * recalculate the enemy's moves.
+	 * In most cases however, the enemy's intent should NOT change, since conditions are probably the same.
+	 * Re-using the same seed should be guarunteeing it does not change unless it needs to.
 	**/
 	public function decideIntents()
 	{

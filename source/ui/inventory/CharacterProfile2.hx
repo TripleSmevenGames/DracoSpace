@@ -6,7 +6,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import models.player.CharacterInfo;
+import models.CharacterInfo;
 import ui.battle.character.CharacterSprite;
 import ui.battle.win.SkillCard;
 import ui.inventory.SkillCardBlank;

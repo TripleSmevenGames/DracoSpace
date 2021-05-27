@@ -171,19 +171,19 @@ class EnemyIntentMaker
 			else
 			{
 				var alivePlayers = context.getAlivePlayers();
-				targets.push(alivePlayers.getRandomChoice());
+				targets.push(alivePlayers.getRandomChoice([], this.random));
 			}
 		}
 		else if (method == SINGLE_ALLY)
 		{
 			var aliveEnemies = context.getAliveEnemies();
-			targets.push(aliveEnemies.getRandomChoice());
+			targets.push(aliveEnemies.getRandomChoice([], this.random));
 		}
 		else if (method == SINGLE_OTHER_ALLY)
 		{
 			var aliveEnemies = context.getAliveEnemies();
 			aliveEnemies.remove(skillSprite.owner);
-			targets.push(aliveEnemies.getRandomChoice());
+			targets.push(aliveEnemies.getRandomChoice([], this.random));
 		}
 		else if (method == ALL_ENEMY)
 		{

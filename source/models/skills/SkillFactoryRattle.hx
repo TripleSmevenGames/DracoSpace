@@ -4,6 +4,9 @@ import Castle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import haxe.Exception;
+import managers.BattleAnimationManager.BattleAnimationGroupOptions;
+import managers.BattleManager;
+import managers.GameController;
 import models.skills.Skill.Effect;
 import models.skills.Skill.SkillPointCombination;
 import models.skills.SkillAnimations;
@@ -11,9 +14,6 @@ import models.skills.SkillFactory.SkillList;
 import ui.battle.SpriteAnimsLayer;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
-import utils.BattleAnimationManager.BattleAnimationGroupOptions;
-import utils.BattleManager;
-import utils.GameController;
 import utils.battleManagerUtils.BattleContext;
 
 @:access(models.skills.SkillFactory)

@@ -1,9 +1,9 @@
 package models.events;
 
+import managers.GameController;
 import models.events.Choice;
 import models.events.GameEvent.GameEventType;
 import models.events.battleEvents.BattleEventFactory;
-import utils.GameController;
 
 class HomeEvent extends GameEvent
 {

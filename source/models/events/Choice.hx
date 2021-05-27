@@ -1,7 +1,7 @@
 package models.events;
 
+import managers.GameController;
 import models.events.battleEvents.BattleEvent;
-import utils.GameController;
 
 /** A choice in an event for the player to take. **/
 class Choice

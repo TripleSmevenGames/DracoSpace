@@ -7,10 +7,10 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
+import managers.GameController;
+import managers.SubStateManager;
 import models.events.GameEvent.GameEventType;
 import ui.buttons.BasicWhiteButton;
-import utils.GameController;
-import utils.SubStateManager;
 import utils.ViewUtils;
 
 using utils.ViewUtils;

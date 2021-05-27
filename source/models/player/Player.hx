@@ -23,7 +23,13 @@ class Player
 	public static var battlesFought:Int;
 	public static var currentMapTile:MapTile;
 
-	public static var maxSkillSlots = 6;
+	public static final MAX_SKILL_SLOTS = 6; // max skill slots a player char can have.
+	public static final MAX_UNEQUIPPED_SKILLS = 8;
+
+	public static function getColumn()
+	{
+		return currentMapTile.node.column;
+	}
 
 	/** Get a list of all the skills the player has. **/
 	public static function getSkills()
@@ -41,7 +47,7 @@ class Player
 		inventory.unequippedSkills.push(skill);
 	}
 
-	public static function refreshSkillShopChoices()
+	public static function rerollSkillShopChoices()
 	{
 		currentSkillShopChoices = RewardHelper.getSkillShopChoices();
 	}
@@ -49,7 +55,7 @@ class Player
 	public static function getCurrentSkillShopChoices()
 	{
 		if (currentSkillShopChoices.length == 0)
-			refreshSkillShopChoices();
+			rerollSkillShopChoices();
 
 		return currentSkillShopChoices;
 	}
@@ -67,7 +73,8 @@ class Player
 
 		// https://haxe.org/manual/lf-condition-compilation.html
 		#if godmode
-		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
+		// if you want to test out a skill, just gainSkill() it here so its already in your inventory.
+		// gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
 		money = 1000;
 		exp = 1000;
 		#end

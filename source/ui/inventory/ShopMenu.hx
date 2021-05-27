@@ -19,10 +19,10 @@ class ShopMenu extends FlxSpriteGroup
 	{
 		super();
 
-		skillShop = new SkillShop();
+		skillShop = new SkillShop(refresh);
 		skillShop.setPosition(FlxG.width / 2, headerHeight + 32);
 
-		upgradeShop = new UpgradeShop();
+		upgradeShop = new UpgradeShop(refresh);
 		upgradeShop.setPosition(FlxG.width / 2, skillShop.y + skillShop.height + 64);
 
 		add(skillShop);

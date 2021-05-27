@@ -1,9 +1,9 @@
 package models.events;
 
+import managers.GameController;
 import models.events.Choice;
 import models.events.GameEvent.GameEventType;
 import models.player.Player;
-import utils.GameController;
 import utils.GameUtils;
 
 class CampEvent extends GameEvent
@@ -26,10 +26,10 @@ class CampEvent extends GameEvent
 		var restEvent = getRestEvent();
 		var effect = (choice:Choice) ->
 		{
-			GameController.subStateManager.ess.goToSubEvent(restEvent);
 			for (char in Player.chars)
 				GameUtils.healCharFromRestEvent(char);
 
+			GameController.subStateManager.ess.goToSubEvent(restEvent);
 			choice.disabled = true;
 		}
 		return new Choice(text, effect);

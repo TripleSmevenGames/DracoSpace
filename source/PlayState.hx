@@ -2,16 +2,15 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
+import managers.GameController;
+import managers.MusicManager;
 import models.events.HomeEvent;
 import models.events.battleEvents.BattleEventFactory;
-import models.player.CharacterInfo;
-import models.player.Deck;
 import models.player.Player;
 import models.skills.SkillFactory;
 import ui.debug.BAMIndicator;
 import ui.debug.BMIndicator;
 import ui.debug.MemIndicator;
-import utils.GameController;
 
 class PlayState extends FlxState
 {
@@ -29,14 +28,16 @@ class PlayState extends FlxState
 		// at cost of greater memory.
 		destroySubStates = false;
 
-		persistentUpdate = true;
-		persistentDraw = true;
+		persistentUpdate = false;
+		persistentDraw = false;
 
 		FlxG.fixedTimestep = false;
 
 		GameController.initSSM(this);
 		GameController.initBattleManagers();
 		GameController.subStateManager.initEvent(new HomeEvent());
+
+		MusicManager.init();
 
 		SkillFactory.init();
 

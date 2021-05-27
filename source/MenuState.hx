@@ -3,12 +3,11 @@ package;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxState;
-import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
-import ui.FlxTextWithReplacements;
+import managers.GameController;
+import managers.MusicManager;
 import ui.buttons.MenuButton;
 import ui.debug.MemIndicator;
-import utils.GameController;
 import utils.GameUtils;
 import utils.ViewUtils;
 
@@ -67,9 +66,12 @@ class MenuState extends FlxState
 		#if debug
 		trace('debug activated');
 		#end
+
 		setupScreen();
 
 		GameController.initSave();
+
+		MusicManager.init();
 
 		// watch mem usage
 		#if debug

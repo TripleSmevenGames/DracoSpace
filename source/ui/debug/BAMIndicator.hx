@@ -1,10 +1,10 @@
 package ui.debug;
 
 import flixel.text.FlxText;
+import managers.BattleAnimationManager;
 import openfl.system.System;
-import utils.BattleAnimationManager;
 
-@:access(utils.BattleAnimationManager)
+@:access(managers.BattleAnimationManager)
 class BAMIndicator extends FlxText
 {
 	var BAM:BattleAnimationManager;

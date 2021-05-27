@@ -107,7 +107,7 @@ class RewardHelper
 	{
 		var retVal = new Array<Skill>();
 
-		// get x common skills for each character.
+		// get x skills for each character. Small chance of uncommon or rare.
 		for (char in Player.chars)
 		{
 			var x = 2;

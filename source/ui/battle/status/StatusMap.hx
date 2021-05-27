@@ -28,5 +28,7 @@ class StatusMap
 		STURDY => (owner:CharacterSprite) -> new SturdyPassive(owner),
 		PLUSDRAW => (owner:CharacterSprite) -> new PlusDraw(owner),
 		MINUSDRAW => (owner:CharacterSprite) -> new MinusDraw(owner),
+		WOUNDED => (owner:CharacterSprite) -> new WoundedStatus(owner),
+		WEAK => (owner:CharacterSprite) -> new WeakStatus(owner),
 	];
 }

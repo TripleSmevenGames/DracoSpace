@@ -3,11 +3,13 @@ package utils;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import haxe.Exception;
+import managers.GameController;
+import models.CharacterInfo;
 import models.cards.Card;
-import models.player.CharacterInfo;
+import models.player.Player;
 import models.skills.Skill.SkillPointCombination;
 
-// utility functions and globals for game logic.
+/** utility functions and globals for game logic. **/
 class GameUtils
 {
 	public static var random:FlxRandom = new FlxRandom();
@@ -57,8 +59,10 @@ class GameUtils
 		return amtToHeal;
 	}
 
-	public static function getRandomChoice<T>(array:Array<T>, ?excludes:Array<T>)
+	public static function getRandomChoice<T>(array:Array<T>, ?excludes:Array<T>, ?random:FlxRandom)
 	{
+		// for consistency's sake, we may pass in our own FlxRandom to use
+		var chosenRandom = random != null ? random : GameUtils.random;
 		if (array.length == 0)
 		{
 			trace('tried to get a randomChoice but the array was empty');
@@ -74,13 +78,27 @@ class GameUtils
 			if (counter > 10)
 				throw new haxe.Exception('getRandomChoice chose a dup 10+ times, something wrong');
 
-			var choice = array[random.int(0, array.length - 1)];
+			var choice = array[chosenRandom.int(0, array.length - 1)];
 			if (!excludes.contains(choice))
 				return choice;
 		}
 
 		trace('getRandomChoice exited loop. Something wrong');
 		return array[0];
+	}
+
+	/** Get the number price for a skill. **/
+	public static function getSkillPrice(sale = false):Int
+	{
+		var basePrice = 10;
+		var multiplier = (Player.skillsBought / 2 + 1) * (sale ? 1 / 2 : 1); // sales give half off
+		var modifier = random.int(-3, 3);
+		var finalPrice = (basePrice * multiplier) + modifier;
+
+		if (finalPrice < 5)
+			finalPrice = 5;
+
+		return Std.int(finalPrice);
 	}
 
 	public static function smallCameraShake()

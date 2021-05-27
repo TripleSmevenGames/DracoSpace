@@ -1,13 +1,13 @@
 package ui.battle.status;
 
+import managers.BattleManager;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-class ColdStatus extends DecayingStatus
+class ColdStatus extends DebuffStatus
 {
 	override public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)
 	{

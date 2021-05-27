@@ -15,14 +15,14 @@ import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import flixel.util.FlxColor;
 import flixel.util.FlxTimer;
+import managers.BattleAnimationManager;
+import managers.BattleManager;
+import managers.GameController;
+import models.CharacterInfo.CharacterType;
 import models.cards.Card;
-import models.player.CharacterInfo.CharacterType;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
-import utils.BattleAnimationManager;
-import utils.BattleManager;
-import utils.GameController;
 import utils.ViewUtils;
 
 using utils.ViewUtils;

@@ -1,11 +1,12 @@
-package models.player;
+package models;
 
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
+import managers.BattleSoundManager.SoundType;
+import models.player.Player;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.battle.status.Status;
-import utils.BattleSoundManager.SoundType;
 
 using utils.ViewUtils;
 
@@ -26,7 +27,9 @@ typedef SpriteSheetInfo =
 	?attackFrames:Array<Int>,
 }
 
-/** Represents a character outside of battle. Health, skills, etc. **/
+/** Represents a character outside of battle. Health, skills, etc.
+ * A character can represent a player character or enemy character.
+**/
 class CharacterInfo
 {
 	public var spriteSheetInfo:SpriteSheetInfo;
@@ -105,8 +108,8 @@ class CharacterInfo
 		ryder.type = PLAYER;
 		ryder.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.RyderIdle74x79x16__png, 74, 79, 16);
 		ryder.avatarPath = AssetPaths.RyderAvatar__png;
-		ryder.maxHp = 30;
-		ryder.currHp = 30;
+		ryder.maxHp = 35;
+		ryder.currHp = 35;
 		ryder.skills = [sf.ryderSkillsBasic.get(protect)()];
 		ryder.soundType = FLESH;
 
@@ -122,8 +125,8 @@ class CharacterInfo
 		kiwi.type = PLAYER;
 		kiwi.spriteSheetInfo = newSpriteSheetInfo(AssetPaths.kiwi__png, 48, 50, 1);
 		kiwi.avatarPath = AssetPaths.KiwiAvatar__png;
-		kiwi.maxHp = 30;
-		kiwi.currHp = 30;
+		kiwi.maxHp = 25;
+		kiwi.currHp = 25;
 		kiwi.skills = [sf.kiwiSkillsBasic.get(shuriken)()];
 		kiwi.soundType = FLESH;
 

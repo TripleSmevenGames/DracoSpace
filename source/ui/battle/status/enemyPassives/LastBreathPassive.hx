@@ -1,10 +1,10 @@
 package ui.battle.status.enemyPassives;
 
 import flixel.math.FlxRandom;
+import managers.BattleManager;
 import models.skills.SkillAnimations;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.BattleManager;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
