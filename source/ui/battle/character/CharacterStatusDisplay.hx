@@ -72,10 +72,9 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerabl
 		}
 
 		// if not, then add it as a new status.
-		var status = StatusMap.map.get(type)(this.owner);
+		var status = StatusMap.map.get(type)(this.owner, stacks);
 		if (status != null)
 		{
-			status.stacks = stacks;
 			statuses.push(status);
 
 			// if this character was just stunned, recheck the disabled of the char's skill sprites

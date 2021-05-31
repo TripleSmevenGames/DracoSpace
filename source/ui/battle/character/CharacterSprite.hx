@@ -558,7 +558,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		maxHp = info.maxHp;
 		currHp = info.currHp;
 		currBlock = 0;
-
+		// if character dies, this breaks
 		setupSprite(info.spriteSheetInfo);
 
 		setupHpBar();

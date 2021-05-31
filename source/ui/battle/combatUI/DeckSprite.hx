@@ -266,6 +266,16 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return cards;
 	}
 
+	public function highlightHandTitle()
+	{
+		hand.titleText.color = FlxColor.YELLOW;
+	}
+
+	public function unhighlightHandTitle()
+	{
+		hand.titleText.color = FlxColor.WHITE;
+	}
+
 	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>)
 	{
 		super(x, y);

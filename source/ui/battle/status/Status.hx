@@ -120,6 +120,7 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 		super(0, 0);
 		this.icon = icon;
 		this.owner = owner;
+		this.stacks = initialStacks;
 
 		add(icon);
 	}

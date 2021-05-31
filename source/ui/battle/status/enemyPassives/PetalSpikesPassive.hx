@@ -9,22 +9,20 @@ import utils.battleManagerUtils.BattleContext;
 
 class PetalSpikesPassive extends Status
 {
-	var damage = 1;
-
 	override public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		var players = context.getAlivePlayers();
 		for (player in players)
 		{
-			owner.dealDamageTo(damage, player, context);
+			owner.dealDamageTo(stacks, player, context);
 		}
 	}
 
-	public function new(owner:CharacterSprite, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, initialStacks:Int = 3)
 	{
 		type = PETALSPIKES;
 		name = 'Petal Spikes';
-		var desc = 'Upon taking damage, deal $damage to all enemies.';
+		var desc = 'Upon taking damage, deal $initialStacks to all enemies.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};

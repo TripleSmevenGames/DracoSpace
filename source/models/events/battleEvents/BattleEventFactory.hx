@@ -30,7 +30,7 @@ class BattleEventFactory
 	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
 	static var battleQueueEasyCounter = 0;
 
-	static var battleQueueElite = [ghostsF, darkFirewood];
+	static var battleQueueElite = [ghostsElite, darkFirewood];
 	static var battleQueueEliteCounter = 0;
 
 	static function getBattleFromQueue(queue:Array<Void->BattleEvent>, counter:Int)
@@ -314,7 +314,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(petalShield)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.dandelionGreenIdle32x32x10__png, 32, 32, 10);
-		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 18, skills);
+		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 14, skills);
 		gd.avatarPath = AssetPaths.dandelionGreenAvatar__png;
 		gd.initialStatuses = [PETALARMOR];
 		gd.soundType = PLANT;
@@ -326,7 +326,7 @@ class BattleEventFactory
 		var skills = [SF.enemySkills.get(petalBlade)()];
 		var spriteSheet = weak ? AssetPaths.dandelionNoPetalIdle32x32x10__png : AssetPaths.dandelionRedIdle32x32x10__png;
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(spriteSheet, 32, 32, 10);
-		var hp = weak ? 10 : 18;
+		var hp = weak ? 10 : 14;
 		var rd = CharacterInfo.createEnemy('Red Dandelion', spriteSheetInfo, hp, skills);
 		rd.avatarPath = AssetPaths.dandelionRedAvatar__png;
 		if (!weak)

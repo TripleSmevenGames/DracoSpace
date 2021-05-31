@@ -14,7 +14,7 @@ class BossEventFactory
 			SF.rattleSkills.get(snakeFangs)(),
 			SF.rattleSkills.get(crossCutter)(1)
 		];
-		var hp = 150;
+		var hp = 50;
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.rattleIdle72x61x16__png, 72, 61, 16);
 		var rattle = CharacterInfo.createEnemy('Rattle', spriteSheetInfo, hp, skills);
 		rattle.avatarPath = AssetPaths.RattleAvatar__png;

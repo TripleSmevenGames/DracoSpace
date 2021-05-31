@@ -1527,7 +1527,7 @@
 								}
 							],
 							"targetMethod": 6,
-							"value": 9,
+							"value": 6,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1683,11 +1683,11 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 11,
+							"value": 9,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
-							"value2": 5
+							"value2": 2
 						},
 						{
 							"id": "crossCutter",
@@ -1700,7 +1700,7 @@
 								}
 							],
 							"targetMethod": 2,
-							"value": 7,
+							"value": 4,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1

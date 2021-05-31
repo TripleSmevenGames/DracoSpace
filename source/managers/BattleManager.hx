@@ -319,6 +319,9 @@ class BattleManager extends FlxBasic
 					turnTriggerable.onPlayerStartTurn(context);
 
 				enemyAI.generateNewSeedForTurn();
+
+				context.pDeck.highlightHandTitle();
+				context.eDeck.unhighlightHandTitle();
 			},
 			update: (elapsed:Float) ->
 			{
@@ -519,6 +522,8 @@ class BattleManager extends FlxBasic
 					turnTriggerable.onEnemyStartTurn(context);
 
 				this.currentIntents = enemyAI.decideIntents(); // decide the intents again
+				context.eDeck.highlightHandTitle();
+				context.pDeck.unhighlightHandTitle();
 			},
 			update: (elapsed:Float) ->
 			{
