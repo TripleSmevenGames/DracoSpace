@@ -28,7 +28,7 @@ class SkillRewardButton extends FlxSpriteGroup
 	var clicked:Bool;
 	var subscreen:FlxSprite;
 
-	function new(width:Int = 100, height:Int = 32, onClaim:Void->Void, ?battleType:GameEventType)
+	public function new(width:Int = 100, height:Int = 32, onClaim:Void->Void, ?battleType:GameEventType)
 	{
 		super();
 		if (battleType == null)

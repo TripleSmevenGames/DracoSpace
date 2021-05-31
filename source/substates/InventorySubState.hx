@@ -116,6 +116,7 @@ class InventorySubState extends FlxSubState
 
 	public function refreshHeader()
 	{
+
 		header.refresh();
 	}
 

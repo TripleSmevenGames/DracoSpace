@@ -49,7 +49,6 @@ class GameEvent
 			var subEvent = GameEvent.getGenericEvent(name, 'You found 20 Dracocoins.');
 			GameController.subStateManager.ess.goToSubEvent(subEvent);
 			Player.money += 20;
-			GameController.subStateManager.refreshISSHeader();
 
 			choice.disabled = true;
 		}
