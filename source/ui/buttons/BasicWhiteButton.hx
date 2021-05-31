@@ -23,7 +23,7 @@ class BasicWhiteButton extends FlxUIButton
 		return disabled = val;
 	}
 
-	public function new(text:String, ?onClick:Void->Void)
+	public function new(text:String, ?onClick:Void->Void, w:Int = 100, h:Int = 32, fontSize:Int = 18)
 	{
 		var actualOnClick = () ->
 		{
@@ -39,9 +39,9 @@ class BasicWhiteButton extends FlxUIButton
 
 		var slice9 = [8, 8, 40, 40];
 		var slice9Array = [slice9, slice9, slice9];
-		loadGraphicSlice9(graphicArray, 100, 32, slice9Array);
+		loadGraphicSlice9(graphicArray, w, h, slice9Array);
 
-		setLabelFormat(Fonts.STANDARD_FONT, 18, FlxColor.BLACK);
+		setLabelFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.BLACK);
 		autoCenterLabel();
 	}
 }

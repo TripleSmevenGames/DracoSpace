@@ -476,12 +476,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		var targetArrowXPos = TARGET_ARROW_DISTANCE + sprite.width / 2;
 		if (this.info.type == PLAYER)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow2L__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
 			ViewUtils.centerSprite(targetArrow, targetArrowXPos, 0);
 		}
 		else if (this.info.type == ENEMY)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.GreenArrow2R__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
 			ViewUtils.centerSprite(targetArrow, -targetArrowXPos, 0);
 		}
 		targetArrow.scale3x();

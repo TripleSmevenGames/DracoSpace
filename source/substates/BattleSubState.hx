@@ -108,7 +108,7 @@ class BattleView extends FlxSpriteGroup
 		{
 			var char = playerChars[i];
 			// either the sprite's width or the hpbar's approx width
-			var effectiveWidth = Math.max(char.sprite.width, 124);
+			var effectiveWidth = Math.max(char.sprite.width, 132);
 			var xPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, effectiveWidth + 16);
 			var yPos = ViewUtils.getXCoordForCenteringLR(i, playerChars.length, char.sprite.height / 2);
 			char.setPosition(PLAYER_X + xPos, middleY - yPos);

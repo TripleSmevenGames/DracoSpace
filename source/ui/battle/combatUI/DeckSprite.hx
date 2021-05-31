@@ -334,7 +334,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		if (type == PLAYER)
 		{
-			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick);
+			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick, 150);
 			// set the btn under-center the Hand
 			endTurnBtn.setPosition(hand.width / 2, hand.body.height / 2 + 4);
 			add(endTurnBtn);
