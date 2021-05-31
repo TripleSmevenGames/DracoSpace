@@ -32,7 +32,7 @@ enum StatusType
 	WEAK;
 }
 
-class Status extends FlxSpriteGroup implements ITurnTriggerable
+class Status extends FlxSpriteGroup implements IBattleTriggerable
 {
 	public var type:StatusType;
 	public var name:String;
@@ -98,7 +98,7 @@ class Status extends FlxSpriteGroup implements ITurnTriggerable
 	**/
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
-	public function onTakeUnblockedDamage() {}
+	public function onTakeUnblockedDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	/** This is called BEFORE The skill's play() is called, but after the skill has been "counted" for skills played this turn. **/
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}

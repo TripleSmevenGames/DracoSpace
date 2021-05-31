@@ -72,14 +72,14 @@ class GameMapView extends FlxSpriteGroup
 				return BattleEventFactory.getNextEliteEvent();
 			case BOSS:
 				return BossEventFactory.rattle();
-			case CHOICE:
-				return GameEvent.getGenericEvent('Sample', 'Sample event. Something happened, choose what to do.');
+			case ENCOUNTER:
+				return GameEvent.sampleEncounter();
 			case CAMP:
 				return new CampEvent();
 			case HOME:
 				return new HomeEvent();
 			case TREASURE:
-				return TreasureEvent.sample();
+				return TreasureEvent.getNextTreasureEvent();
 			default:
 				return GameEvent.getGenericEvent('Sample', 'Sample event. Something happened, choose what to do.');
 		}

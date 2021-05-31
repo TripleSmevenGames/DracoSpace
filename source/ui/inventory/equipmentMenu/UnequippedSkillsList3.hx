@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.equipmentMenu;
 
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -9,8 +9,9 @@ import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.Player;
-import ui.battle.SkillTile;
 import ui.battle.win.SkillCard;
+import ui.skillTile.InventorySkillTile;
+import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 
@@ -53,7 +54,7 @@ class UnequippedSkillsList3 extends FlxSpriteGroup
 			if (i < numSkills)
 			{
 				var skill = Player.inventory.unequippedSkills[i];
-				var skillTile = new SkillTile(skill, true, 'Equip');
+				var skillTile = new InventorySkillTile(skill, 'Equip');
 				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, skillTile.width, 4);
 				skillTile.setPosition(xPos, 0);
 				skillTiles.push(skillTile);

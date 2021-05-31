@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxState;
 import managers.GameController;
 import managers.MusicManager;
+import models.artifacts.ArtifactFactory;
 import models.events.HomeEvent;
 import models.events.battleEvents.BattleEventFactory;
 import models.player.Player;
@@ -28,7 +29,7 @@ class PlayState extends FlxState
 		// at cost of greater memory.
 		destroySubStates = false;
 
-		persistentUpdate = false;
+		persistentUpdate = true; // if this is false, your key presses in update wont fire. So make sure it's true.
 		persistentDraw = false;
 
 		FlxG.fixedTimestep = false;
@@ -44,6 +45,8 @@ class PlayState extends FlxState
 		Player.init();
 
 		BattleEventFactory.init();
+
+		ArtifactFactory.init();
 
 		FlxG.camera.minScrollX = 0;
 		// FlxG.camera.maxScrollX = 5000; // arbitrary

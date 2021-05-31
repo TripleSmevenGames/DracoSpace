@@ -13,7 +13,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
 import ui.FlxTextWithReplacements;
-import ui.inventory.SkillShop.SkillShopChoiceCover;
+import ui.inventory.shopMenu.SkillShop.SkillShopChoiceCover;
+import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 

@@ -19,7 +19,7 @@ import models.ai.EnemyIntentMaker.Intent;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
-import ui.battle.ITurnTriggerable;
+import ui.battle.IBattleTriggerable;
 import ui.battle.status.Status;
 import ui.battle.win.SkillCard;
 import utils.GameUtils;
@@ -297,7 +297,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		GameController.battleDamageNumbers.spawnDamageNumber(spawnX, spawnY, val, color, usePhysics);
 	}
 
-	/** Just places the intent sprites so they float above the body properly. **/
+	/** Just places the intent sprites so they float above the body properly.
+	 * Only Enemies should have intent sprites
+	**/
 	function rerenderEnemyIntentSprites()
 	{
 		if (enemyIntentSprites != null)

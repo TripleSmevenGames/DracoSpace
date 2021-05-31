@@ -2,14 +2,14 @@ package ui.battle.character;
 
 import flixel.group.FlxSpriteGroup;
 import haxe.Exception;
-import ui.battle.ITurnTriggerable;
+import ui.battle.IBattleTriggerable;
 import ui.battle.status.*;
 import ui.battle.status.Status;
 import ui.battle.status.enemyPassives.*;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
-class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
+class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerable
 {
 	var statuses:Array<Status> = [];
 	var owner:CharacterSprite;
@@ -159,9 +159,13 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements ITurnTriggerable
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		for (status in statuses)
-		{
 			status.onTakeDamage(damage, dealer, context);
-		}
+	}
+
+	public function onTakeUnblockedDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
+	{
+		for (status in statuses)
+			status.onTakeUnblockedDamage(damage, dealer, context);
 	}
 
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)

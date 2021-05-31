@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.shopMenu;
 
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -11,7 +11,7 @@ import flixel.util.FlxColor;
 import managers.GameController;
 import models.CharacterInfo;
 import models.player.Player;
-import ui.inventory.SkillShop.SkillShopChoiceCover;
+import ui.inventory.shopMenu.SkillShop.SkillShopChoiceCover;
 import utils.ViewUtils;
 
 using utils.ViewUtils;
@@ -146,6 +146,8 @@ class UpgradeShop extends FlxSpriteGroup
 			item.setPosition(xPos, yPos);
 			add(item);
 		}
+
+		var background = ViewUtils.newSlice9(AssetPaths.shopBg__png, 20, 20, [8, 8, 40, 40]);
 	}
 }
 

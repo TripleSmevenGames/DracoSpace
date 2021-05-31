@@ -1,6 +1,7 @@
 package ui.battle;
 
-import managers.BattleManager;
+import ui.battle.character.CharacterSprite;
+import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 
 /** Can be triggered at moments during a turn. **/

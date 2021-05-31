@@ -1,35 +1,41 @@
 package models.events;
 
 import managers.GameController;
+import models.artifacts.Artifact;
+import models.artifacts.ArtifactFactory;
 import models.events.GameEvent.GameEventType;
-import models.items.Item;
 import models.player.Player;
 
 class TreasureEvent extends GameEvent
 {
-	public var item:Item;
+	var artifact:Artifact;
 
-	static public function sample()
+	public static function getNextTreasureEvent()
 	{
-		var name = 'Sample treasure event';
-		var desc = 'You find something glistening on the ground.';
-
-		var effect = (choice:Choice) ->
-		{
-			var subEvent = GameEvent.getGenericEvent(name, 'You found 20 Dracocoins.');
-			GameController.subStateManager.ess.goToSubEvent(subEvent);
-			Player.money += 20;
-			choice.disabled = true;
-		}
-		var choice = new Choice('Pick it up', effect);
-		var choices = [choice, Choice.getLeave()];
-		return new GameEvent(name, desc, TREASURE, choices);
+		var artifact = ArtifactFactory.getNextArtifact();
+		return new TreasureEvent(artifact);
 	}
 
-	public function new(name:String, desc:String, item:Item)
+	// this code will be run when the event is shown
+	override public function onEventShown()
+	{
+		Player.gainArtifact(this.artifact);
+	}
+
+	public function new(artifact:Artifact)
 	{
 		var choices = [Choice.getLeave()];
-		super(name, desc, TREASURE, choices);
-		this.item = item;
+		this.artifact = artifact;
+
+		var a_or_an:String;
+		switch (artifact.name.charAt(0))
+		{
+			case 'A', 'E', 'I', 'O', 'U':
+				a_or_an = 'an';
+			default:
+				a_or_an = 'a';
+		}
+		var desc = 'You find an abandoned supply crate. Inside is ${a_or_an} ${artifact.name}!';
+		super(artifact.name, desc, TREASURE, choices);
 	}
 }

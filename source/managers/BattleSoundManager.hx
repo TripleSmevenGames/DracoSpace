@@ -20,6 +20,7 @@ enum SoundType
 **/
 class BattleSoundManager extends FlxGroup
 {
+	// generic sounds
 	public static var fleshHit1 = AssetPaths.standardHit4__wav;
 	public static var fleshHit2 = AssetPaths.standardHit5__wav;
 	public static var slimeHit1 = AssetPaths.slimeHit1__wav;
@@ -63,6 +64,8 @@ class BattleSoundManager extends FlxGroup
 		}
 
 		// finally, play the sound
+		// pass in true for forceRestart so if you play 2 sounds in rapid succession, it just restarts the sounds,
+		// instead of huring the player's ears and playing the sound twice overalapping.
 		cache.get(assetPath).play(true);
 	}
 

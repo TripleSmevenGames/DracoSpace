@@ -92,6 +92,8 @@ class EventView extends FlxSpriteGroup
 
 		// update the header
 		header.refresh();
+
+		event.onEventShown();
 	}
 
 	public function new()
@@ -141,7 +143,7 @@ class EventSubState extends FlxSubState
 		eventStack = [event];
 	}
 
-	/** Proceed into a new sub event. **/
+	/** Proceed into a new sub event. Usually you will call this in an event Choice's effect. **/
 	public function goToSubEvent(event:GameEvent)
 	{
 		eventStack.push(event);

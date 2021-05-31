@@ -42,7 +42,7 @@ class BattleEventFactory
 		else
 		{
 			// somehow the counter grew past the queue's length. Shouldn't happen, but if it does,
-			// just return something random.
+			// just return something random as a fallback.
 			return queue.getRandomChoice()();
 		}
 	}

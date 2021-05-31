@@ -412,7 +412,7 @@ class SkillFactory
 				target.currBlock += context.expendStatic();
 			}
 			var effectFrame = 10;
-			var sound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
+			var sound = AssetPaths.gainBlock1__wav;
 			skill.play = SkillAnimations.getCustomPlay(animSprite, effect, effectFrame, sound);
 			skill.spritePath = kiwiPlaceholder;
 			return skill;

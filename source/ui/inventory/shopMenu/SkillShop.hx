@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.shopMenu;
 
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -126,9 +126,11 @@ class SkillShop extends FlxSpriteGroup
 		// small help tooltip icon in the corner.
 		var infoText = 'Spend XP earned from battles to buy new skills. Remember to equip them. ' + 'When you buy a skill, the shop refreshes. Choose wisely!';
 		this.infoIcon = IndicatorIcon.createInfoIndicator('Skill Shop', infoText);
-		infoIcon.setPosition(titleText.width / 2 + 4, titleText.height / 2);
+		infoIcon.setPosition(titleText.width / 2 + 16, titleText.height / 2);
 		add(infoIcon);
 		infoIcon.registerTooltip();
+
+		var background = ViewUtils.newSlice9(AssetPaths.shopBg__png, 20, 20, [8, 8, 40, 40]);
 	}
 }
 

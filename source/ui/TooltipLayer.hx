@@ -12,8 +12,8 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
 import ui.battle.SkillSprite;
-import ui.battle.SkillTile;
 import ui.battle.win.SkillCard;
+import ui.skillTile.SkillTile;
 import utils.ViewUtils;
 
 // if all these tooltips cause a performance issue, make this one tooltip that "teleports" around instead.

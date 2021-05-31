@@ -6,6 +6,7 @@ import managers.GameController;
 import models.ai.EnemyIntentMaker.Intent;
 import models.skills.Skill;
 import ui.TooltipLayer.Tooltip;
+import ui.skillTile.SkillTile;
 import utils.DebugUtils;
 
 using utils.ViewUtils;
@@ -96,12 +97,12 @@ class EnemyIntentSprite extends FlxSpriteGroup
 		super();
 
 		var skillTile = new SkillTile(intent.skill.skill);
+		add(skillTile);
+		skillTile.setupHover();
+
 		if (intent.targets.length == 0)
-		{
-			add(skillTile);
-			skillTile.setupHover();
 			return;
-		}
+
 		var arrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
 		arrow.scale3x();
 		var targetSprites = new TargetSprites(intent.targets);
@@ -119,7 +120,7 @@ class EnemyIntentSprite extends FlxSpriteGroup
 		add(skillTile);
 		add(targetSprites);
 
-		this.addScaledToMouseManager();
+		arrow.addScaledToMouseManager();
 		var tooltip = Tooltip.genericTooltip('Intent', generateTooltipString(intent), {width: 250});
 		GameController.battleTooltipLayer.registerTooltip(tooltip, arrow);
 	}

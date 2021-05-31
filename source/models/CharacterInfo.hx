@@ -3,6 +3,7 @@ package models;
 import flixel.FlxSprite;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import managers.BattleSoundManager.SoundType;
+import models.artifacts.Artifact;
 import models.player.Player;
 import models.skills.Skill;
 import models.skills.SkillFactory;
@@ -48,6 +49,7 @@ class CharacterInfo
 	public var currHp:Int = 1;
 	public var skills:Array<Skill> = [];
 	public var numSkillSlots:Int = 1; // for Player chars only
+	public var artifacts:Array<Artifact> = []; // for Player chars only
 
 	public var initialStatuses:Array<StatusType> = [];
 
@@ -80,6 +82,28 @@ class CharacterInfo
 		{
 			this.skills.remove(skill);
 			Player.inventory.unequippedSkills.push(skill);
+		}
+	}
+
+	public function equipArtifact(artifact:Artifact)
+	{
+		if (this.artifacts.contains(artifact))
+			return;
+		if (artifacts.length >= Player.MAX_ARTIFACT_SLOTS)
+			return;
+
+		this.artifacts.push(artifact);
+		Player.inventory.unequippedArtifacts.remove(artifact);
+		artifact.ownerInfo = this;
+	}
+
+	public function unequipArtifact(artifact:Artifact)
+	{
+		if (this.artifacts.contains(artifact))
+		{
+			this.artifacts.remove(artifact);
+			Player.inventory.unequippedArtifacts.push(artifact);
+			artifact.ownerInfo = null;
 		}
 	}
 

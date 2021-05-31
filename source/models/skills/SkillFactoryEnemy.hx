@@ -135,7 +135,7 @@ class SkillFactoryEnemy
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				var explosionAnim = SkillAnimations.getSmallBlueExplosionAnim();
-				var sound = FlxG.sound.load(AssetPaths.smallExplosion1__wav);
+				var sound = AssetPaths.smallExplosion1__wav;
 				SkillAnimations.genericAttackPlay(skill.value2, explosionAnim, 0, sound)(targets, owner, context);
 				SkillAnimations.genericAttackPlay(skill.value, explosionAnim, 0, sound)([owner], owner, context); // hit self
 			};
@@ -145,7 +145,9 @@ class SkillFactoryEnemy
 		spook => (?priority:Int) ->
 		{
 			var skill = skillFromData(enemy, spook, priority);
-			skill.play = SkillAnimations.genericAttackPlay(skill.value);
+			var spookAnim = SkillAnimations.getSpookAnim();
+			var sound = AssetPaths.spook2__wav;
+			skill.play = SkillAnimations.genericAttackPlay(skill.value, spookAnim, 1, sound);
 			skill.spritePath = AssetPaths.spook__png;
 			return skill;
 		},
@@ -264,7 +266,7 @@ class SkillFactoryEnemy
 				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
 				SkillAnimations.genericBlockPlay(skill.value2)([owner], owner, context);
 			};
-			skill.spritePath = AssetPaths.flameShield__png;
+			skill.spritePath = AssetPaths.grow__png;
 			return skill;
 		},
 		shroomSpines => (?priority:Int) ->

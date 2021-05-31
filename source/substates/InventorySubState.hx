@@ -13,10 +13,8 @@ import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.IndicatorIcon;
 import ui.buttons.BasicWhiteButton;
 import ui.header.Header;
-import ui.inventory.EquipmentMenu;
-import ui.inventory.InventoryMenu2;
-import ui.inventory.ShopMenu;
-import ui.inventory.SkillShop;
+import ui.inventory.equipmentMenu.EquipmentMenu;
+import ui.inventory.shopMenu.ShopMenu;
 
 using utils.ViewUtils;
 

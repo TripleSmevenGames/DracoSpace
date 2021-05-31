@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.equipmentMenu;
 
 import flixel.FlxG;
 import flixel.FlxG;
@@ -9,7 +9,7 @@ import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import models.player.Player;
 import ui.battle.IndicatorIcon;
-import ui.battle.SkillTile;
+import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 

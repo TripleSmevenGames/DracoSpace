@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.equipmentMenu;
 
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -10,11 +10,12 @@ import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.CharacterInfo;
-import ui.battle.SkillTile.SkillTileBlank;
-import ui.battle.SkillTile.SkillTileLocked;
-import ui.battle.SkillTile;
 import ui.battle.character.CharacterSprite;
 import ui.header.CharacterDisplay.HpDisplay;
+import ui.skillTile.InventorySkillTile;
+import ui.skillTile.SkillTile.SkillTileBlank;
+import ui.skillTile.SkillTile.SkillTileLocked;
+import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 
@@ -62,7 +63,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 
 			if (i < numSkills)
 			{
-				var skillTile = new SkillTile(char.skills[i], true, 'Unequip');
+				var skillTile = new InventorySkillTile(char.skills[i], 'Unequip');
 				tiles.push(skillTile);
 				skillTiles.push(skillTile);
 				skillTile.setupHover(INV);

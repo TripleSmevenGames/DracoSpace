@@ -1,4 +1,4 @@
-package ui.inventory;
+package ui.inventory.shopMenu;
 
 import flixel.FlxG;
 import flixel.group.FlxSpriteGroup;
@@ -20,7 +20,7 @@ class ShopMenu extends FlxSpriteGroup
 		super();
 
 		skillShop = new SkillShop(refresh);
-		skillShop.setPosition(FlxG.width / 2, headerHeight + 32);
+		skillShop.setPosition(FlxG.width / 2, headerHeight + 24);
 
 		upgradeShop = new UpgradeShop(refresh);
 		upgradeShop.setPosition(FlxG.width / 2, skillShop.y + skillShop.height + 64);

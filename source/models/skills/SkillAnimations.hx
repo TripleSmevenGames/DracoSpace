@@ -49,6 +49,11 @@ class SkillAnimations
 		return SpriteAnimsLayer.createStandardAnim(AssetPaths.blueSmallExplosion100x100x70__png, 100, 100, 70);
 	}
 
+	public static function getSpookAnim()
+	{
+		return SpriteAnimsLayer.createStandardAnim(AssetPaths.spookAnim64x64x18__png, 64, 64, 18, 1, 10);
+	}
+
 	/** Create a play that will run ONE bam animation group with 1 effect.
 	 * Calling the created play() DOES NOT run the effect at that time.
 	 * The play is a function that, when run, adds an animation to the BAM queue and a sprite to the BSAL.
@@ -57,7 +62,7 @@ class SkillAnimations
 	 * Look at the SkillFactory for examples.
 	 * Remember that the effect is called once on EACH target.
 	**/
-	public static function getCustomPlay(animSprite:FlxSprite, effect:Effect, effectFrame:Int = 0, ?sound:FlxSound, ?options:CustomPlayOptions)
+	public static function getCustomPlay(animSprite:FlxSprite, effect:Effect, effectFrame:Int = 0, ?sound:String, ?options:CustomPlayOptions)
 	{
 		if (options == null)
 			options = {};
@@ -67,7 +72,7 @@ class SkillAnimations
 			var effect = () ->
 			{
 				if (sound != null)
-					sound.play();
+					GameController.battleSoundManager.playSound(sound);
 				for (target in targets)
 					effect(target, owner, context);
 			};
@@ -103,7 +108,7 @@ class SkillAnimations
 	}
 
 	/** Create a generic attack play. */
-	public static function genericAttackPlay(damage:Int, ?customAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound, ?extraEffect:Effect)
+	public static function genericAttackPlay(damage:Int, ?customAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:String, ?extraEffect:Effect)
 	{
 		var animSprite:FlxSprite = customAnimSprite != null ? customAnimSprite : getHitAnim();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
@@ -126,22 +131,22 @@ class SkillAnimations
 				extraEffect(target, owner, context);
 		}
 		var effectFrame = 10;
-		var sound = FlxG.sound.load(AssetPaths.gainBlock1__wav);
+		var sound = AssetPaths.gainBlock1__wav;
 		return getCustomPlay(animSprite, effect, effectFrame, sound);
 	}
 
 	/** This assumes the targets are getting the buff. Don't use alone if the target and the character getting the buff (e.g. owner) are different! */
-	public static function genericBuffPlay(effect:Effect, ?customAnimSprite:FlxSprite, ?sound:FlxSound)
+	public static function genericBuffPlay(effect:Effect, ?customAnimSprite:FlxSprite, ?sound:String)
 	{
 		var animSprite = customAnimSprite != null ? customAnimSprite : getPowerUpAnim();
-		var soundToPlay = sound != null ? sound : FlxG.sound.load(AssetPaths.powerup1__wav);
+		var soundToPlay = sound != null ? sound : AssetPaths.powerup1__wav;
 		return getCustomPlay(animSprite, effect, 0, soundToPlay, {touchBase: true});
 	}
 
 	/** Create a play where the animation is a screenAnim.
 	 * Make sure you create a screenAnimSprite with SAL.createScreenAnim first.
 	**/
-	public static function screenAnimPlay(effect:Effect, screenAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:FlxSound)
+	public static function screenAnimPlay(effect:Effect, screenAnimSprite:FlxSprite, effectFrame:Int = 0, ?sound:String)
 	{
 		return getCustomPlay(screenAnimSprite, effect, effectFrame, sound, {screenAnim: true});
 	}

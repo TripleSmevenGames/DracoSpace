@@ -55,16 +55,16 @@ class GameMap
 	function createEventTypePool(length:Int)
 	{
 		var eventTypePool = new Array<GameEventType>();
-		// add the guaranteed events in first, the battles and the choice events.
+		// add the guaranteed events in first, the battles and the encounter events.
 		for (i in 0...MapGenConsts.MIN_BATTLES)
 		{
 			if (eventTypePool.length < length)
 				eventTypePool.push(BATTLE);
 		}
-		for (i in 0...MapGenConsts.MIN_CHOICES)
+		for (i in 0...MapGenConsts.MIN_ENCOUNTERS)
 		{
 			if (eventTypePool.length < length)
-				eventTypePool.push(CHOICE);
+				eventTypePool.push(ENCOUNTER);
 		}
 
 		// now add the variable events to the pool, based on their weight;

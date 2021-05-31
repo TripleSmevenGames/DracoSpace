@@ -3,6 +3,7 @@ package utils.battleManagerUtils;
 import flixel.math.FlxRandom;
 import haxe.Exception;
 import models.CharacterInfo.CharacterType;
+import ui.battle.ITurnTriggerable;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.status.Status.StatusType;
@@ -16,10 +17,13 @@ class BattleContext
 	public var eDeck:DeckSprite;
 	public var pChars:Array<CharacterSprite>;
 	public var eChars:Array<CharacterSprite>;
+	public var turnTriggerables:Array<ITurnTriggerable>;
 	public var turnCounter:Int = 0;
 
-	public function getChars(type:CharacterType)
+	public function getChars(?type:CharacterType)
 	{
+		if (type == null)
+			return eChars.concat(pChars);
 		if (type == ENEMY)
 			return eChars;
 		if (type == PLAYER)
@@ -66,7 +70,7 @@ class BattleContext
 		return charsWithStatus;
 	}
 
-	public function getAlive(type:CharacterType)
+	public function getAlive(?type:CharacterType)
 	{
 		var alive:Array<CharacterSprite> = [];
 		var chars = getChars(type);
@@ -88,7 +92,8 @@ class BattleContext
 		return getAlive(PLAYER);
 	}
 
-	public function getRandomTarget(type:CharacterType)
+	/** Enter null as the CharacterType to choose among all characters (player and enemy). **/
+	public function getRandomTarget(?type:CharacterType)
 	{
 		var chars = getAlive(type);
 		if (chars.length == 0)
@@ -148,5 +153,13 @@ class BattleContext
 		this.eDeck = eDeck;
 		this.pChars = pChars;
 		this.eChars = eChars;
+
+		// add the players first then the decks after.
+		// I dont remember why but I think something breaks if you do it in the wrong order.
+		this.turnTriggerables = [];
+		for (char in pChars.concat(eChars))
+			turnTriggerables.push(char);
+		turnTriggerables.push(pDeck);
+		turnTriggerables.push(eDeck);
 	}
 }

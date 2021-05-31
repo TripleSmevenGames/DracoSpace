@@ -1,11 +1,14 @@
 package models.player;
 
+import models.artifacts.Artifact;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.MapTile;
 import utils.battleManagerUtils.RewardHelper;
 
-/** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. **/
+/** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. 
+ * Also holds a lot of "globals" relating to the inventory menu, equipement, etc.
+**/
 class Player
 {
 	public static var deck:Deck;
@@ -23,8 +26,11 @@ class Player
 	public static var battlesFought:Int;
 	public static var currentMapTile:MapTile;
 
-	public static final MAX_SKILL_SLOTS = 6; // max skill slots a player char can have.
-	public static final MAX_UNEQUIPPED_SKILLS = 8;
+	public static inline final MAX_SKILL_SLOTS = 6; // max skill slots a player char can have.
+	public static inline final MAX_UNEQUIPPED_SKILLS = 8;
+
+	public static inline final MAX_ARTIFACT_SLOTS = 3;
+	public static inline final MAX_UNEQUIPPED_ARTIFACTS = 8;
 
 	public static function getColumn()
 	{
@@ -45,6 +51,11 @@ class Player
 	public static function gainSkill(skill:Skill)
 	{
 		inventory.unequippedSkills.push(skill);
+	}
+
+	public static function gainArtifact(artifact:Artifact)
+	{
+		inventory.unequippedArtifacts.push(artifact);
 	}
 
 	public static function rerollSkillShopChoices()

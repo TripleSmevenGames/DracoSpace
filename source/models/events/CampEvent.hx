@@ -8,6 +8,7 @@ import utils.GameUtils;
 
 class CampEvent extends GameEvent
 {
+	/** Get the actual game event which results from pressing the rest choice. **/
 	static function getRestEvent()
 	{
 		var name = 'Rest';
@@ -20,9 +21,19 @@ class CampEvent extends GameEvent
 		return new GameEvent(name, eventDesc, SUB, choices);
 	}
 
+	static function getTrainEvent()
+	{
+		var name = 'Train';
+		var eventDesc = 'Your party decides to spend time in the barracks training. The instructors there give you some advice. \n\n';
+		eventDesc += 'Your skill shop choices have been rerolled.';
+
+		var choices = [Choice.getGoRoot()];
+		return new GameEvent(name, eventDesc, SUB, choices);
+	}
+
 	static function getRestChoice()
 	{
-		var text = 'Rest';
+		var text = 'Rest (Heal party members)';
 		var restEvent = getRestEvent();
 		var effect = (choice:Choice) ->
 		{
@@ -30,7 +41,21 @@ class CampEvent extends GameEvent
 				GameUtils.healCharFromRestEvent(char);
 
 			GameController.subStateManager.ess.goToSubEvent(restEvent);
-			choice.disabled = true;
+			choice.disabled = true; // disable the choice so the player cant choose it again.
+		}
+		return new Choice(text, effect);
+	}
+
+	static function getTrainChoice()
+	{
+		var text = 'Train (Reroll skill shop choices)';
+		var trainEvent = getTrainEvent();
+		var effect = (choice:Choice) ->
+		{
+			Player.rerollSkillShopChoices();
+
+			GameController.subStateManager.ess.goToSubEvent(trainEvent);
+			choice.disabled = true; // disable the choice so the player cant choose it again.
 		}
 		return new Choice(text, effect);
 	}
@@ -38,8 +63,9 @@ class CampEvent extends GameEvent
 	public function new()
 	{
 		var name = 'Researcher\'s Camp';
-		var desc = 'A group a researchers studying the forest have setup camp here. There\'s a few things you can do here.';
-		var choices:Array<Choice> = [getRestChoice(), Choice.getLeave()];
+		var desc = 'A group a researchers studying the forest have setup camp here. A small military presence keeps watch.\n\n'
+			+ 'There\'s a few things you can do here.';
+		var choices:Array<Choice> = [getRestChoice(), getTrainChoice(), Choice.getLeave()];
 		super(name, desc, CAMP, choices);
 	}
 }

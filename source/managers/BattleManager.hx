@@ -7,13 +7,10 @@ import models.ai.BaseAI;
 import models.ai.EnemyIntentMaker;
 import models.events.GameEvent;
 import models.player.Player;
-import models.skills.Skill.SkillPointCombination;
 import substates.BattleSubState;
-import ui.battle.ITurnTriggerable;
+import ui.battle.IBattleTriggerable;
 import ui.battle.SkillSprite;
 import ui.battle.character.CharacterSprite;
-import ui.battle.combatUI.DeckSprite;
-import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleUISounds;
 import utils.battleManagerUtils.RewardHelper;
@@ -75,9 +72,6 @@ class BattleManager extends FlxBasic
 
 	public var context:BattleContext;
 	public var battleType:GameEventType;
-
-	/** something is "turnable" if it has something to trigger at the start or end of player or enemy turns. **/
-	var turnables:Array<ITurnTriggerable>;
 
 	var enemyAI:BaseAI;
 	var currentIntents:Array<Intent>;
@@ -268,14 +262,12 @@ class BattleManager extends FlxBasic
 		this.battleType = battleType;
 		this.playerSkillSprites = [];
 		this.enemySkillSprites = [];
-		this.turnables = [];
 
 		for (char in context.pChars)
 		{
 			char.context = context;
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
-			turnables.push(char); // add all player chars to the list of turnables.
 			char.setOnClickCancelSkill(cancelSkillTargeting);
 			for (skillSprite in char.skillSprites)
 			{
@@ -289,16 +281,11 @@ class BattleManager extends FlxBasic
 			char.context = context;
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
-			turnables.push(char); // add all enemy chars to the list of turnables.
 			for (skillSprite in char.skillSprites)
 			{
 				enemySkillSprites.push(skillSprite);
 			}
 		}
-
-		// the decks must be after the characters in the turnables array.
-		turnables.push(context.pDeck);
-		turnables.push(context.eDeck);
 
 		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, context);
 
@@ -328,8 +315,8 @@ class BattleManager extends FlxBasic
 
 				showAllSkillSprites();
 
-				for (turnable in this.turnables)
-					turnable.onPlayerStartTurn(context);
+				for (turnTriggerable in this.context.turnTriggerables)
+					turnTriggerable.onPlayerStartTurn(context);
 
 				enemyAI.generateNewSeedForTurn();
 			},
@@ -512,8 +499,8 @@ class BattleManager extends FlxBasic
 
 				sounds.endPlayerTurn.play();
 
-				for (turnable in this.turnables)
-					turnable.onPlayerEndTurn(context);
+				for (turnTriggerable in this.context.turnTriggerables)
+					turnTriggerable.onPlayerEndTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{
@@ -528,8 +515,8 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				state = enemyStartState;
-				for (turnable in this.turnables)
-					turnable.onEnemyStartTurn(context);
+				for (turnTriggerable in this.context.turnTriggerables)
+					turnTriggerable.onEnemyStartTurn(context);
 
 				this.currentIntents = enemyAI.decideIntents(); // decide the intents again
 			},
@@ -666,8 +653,8 @@ class BattleManager extends FlxBasic
 			{
 				state = enemyEndState;
 
-				for (turnable in this.turnables)
-					turnable.onEnemyEndTurn(context); // make sure the character's are BEFORE the decks for this to work properly!!!
+				for (turnTriggerable in this.context.turnTriggerables)
+					turnTriggerable.onEnemyStartTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{

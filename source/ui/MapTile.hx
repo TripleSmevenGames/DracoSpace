@@ -22,7 +22,7 @@ class MapTile extends FlxSpriteGroup
 	public var highlighted(default, set):Bool = false;
 
 	static var typeToSpriteMap = [
-		CHOICE => AssetPaths.choiceMapTile__png,
+		ENCOUNTER => AssetPaths.encounterMapTile__png,
 		BATTLE => AssetPaths.enemyMapTile__png,
 		ELITE => AssetPaths.eliteMapTile__png,
 		BOSS => AssetPaths.bossMapTile__png,
