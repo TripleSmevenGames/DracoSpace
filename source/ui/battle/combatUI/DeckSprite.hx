@@ -225,7 +225,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 	public function onEnemyEndTurn(context:BattleContext)
 	{
-		if (type == ENEMY) // only the enemy discards their hand at the end of their turn
+		// only the enemy discards their hand at the end of their turn
+		if (type == ENEMY)
 			discardHand();
 	}
 

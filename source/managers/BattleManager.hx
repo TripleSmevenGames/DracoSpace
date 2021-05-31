@@ -654,7 +654,7 @@ class BattleManager extends FlxBasic
 				state = enemyEndState;
 
 				for (turnTriggerable in this.context.turnTriggerables)
-					turnTriggerable.onEnemyStartTurn(context);
+					turnTriggerable.onEnemyEndTurn(context);
 			},
 			update: (elapsed:Float) ->
 			{
