@@ -1,26 +1,41 @@
 package models.events;
 
+import managers.GameController;
+import models.artifacts.Artifact;
+import models.artifacts.ArtifactFactory;
 import models.events.GameEvent.GameEventType;
-import models.items.Item;
+import models.player.Player;
 
-class TreasureEvent implements GameEvent
+class TreasureEvent extends GameEvent
 {
-	public var name:String;
-	public var desc:String;
-	public var item:Item;
+	var artifact:Artifact;
 
-	public var type:GameEventType = TREASURE;
-
-	public static function sample()
+	public static function getNextTreasureEvent()
 	{
-		var desc = "You found a treasure! Not really. Sample.";
-		return new TreasureEvent('Sample Treasure', desc, EquipmentItem.sample());
+		var artifact = ArtifactFactory.getNextArtifact();
+		return new TreasureEvent(artifact);
 	}
 
-	public function new(name:String, desc:String, item:Item)
+	// this code will be run when the event is shown
+	override public function onEventShown()
 	{
-		this.name = name;
-		this.desc = desc;
-		this.item = item;
+		Player.gainArtifact(this.artifact);
+	}
+
+	public function new(artifact:Artifact)
+	{
+		var choices = [Choice.getLeave()];
+		this.artifact = artifact;
+
+		var a_or_an:String;
+		switch (artifact.name.charAt(0))
+		{
+			case 'A', 'E', 'I', 'O', 'U':
+				a_or_an = 'an';
+			default:
+				a_or_an = 'a';
+		}
+		var desc = 'You find an abandoned supply crate. Inside is ${a_or_an} ${artifact.name}!';
+		super(artifact.name, desc, TREASURE, choices);
 	}
 }

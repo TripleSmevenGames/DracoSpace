@@ -1,5 +1,6 @@
 package ui.buttons;
 
+import constants.Fonts;
 import flixel.addons.ui.FlxUIButton;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.util.FlxColor;
@@ -11,6 +12,8 @@ class MenuButton extends FlxUIButton
 	{
 		super(0, 0, text, onClick);
 
+		final FONT_SIZE = 30;
+
 		var upSprite = AssetPaths.blue_outline__png;
 		var hoverSprite = AssetPaths.green_outline__png;
 		var downSprite = AssetPaths.green_pressed_outline__png;
@@ -18,9 +21,9 @@ class MenuButton extends FlxUIButton
 
 		var slice9 = [8, 8, 40, 40];
 		var slice9Array = [slice9, slice9, slice9];
-		loadGraphicSlice9(graphicArray, 350, 50, slice9Array);
+		loadGraphicSlice9(graphicArray, 350, 64, slice9Array);
 
-		setLabelFormat(AssetPaths.DOSWin__ttf, 30, FlxColor.BLACK);
+		setLabelFormat(Fonts.STANDARD_FONT2, FONT_SIZE, FlxColor.BLACK);
 		autoCenterLabel();
 	}
 }

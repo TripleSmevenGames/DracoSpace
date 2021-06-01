@@ -2,17 +2,24 @@ package;
 
 import flixel.FlxG;
 import flixel.FlxState;
-import flixel.text.FlxText;
-import openfl.system.System;
+import managers.GameController;
+import managers.MusicManager;
+import models.artifacts.ArtifactFactory;
+import models.events.HomeEvent;
+import models.events.battleEvents.BattleEventFactory;
+import models.player.Player;
+import models.skills.SkillFactory;
 import ui.debug.BAMIndicator;
+import ui.debug.BMIndicator;
 import ui.debug.MemIndicator;
-import utils.GameController;
-import utils.SubStateManager;
 
 class PlayState extends FlxState
 {
+	#if debug
 	var memIndicator:MemIndicator;
 	var bamIndicator:BAMIndicator;
+	var bmIndicator:BMIndicator;
+	#end
 
 	override public function create()
 	{
@@ -22,26 +29,35 @@ class PlayState extends FlxState
 		// at cost of greater memory.
 		destroySubStates = false;
 
-		persistentUpdate = true;
-		persistentDraw = true;
+		persistentUpdate = true; // if this is false, your key presses in update wont fire. So make sure it's true.
+		persistentDraw = false;
 
 		FlxG.fixedTimestep = false;
 
 		GameController.initSSM(this);
-		GameController.initBAM();
-		GameController.subStateManager.returnToMap();
+		GameController.initBattleManagers();
+		GameController.subStateManager.initEvent(new HomeEvent());
+
+		MusicManager.init();
+
+		SkillFactory.init();
+
+		Player.init();
+
+		BattleEventFactory.init();
+
+		ArtifactFactory.init();
 
 		FlxG.camera.minScrollX = 0;
-		FlxG.camera.maxScrollX = 5000; // arbitrary
+		// FlxG.camera.maxScrollX = 5000; // arbitrary
 		FlxG.camera.minScrollY = 0;
-		FlxG.camera.maxScrollY = 1000;
+		// FlxG.camera.maxScrollY = 1000;
+
+		FlxG.sound.volume = .4;
 
 		#if debug
 		memIndicator = new MemIndicator();
 		add(memIndicator);
-
-		bamIndicator = new BAMIndicator(GameController.battleAnimationManager);
-		add(bamIndicator);
 		#end
 	}
 
@@ -49,6 +65,14 @@ class PlayState extends FlxState
 	{
 		if (FlxG.keys.anyPressed([ESCAPE]))
 			FlxG.switchState(new MenuState());
+
+		#if desktop
+		if (FlxG.keys.justPressed.P)
+		{
+			trace('pressed p');
+			FlxG.fullscreen = !FlxG.fullscreen;
+		}
+		#end
 
 		super.update(elapsed);
 	}
