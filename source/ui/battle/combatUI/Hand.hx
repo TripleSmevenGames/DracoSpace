@@ -25,83 +25,8 @@ import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
 import utils.ViewUtils;
 
+using utils.GameUtils;
 using utils.ViewUtils;
-
-/** Indicator on the side of the "Hand" telling you how many
-	of each skill point you will get from the picked cards. */
-class SkillPointDisplay extends FlxSpriteGroup
-{
-	var pointList:Array<FlxText>;
-	var bm:BattleManager;
-
-	// used for the blink() function
-	var timer:FlxTimer;
-
-	var LINE_HEIGHT = 18;
-
-	/** Rerender the display based on the information. **/
-	function refresh(skillPoints:SkillPointCombination)
-	{
-		var nonZeroCount = 0;
-		for (i in 0...pointList.length)
-		{
-			var line = pointList[i];
-			line.visible = false;
-
-			var type = SkillPointCombination.ARRAY[i];
-			var name = type.getName();
-			var val = skillPoints.get(type);
-			if (val > 0) // just show the types that are non-zero
-			{
-				line.text = '${val} ${name}';
-				line.setPosition(this.x, this.y + nonZeroCount * LINE_HEIGHT);
-				line.visible = true;
-				nonZeroCount++;
-			}
-		}
-	}
-
-	// handles a single "blink", ie turning the sprite white to red, or red to white.
-	function singleBlink()
-	{
-		var currColor = pointList[0].color;
-		var white:FlxColor = 0x00FFFFFF; // same as FlxColor.WHITE but without the alpha
-		var color = currColor == white ? FlxColor.RED : white;
-		for (text in pointList)
-			text.color = color;
-	}
-
-	/** Flash the indicator red using an FlxTimer, if its not blinking already. **/
-	function blink()
-	{
-		if (!timer.finished)
-			return;
-
-		var time = .20; // time each loop lasts.
-		var loops = 6;
-		var onComplete = (_) -> singleBlink();
-
-		timer.start(time, onComplete, loops);
-	}
-
-	public function new(x:Int = 0, y:Int = 0)
-	{
-		super(x, y);
-		this.pointList = new Array<FlxText>();
-		this.timer = new FlxTimer();
-		timer.cancel();
-		this.bm = GameController.battleManager;
-
-		for (i in 0...SkillPointCombination.ARRAY.length)
-		{
-			var flxText = new FlxText(0, 0, 0, ' ');
-			flxText.setFormat(Fonts.STANDARD_FONT, BATTLE_UI_FONT_SIZE_SM);
-			pointList.push(flxText);
-			add(flxText);
-			flxText.visible = false;
-		}
-	}
-}
 
 /** Holds the cards in the player's hand and handles animations of cards. It's centered. **/
 @:access(ui.battle.combatUI.SkillPointDisplay)
@@ -121,7 +46,7 @@ class Hand extends FlxSpriteGroup
 
 	var skillPointDisplay:SkillPointDisplay;
 
-	// for player's hand only
+	// for player's hand only. This is the list of manually picked cards by the player clicking on cards.
 	var pickedCards:Cards = new Cards();
 
 	var anchor:FlxSprite;
@@ -190,7 +115,7 @@ class Hand extends FlxSpriteGroup
 		return pickedCards.contains(card);
 	}
 
-	/** on click handler for picking or unpicking the card. **/
+	/** on click handler for picking or unpicking the card when the player clicks on it. **/
 	function pick(card:Card)
 	{
 		wipeVisual();
@@ -199,22 +124,23 @@ class Hand extends FlxSpriteGroup
 		pickSound.play(true);
 
 		// get the absolute position of the card, since card.x/y
-		// will give you the local position in this group. (not sure why tbh)
+		// will give you the local position in this group.
 		// But this.x/y gives you this group's global position.
 		// We need global coords for tween.
 		var absX = this.x + card.x;
 		var absY = this.y + card.y;
 
-		// remove the listener at the start of animation
-		function onStart(_)
-		{
-			FlxMouseEventManager.setObjectMouseEnabled(card, false);
-		}
-
-		// unpick the card if its picked
+		// unpick the card if its already picked
 		if (isPicked(card))
 		{
-			function onUnPickFinish(_)
+			var onUnPickStart = (_) ->
+			{
+				pickedCards.remove(card);
+				// remove the listener at the start of animation
+				FlxMouseEventManager.setObjectMouseEnabled(card, false);
+			}
+
+			var onUnPickFinish = (_) ->
 			{
 				pickedCards.remove(card);
 				renderVisual();
@@ -223,7 +149,7 @@ class Hand extends FlxSpriteGroup
 			}
 
 			FlxTween.tween(card, {x: absX, y: absY - PICK_HEIGHT}, .1, {
-				onStart: onStart,
+				onStart: onUnPickStart,
 				onComplete: onUnPickFinish,
 				ease: FlxEase.cubeOut
 			});
@@ -231,21 +157,34 @@ class Hand extends FlxSpriteGroup
 		// pick the card if its unpicked
 		else
 		{
-			function onPickFinish(_)
+			var onPickStart = (_) ->
 			{
 				pickedCards.push(card);
+				// remove the listener at the start of animation
+				FlxMouseEventManager.setObjectMouseEnabled(card, false);
+			}
+
+			var onPickFinish = (_) ->
+			{
 				renderVisual();
 				// add the listener back at the end
 				FlxMouseEventManager.setObjectMouseEnabled(card, true);
 			}
 
 			FlxTween.tween(card, {x: absX, y: absY + PICK_HEIGHT}, .1, {
-				onStart: onStart,
+				onStart: onPickStart,
 				onComplete: onPickFinish,
 				ease: FlxEase.cubeOut
 			});
 		}
 		renderVisual();
+	}
+
+	/** Pick a card according to index. E.g. pickAtIndex(0) picks the first card in your hand. **/
+	public function pickAtIndex(index:Int)
+	{
+		if (index < cards.length)
+			pick(cards[index]);
 	}
 
 	/** Get a shallow copy of the cards in your hand */

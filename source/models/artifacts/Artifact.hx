@@ -38,7 +38,7 @@ class Artifact implements IBattleTriggerable
 	public function onEnemyEndTurn(context:BattleContext) {}
 
 	/** dont modify damage here
-	 * This is called AFTER the character has taken damage.
+	 * This is called BEFORE the character has taken damage.
 	**/
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 

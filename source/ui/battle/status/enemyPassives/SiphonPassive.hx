@@ -25,6 +25,7 @@ class SiphonPassive extends Status
 		var desc = 'Yuyi draws a card every time an enemy plays a skill. (You\'re her enemy!)';
 		var options:IndicatorIconOptions = {
 			outlined: true,
+			display: false,
 		};
 		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 

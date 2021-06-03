@@ -2,13 +2,16 @@ package ui.battle;
 
 import constants.Fonts;
 import constants.UIMeasurements;
+import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.input.mouse.FlxMouseButton.FlxMouseButtonID;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import managers.BattleManager;
 import managers.GameController;
+import models.cards.Card;
 import models.skills.Skill;
 import ui.TooltipLayer;
 import ui.battle.character.CharacterSprite;
@@ -22,6 +25,8 @@ using utils.ViewUtils;
 	the Skill it represents. This should not exist outside the context of a battle.
 	*
 	* During battle, you should pretty much ALWAYS be interacting and modifying the SkillSprite, not the Skill itself.
+	*
+	* This has a special way of handling mouse callbacks. Use its callback setting methods, DONT call FlxMouseEventManager on it.
  */
 class SkillSprite extends FlxSpriteGroup
 {
@@ -40,6 +45,8 @@ class SkillSprite extends FlxSpriteGroup
 
 	public var mouseOverCallbacks:Array<FlxSprite->Void> = [];
 	public var mouseOutCallbacks:Array<FlxSprite->Void> = [];
+	public var leftClickCallbacks:Array<FlxSprite->Void> = [];
+	public var rightClickCallbacks:Array<FlxSprite->Void> = [];
 
 	public function set_cooldownTimer(val:Int)
 	{
@@ -99,6 +106,21 @@ class SkillSprite extends FlxSpriteGroup
 		return this.disabled = val;
 	}
 
+	/** Returns true if any subset these cards COULD pay for the skill. **/
+	public function couldPayWithCards(cards:Array<Card>)
+	{
+		return skill.couldPayWithCards(cards);
+	}
+
+	/** From the passed in cards, pick cards which can pay for this skill. 
+	 * Tries to pay for the first cost. If not, tries to pay for the second, and so on.
+	 * Returns null if we can't play the skill with these cards.
+	**/
+	public function pickCardsForPay(cards:Array<Card>)
+	{
+		return skill.pickCardsForPay(cards);
+	}
+
 	/** Check if this skill should be disabled, and disable it if so.
 	 * Is automatically called at certain points, but can be manually called too.
 	**/
@@ -107,10 +129,22 @@ class SkillSprite extends FlxSpriteGroup
 		disabled = (currentCharges == 0) || owner.getStatus(STUN) != 0 || owner.dead;
 	}
 
-	/** Sets the click callback, which will fire when clicked if the skill is not disabled. **/
+	/** adds a left click callback, which will fire when clicked if the skill is not disabled. **/
 	public function setOnClick(onClick:SkillSprite->Void)
 	{
-		FlxMouseEventManager.setMouseClickCallback(tile, (_) ->
+		leftClickCallbacks.push((sprite:FlxSprite) ->
+		{
+			if (disabled)
+				return;
+			else
+				onClick(this);
+		});
+	}
+
+	/** adds a right click callback, which will fire when right clicked if the skill is not disabled. **/
+	public function setOnRightClick(onClick:SkillSprite->Void)
+	{
+		rightClickCallbacks.push((sprite:FlxSprite) ->
 		{
 			if (disabled)
 				return;
@@ -177,19 +211,40 @@ class SkillSprite extends FlxSpriteGroup
 
 		// setup the mouse events
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
-		FlxMouseEventManager.add(tile, null, null, null, null, false, true, false);
-		FlxMouseEventManager.setMouseOverCallback(tile, (sprite:FlxSprite) ->
+		// In order for right click to work, we need to set the mouseButtons arg
+		var mouseOver = (sprite:FlxSprite) ->
 		{
 			for (callback in mouseOverCallbacks)
 				callback(sprite);
-		});
-		FlxMouseEventManager.setMouseOutCallback(tile, (sprite:FlxSprite) ->
+		};
+
+		var mouseOut = (sprite:FlxSprite) ->
 		{
 			for (callback in mouseOutCallbacks)
 				callback(sprite);
-		});
+		};
 
-		// setup the hover effect
+		var mouseClick = (sprite:FlxSprite) ->
+		{
+			// left click activated this click
+			if (FlxG.mouse.justReleased)
+			{
+				for (callback in leftClickCallbacks)
+					callback(sprite);
+			}
+			// right click activated this click
+			else if (FlxG.mouse.justReleasedRight)
+			{
+				for (callback in rightClickCallbacks)
+					callback(sprite);
+			}
+		};
+
+		// note, for right clicking to work, you MUST add the click handler through add() like this, with the MouseButtons arg.
+		// You cannot do .setMouseClickCallback() for right clicks.
+		FlxMouseEventManager.add(tile, null, mouseClick, mouseOver, mouseOut, false, true, false, [FlxMouseButtonID.LEFT, FlxMouseButtonID.RIGHT]);
+
+		// setup the default hover effect
 		var darken = (_) -> tile.color = FlxColor.fromRGB(200, 200, 200);
 		var undarken = (_) -> tile.color = FlxColor.WHITE;
 		addHoverCallback(darken, undarken);

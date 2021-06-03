@@ -7,6 +7,7 @@ import flixel.addons.nape.FlxNapeSpace;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
+import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
 import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
@@ -46,6 +47,11 @@ class BattleView extends FlxSpriteGroup
 	var enemyChars:Array<CharacterSprite>;
 
 	var enemySpots:Array<FlxPoint>;
+
+	/** This is the sprite that shows at the top of the view. 
+	 * It might say something like "PLAYER TURN: SELECT TARGET" or something.
+	**/
+	var battleTitleText:FlxText;
 
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
@@ -88,7 +94,11 @@ class BattleView extends FlxSpriteGroup
 		// create the characters and the deck, but only add the deck first.
 		playerChars = [];
 		for (charInfo in Player.chars)
-			playerChars.push(new CharacterSprite(charInfo));
+		{
+			// make sure the char isnt dead.
+			if (charInfo.currHp != 0)
+				playerChars.push(new CharacterSprite(charInfo));
+		}
 
 		playerDeckSprite = new DeckSprite(50, FlxG.height - 120, Player.deck, PLAYER, playerChars);
 		add(playerDeckSprite);

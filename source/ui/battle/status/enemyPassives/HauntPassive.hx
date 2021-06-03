@@ -14,24 +14,22 @@ class HauntPassive extends Status
 	{
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
-			target.addStatus(EXPOSED, 2);
+			target.addStatus(EXPOSED, stacks);
 		}
 		// create a 'play', then call it immediately.
 		// this will add the animation to the queue.
 		SkillAnimations.genericBuffPlay(effect)(context.getAlivePlayers(), this.owner, context);
 	}
 
-	public function new(owner:CharacterSprite, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, initialStacks:Int = 2)
 	{
 		type = HAUNT;
 		name = 'Haunt';
-		var desc = 'When ${owner.info.name} dies, all its enemies gain 2 Exposed.';
+		var desc = 'When ${owner.info.name} dies, all its enemies gain ${initialStacks} Exposed.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
 		};
 		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
-
-		this.stackable = false;
 
 		super(owner, icon, initialStacks);
 	}

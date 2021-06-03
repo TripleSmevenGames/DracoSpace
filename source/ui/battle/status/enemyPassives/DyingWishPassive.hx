@@ -29,6 +29,7 @@ class DyingWishPassive extends Status
 		var desc = 'When ${owner.info.name} dies, all allies gain ${owner.info.name}\'s Attack.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
+			display: false, // this status doesnt have stacks, so dont show a number.
 		};
 		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 

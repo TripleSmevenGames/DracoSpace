@@ -5,6 +5,7 @@ import haxe.Exception;
 import models.CharacterInfo;
 import models.ai.BaseAI;
 import models.ai.EnemyIntentMaker;
+import models.cards.Card;
 import models.events.GameEvent;
 import models.player.Player;
 import substates.BattleSubState;
@@ -14,6 +15,8 @@ import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleUISounds;
 import utils.battleManagerUtils.RewardHelper;
+
+using utils.GameUtils;
 
 enum BattleManagerStateNames
 {
@@ -60,6 +63,9 @@ class BattleManager extends FlxBasic
 
 	/** The skill soon to be played, both during enemy and player turns.**/
 	var activeSkillSprite:SkillSprite;
+
+	/** The cards to be used to pay for the activeSkillSprite**/
+	var activeCards:Array<Card>;
 
 	/** The targets that the active skill will target (for both enemy and player turns)**/
 	var activeTargets:Array<CharacterSprite>;
@@ -172,7 +178,9 @@ class BattleManager extends FlxBasic
 			char.playIdle();
 	}
 
-	// called during idle state, player is picking a skill to activate.
+	/** called during idle state, player is picking a skill to activate.
+	 * The player is using the cards they picked manually to pay for the skill.
+	**/
 	function onSkillClick(skillSprite:SkillSprite)
 	{
 		if (getState() != PLAYER_IDLE)
@@ -180,13 +188,15 @@ class BattleManager extends FlxBasic
 
 		var skill = skillSprite.skill;
 		if (skillSprite.disabled)
+		{
+			sounds.error.play();
 			return;
+		}
 
 		var pDeck = context.pDeck;
 
 		if (!skill.canPayWith(context.pDeck.getSkillPoints()))
 		{
-			// pDeck.blinkSkillPointDisplay(); // warn the player they are short on points
 			// play some sound instead
 			sounds.error.play();
 			return;
@@ -199,6 +209,35 @@ class BattleManager extends FlxBasic
 		}
 
 		activeSkillSprite = skillSprite;
+		activeCards = pDeck.getPickedCardsInHand();
+	}
+
+	/** right clicking auto-pays for the skill. So they player is using auto-picked cards to pay for the skill. **/
+	function onSkillRightClick(skillSprite:SkillSprite)
+	{
+		if (getState() != PLAYER_IDLE)
+			return;
+
+		if (skillSprite.disabled)
+		{
+			sounds.error.play();
+			return;
+		}
+
+		// try to auto pick the correct cards, then use them to pay for the skill
+		var cardsToPayWith = skillSprite.pickCardsForPay(context.pDeck.getCardsInHand());
+
+		// if the cardsToPayWith are null, we can't pay for this skill with these cards.
+		if (cardsToPayWith == null)
+		{
+			sounds.error.play();
+			return;
+		}
+		else
+		{
+			activeSkillSprite = skillSprite;
+			activeCards = cardsToPayWith;
+		}
 	}
 
 	function cancelSkillTargeting()
@@ -273,6 +312,7 @@ class BattleManager extends FlxBasic
 			{
 				playerSkillSprites.push(skillSprite);
 				skillSprite.setOnClick(onSkillClick);
+				skillSprite.setOnRightClick(onSkillRightClick);
 			}
 		}
 
@@ -332,7 +372,7 @@ class BattleManager extends FlxBasic
 			}
 		};
 
-		// Do some checks like if characters are dead or not.
+		// Do some checks like if characters are dead or not. Also reset some UI.
 		// Otherwise, player can pick cards, play skills, or end their turn.
 		this.playerIdleState = {
 			name: PLAYER_IDLE,
@@ -346,6 +386,7 @@ class BattleManager extends FlxBasic
 
 				// reset this stuff
 				activeSkillSprite = null;
+				activeCards = null;
 				activeTargets = null;
 				availableTargets = [];
 				setTargetArrowsVisible(false, PLAYER);
@@ -390,7 +431,7 @@ class BattleManager extends FlxBasic
 			},
 		};
 
-		// Animate the cards being played. Player can't act.
+		// Animate the picked cards being played and paying for the active skill. Player can't act.
 		this.playerAnimatingPlayState = {
 			name: PLAYER_ANIMATING_PLAY,
 			turn: PLAYER,
@@ -399,8 +440,11 @@ class BattleManager extends FlxBasic
 				if (activeSkillSprite == null)
 					throw new Exception('entered animating play state, but no skill was active');
 
+				if (activeCards == null)
+					throw new Exception('entered animating play state, but activeCards was null');
+
 				state = playerAnimatingPlayState;
-				context.pDeck.playPickedCards(activeSkillSprite);
+				context.pDeck.playCards(activeCards, activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
@@ -409,7 +453,7 @@ class BattleManager extends FlxBasic
 			},
 		};
 
-		// Let player select a target for their played skill, if possible. Player can't do anything else.
+		// Let player select a target for their played skill, if possible. Or, players can cancel this skill. Player can't do anything else.
 		this.playerTargetState = {
 			name: PLAYER_TARGET,
 			turn: PLAYER,
@@ -438,7 +482,9 @@ class BattleManager extends FlxBasic
 							availableTargets = context.getAliveEnemies();
 							hideAllSkillSprites();
 							activeSkillSprite.owner.cancelSkillBtn.revive();
-							return; // wait for user selection.
+
+							// wait for user selection.
+							return;
 						}
 					case ALL_ENEMY:
 						var aliveEnemies = context.getAliveEnemies();
@@ -450,7 +496,9 @@ class BattleManager extends FlxBasic
 						hideAllSkillSprites();
 						availableTargets = context.getAlivePlayers();
 						activeSkillSprite.owner.cancelSkillBtn.revive();
-						return; // wait for user selection.
+
+						// wait for user selection.
+						return;
 					case ALL_ALLY:
 						activeTargets = context.pChars;
 					case SELF, DECK:
@@ -468,6 +516,7 @@ class BattleManager extends FlxBasic
 			},
 		};
 
+		// hide some UI and allow the skill animations to play. Once all the animations are played, go back to the idle state.
 		this.playerAnimatingSkillState = {
 			name: PLAYER_ANIMATING_SKILL,
 			turn: PLAYER,
@@ -492,7 +541,7 @@ class BattleManager extends FlxBasic
 			},
 		}
 
-		// Trigger some stuff. Player can't act.
+		// Happens when the player ends the turn. Trigger some stuff. Player can't act.
 		this.playerEndState = {
 			name: PLAYER_END,
 			turn: PLAYER,
@@ -563,6 +612,7 @@ class BattleManager extends FlxBasic
 				checkDead();
 
 				activeSkillSprite = null;
+				activeCards = null;
 				activeTargets = null;
 
 				if (context.areAllCharsDead(ENEMY))
@@ -580,6 +630,7 @@ class BattleManager extends FlxBasic
 				{
 					activeIntent = enemyAI.getNextIntent();
 					activeSkillSprite = activeIntent.skill;
+					activeCards = activeIntent.cardsToPlay;
 					enemyAnimatingPlayState.start();
 				}
 				else // there are no more decided intents. Try to create one more list of intents. If there's still nothing to do, give up and end turn.
@@ -591,6 +642,7 @@ class BattleManager extends FlxBasic
 					{
 						activeIntent = enemyAI.getNextIntent();
 						activeSkillSprite = activeIntent.skill;
+						activeCards = activeIntent.cardsToPlay;
 						enemyAnimatingPlayState.start();
 					}
 				}
@@ -603,12 +655,13 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				if (activeSkillSprite == null)
-				{
 					throw new Exception('entered animating play state, but no skill was active');
-				}
+
+				if (activeCards == null)
+					throw new Exception('entered animating play state, but activeCards was null');
+
 				state = enemyAnimatingPlayState;
-				var cards = activeIntent.cardsToPlay;
-				context.eDeck.playCards(cards, activeSkillSprite);
+				context.eDeck.playCards(activeCards, activeSkillSprite);
 			},
 			update: (elapsed:Float) ->
 			{
@@ -666,7 +719,7 @@ class BattleManager extends FlxBasic
 				// wait for animations to finish before player's turn start
 				if (canMoveToNextState())
 				{
-					// mark any dead characters as dead, by putting the xCover over their avatar
+					// mark any dead characters as dead, by putting an 'X' symbol over their avatar
 					checkDead();
 
 					// check if we've won or lost

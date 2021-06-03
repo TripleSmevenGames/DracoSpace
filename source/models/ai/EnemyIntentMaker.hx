@@ -22,6 +22,8 @@ class GhostSkill
 	/** The actual skillSprite this ghost represents. **/
 	public var skillSprite:SkillSprite;
 
+	// these ghost values are what the value would be if they were played. It's like a preview to what
+	// the value WOULD look like in the future.
 	public var ghostCooldown:Int;
 	public var ghostCharges:Int;
 
@@ -47,22 +49,16 @@ class EnemyIntentMaker
 	var context:BattleContext;
 	var random:FlxRandom;
 
-	function canPayForSkillWithHand(skillSprite:SkillSprite)
-	{
-		var skillPointTotal = ghostHand.getSkillPointTotal();
-		return skillSprite.skill.canPayWith(skillPointTotal, true);
-	}
-
 	/** Whether this skill should be considered as a possible skill this turn, and turned into a ghost for decision making. **/
 	function shouldConsiderSkill(skillSprite:SkillSprite):Bool
 	{
-		if (skillSprite.disabled) // no charges left, or owner is dead
+		if (skillSprite.disabled) // no charges left, or is disabled somehow..
 			return false;
 
-		if (!canPayForSkillWithHand(skillSprite)) // or, can't pay even if used whole hand
+		if (!skillSprite.couldPayWithCards(ghostHand)) // or, can't pay even if used whole hand
 			return false;
 
-		if (skillSprite.owner.dead)
+		if (skillSprite.owner.dead) // or, double check that the owner is dead.
 			return false;
 
 		return true;
@@ -80,17 +76,16 @@ class EnemyIntentMaker
 		for (ghostSkill in ghostSkills)
 		{
 			var skill = ghostSkill.skillSprite;
-			if (canPayForSkillWithHand(skill))
+
+			// if we find a skill that is higher priority than what we've seen, make that the new highest priority.
+			if (skill.priority > highest)
 			{
-				if (skill.priority > highest)
-				{
-					highest = skill.priority;
-					ghostsToReturn = [ghostSkill];
-				}
-				else if (skill.priority == highest)
-				{
-					ghostsToReturn.push(ghostSkill);
-				}
+				highest = skill.priority;
+				ghostsToReturn = [ghostSkill];
+			}
+			else if (skill.priority == highest)
+			{
+				ghostsToReturn.push(ghostSkill);
 			}
 		}
 
@@ -116,32 +111,13 @@ class EnemyIntentMaker
 		return choice.skillSprite;
 	}
 
-	function pickCardsForSkill(skillSprite:SkillSprite)
+	/** Similar to hand.pickCardsForSkill, but this accounts for the "ghost hand". **/
+	function pickCardsForSkill(skillSprite:SkillSprite):Null<Array<Card>>
 	{
-		var pickedCards = new Array<Card>();
-		var skillPoints = new SkillPointCombination();
+		var pickedCards = skillSprite.skill.pickCardsForPay(ghostHand);
 
-		// For now, we're going to assume enemy skills just have 1 cost.
-		var cost = skillSprite.skill.costs[0];
-
-		for (card in ghostHand)
-		{
-			if (skillSprite.skill.canPayWith(skillPoints))
-			{
-				break;
-			}
-			else
-			{
-				var need = cost.subtract(skillPoints);
-				if (card.skillPoints.contributesTo(need))
-				{
-					pickedCards.push(card);
-					skillPoints.add(card.skillPoints);
-				}
-			}
-		}
-
-		// now remove the cards we picked for this skill from the ghost hand
+		// remove the cards we picked from the ghost hand,
+		// so we can accurately decide what additional skills we could play this turn.
 		for (card in pickedCards)
 			ghostHand.remove(card);
 

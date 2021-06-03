@@ -46,7 +46,7 @@ class CharacterInfo
 
 	public var category:Castle.SkillDataKind; // used by a Skill to know what player character can equip it.
 	public var maxHp:Int = 1;
-	public var currHp:Int = 1;
+	public var currHp(default, set):Int = 1;
 	public var skills:Array<Skill> = [];
 	public var numSkillSlots:Int = 1; // for Player chars only
 	public var artifacts:Array<Artifact> = []; // for Player chars only
@@ -54,6 +54,15 @@ class CharacterInfo
 	public var initialStatuses:Array<StatusType> = [];
 
 	static var sf = SkillFactory;
+
+	public function set_currHp(val:Int)
+	{
+		if (val < 0)
+			val = 0;
+		else if (val > maxHp)
+			val = maxHp;
+		return currHp = val;
+	}
 
 	public function equipSkill(skill:Skill)
 	{

@@ -28,6 +28,7 @@ class CunningPassive extends Status
 		var desc = 'Rattle doesn\'t discard Wisdom cards at the end of her turn.';
 		var options:IndicatorIconOptions = {
 			outlined: true,
+			display: false, // this status doesnt have stacks, so dont show a number.
 		};
 		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
 

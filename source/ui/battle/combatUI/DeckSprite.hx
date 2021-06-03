@@ -55,6 +55,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	**/
 	public var cardPool:Array<Card>;
 
+	/** unused right now. **/
 	function blinkSkillPointDisplay()
 	{
 		if (hand != null)
@@ -145,7 +146,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return hand.playCardsAnimate(cards, skillSprite.x, skillSprite.y); // return the anims
 	}
 
-	/** Plays the picked cards on the chosen skill and discards those cards. For players.**/
+	/** Plays the picked cards on the chosen skill and discards those cards. For players, since only players "pick" cards. **/
 	public function playPickedCards(skillSprite:SkillSprite)
 	{
 		return playCards(hand.pickedCards, skillSprite);
@@ -174,6 +175,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (endTurnBtn.disabled)
 			return;
 
+		// the battle manager will see this flag flipped and will end the turn.
 		bm.endTurnFlag = true;
 	}
 
@@ -181,6 +183,12 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public function getCardsInHand()
 	{
 		return this.hand.getCards();
+	}
+
+	/** Get shallow copy of picked cards in hand. **/
+	public function getPickedCardsInHand()
+	{
+		return this.hand.pickedCards.copy();
 	}
 
 	public function getSkillPoints()
@@ -328,17 +336,17 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			addToCursor(0, -(skillList.height - 16));
 		}
 
+		if (type == PLAYER)
+		{
+			endTurnBtn = new BasicWhiteButton('End Turn (SPACE)', endTurnBtnClick, 150);
+			// set the btn under-center the Hand with some padding
+			endTurnBtn.setPosition(hand.body.width / 2, hand.body.height / 2 + 4);
+			add(endTurnBtn);
+		}
+
 		add(drawPile);
 		add(discardPile);
 		add(hand);
-
-		if (type == PLAYER)
-		{
-			endTurnBtn = new BasicWhiteButton('End Turn', endTurnBtnClick, 150);
-			// set the btn under-center the Hand
-			endTurnBtn.setPosition(hand.width / 2, hand.body.height / 2 + 4);
-			add(endTurnBtn);
-		}
 
 		hand.clearHand();
 		discardPile.clearPile();
@@ -351,5 +359,24 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		super.update(elapsed);
 		if (endTurnBtn != null)
 			endTurnBtn.disabled = !bm.canEndTurn();
+
+		// this check is needed because we only want the Player's deckSprite to be listening for these key presses,
+		// not the enemy. Or else you'll start selecting the enemy's cards.
+		if (type == PLAYER)
+		{
+			// pressing space is the same as trying to press the end turn button.
+			if (FlxG.keys.justReleased.SPACE)
+				endTurnBtnClick();
+
+			// select cards using the number keys.
+			if (FlxG.keys.justPressed.ONE)
+				hand.pickAtIndex(0);
+			if (FlxG.keys.justPressed.TWO)
+				hand.pickAtIndex(1);
+			if (FlxG.keys.justPressed.THREE)
+				hand.pickAtIndex(2);
+			if (FlxG.keys.justPressed.FOUR)
+				hand.pickAtIndex(3);
+		}
 	}
 }

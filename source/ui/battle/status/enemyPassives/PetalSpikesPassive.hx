@@ -28,8 +28,6 @@ class PetalSpikesPassive extends Status
 		};
 		var icon = new IndicatorIcon(AssetPaths.petalSpikes__png, name, desc, options);
 
-		this.stackable = false;
-
 		super(owner, icon, initialStacks);
 	}
 }

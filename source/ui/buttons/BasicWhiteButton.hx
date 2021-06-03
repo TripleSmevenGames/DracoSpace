@@ -12,6 +12,8 @@ import flixel.util.FlxColor;
 class BasicWhiteButton extends FlxUIButton
 {
 	public var disabled(default, set):Bool = false;
+	public var buttonWidth:Int;
+	public var buttonHeight:Int;
 
 	public function set_disabled(val:Bool)
 	{
@@ -43,5 +45,8 @@ class BasicWhiteButton extends FlxUIButton
 
 		setLabelFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.BLACK);
 		autoCenterLabel();
+
+		this.buttonWidth = w;
+		this.buttonHeight = h;
 	}
 }

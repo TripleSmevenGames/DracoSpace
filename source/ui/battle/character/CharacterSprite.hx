@@ -183,6 +183,10 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			return;
 		}
 
+		// call onTakeDamage before damage is actually taken.
+		// That way if the character dies from this damage, the status' onTakeDamage will still fire.
+		this.onTakeDamage(val, dealer, context);
+
 		// if the damage is blockable (which is true by default)
 		// calculate the damage to hp and block, and play the right sounds.
 		if (blockable)
@@ -206,8 +210,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			playHurtAnimation();
 			currHp -= val;
 		}
-
-		this.onTakeDamage(val, dealer, context);
 		spawnDamageNumber(Std.string(val));
 	}
 
@@ -396,7 +398,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		statusDisplay.onDealDamage(damage, target, context);
 	}
 
-	/** Called AFTER this char takes the damage. **/
+	/** This is called BEFORE the char takes the damage. **/
 	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		statusDisplay.onTakeDamage(damage, dealer, context);

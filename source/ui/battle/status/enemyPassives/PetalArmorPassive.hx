@@ -28,8 +28,6 @@ class PetalArmorPassive extends Status
 		};
 		var icon = new IndicatorIcon(AssetPaths.petalArmor__png, name, desc, options);
 
-		this.stackable = false;
-
 		super(owner, icon, initialStacks);
 	}
 }

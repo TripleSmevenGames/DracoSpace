@@ -3,9 +3,12 @@ package models.skills;
 import Castle;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import managers.BattleManager;
+import models.cards.Card;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import utils.battleManagerUtils.BattleContext;
+
+using utils.GameUtils;
 
 enum SkillPointType
 {
@@ -26,7 +29,6 @@ typedef Effect = (CharacterSprite, CharacterSprite, BattleContext) -> Void; // t
 /** Represents a combination of skill points.
  *
  * eg. 1 POW and 3 AGI
- *
  * eg. 2 KNO and 2 ANY
  *
  * Used for skill's costs and card's skill points
@@ -86,9 +88,17 @@ class SkillPointCombination
 		return retVal;
 	}
 
-	/** If this SPC would help pay for this cost. Assumes you don't care about overpaying. **/
+	/** If this SPC would help pay for this cost. Assumes you don't care about overpaying/wasting points. **/
 	public function contributesTo(other:SkillPointCombination)
 	{
+		// if this SPC has no value, obviously the answer is false.
+		if (isZero())
+			return false;
+
+		// any non zero combination contributes to an ANY cost.
+		if (other.get(ANY) > 0)
+			return true;
+
 		for (type in ARRAY)
 		{
 			if (this.get(type) > 0 && other.get(type) > 0)
@@ -112,6 +122,16 @@ class SkillPointCombination
 	public function exists(key:SkillPointType)
 	{
 		return map.exists(key);
+	}
+
+	public function isZero()
+	{
+		for (type in ARRAY)
+		{
+			if (this.get(type) > 0)
+				return false;
+		}
+		return true;
 	}
 
 	public function toString()
@@ -156,6 +176,7 @@ class SkillPointCombination
 /* Represents the skill data itself. Its tile during a battle is represented by SkillSprite. */
 class Skill
 {
+	// most of these fields are taken from the skill's entry in the skillData database.
 	public var id(default, null):Int;
 	public var name(default, null):String;
 	public var desc(default, null):String;
@@ -166,17 +187,18 @@ class Skill
 	public var costs(default, null):Costs = new Costs(); // need to translate from DB in code
 	public var type(default, null):SkillPointType; // need to translate from cost
 	public var targetMethod(default, null):SkillData_skills_targetMethod;
-	public var play(default, null):Play; // not in DB
+	public var play(default, null):Play; // not in DB. Define in a SkillFactory.
 	public var cooldown(default, null):Int = 1;
 	public var maxCharges(default, null):Int = 1;
 	public var chargesPerCD(default, null):Int = 1;
 
-	/** Borderless skill art. Border is added later accoring to its type.**/
+	/** Borderless skill art. Border is added later according to its type.**/
 	public var spritePath(default, null):FlxGraphicAsset; // not in DB
 
 	public var category(default, null):SkillDataKind; // not in DB, need to translate in code
 	public var priority(default, null):Int = 0; // not in DB, set in code. Used for enemy skills only.
 
+	/** Returns if the pay can pay for the cost. If overpay is true, the functions returns true even if you are over paying.**/
 	static function paysCost(pay:SkillPointCombination, cost:SkillPointCombination, overpay:Bool = false)
 	{
 		var leftover:Int = 0;
@@ -196,7 +218,10 @@ class Skill
 			return leftover + pay.get(ANY) == cost.get(ANY);
 	}
 
-	/** Returns false if the pay combo can't pay any of the card's costs. **/
+	/** Returns if the pay can pay for any of this skill's costs.
+	 * Remember a skill could have multiple costs. You only
+	 * need to pay for one of them to activate the skill.
+	**/
 	public function canPayWith(pay:SkillPointCombination, overpay:Bool = false)
 	{
 		for (cost in costs)
@@ -208,6 +233,66 @@ class Skill
 		}
 
 		return false;
+	}
+
+	/** Returns true if any subset these cards COULD pay for the skill. **/
+	public function couldPayWithCards(cards:Array<Card>)
+	{
+		var skillPointTotal = cards.getSkillPointTotal();
+		return canPayWith(skillPointTotal, true);
+	}
+
+	/** From the passed in cards, pick cards which can pay for this skill. 
+	 * Tries to pay for the first cost. If not, tries to pay for the second, and so on.
+	 * Returns null if we can't play the skill with these cards.
+	**/
+	public function pickCardsForPay(cards:Array<Card>):Null<Array<Card>>
+	{
+		// if we couldnt pay for this skill even if we used all the cards,
+		// then there's no combination of cards which can pay for the skill. Return null.
+		if (!couldPayWithCards(cards))
+		{
+			// trace('cant pay for ${name} with ${cards.cardsToString()}');
+			return null;
+		}
+
+		// the cards we will return which can play this skill.
+		var pickedCards = new Array<Card>();
+		// the current skillpoints among the cards we have picked.
+		var skillPoints = new SkillPointCombination();
+
+		var donePicking = false;
+
+		for (cost in costs)
+		{
+			if (donePicking)
+				break;
+
+			pickedCards = [];
+			skillPoints = new SkillPointCombination();
+
+			for (card in cards)
+			{
+				// calculate what points we need left to pay for this skill.
+				// if this card contributes to this need, pick it.
+				var need = cost.subtract(skillPoints);
+				if (card.skillPoints.contributesTo(need))
+				{
+					pickedCards.push(card);
+					skillPoints.add(card.skillPoints);
+
+					// if we've just picked enough cards to pay for this skill,
+					// just break out of the loop. We're good now.
+					if (canPayWith(skillPoints))
+					{
+						donePicking = true;
+						break;
+					}
+				}
+			}
+		}
+
+		return pickedCards;
 	}
 
 	public function getCostString()

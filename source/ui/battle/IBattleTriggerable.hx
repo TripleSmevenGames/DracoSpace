@@ -7,7 +7,7 @@ import utils.battleManagerUtils.BattleContext;
 interface IBattleTriggerable extends ITurnTriggerable
 {
 	/** dont modify damage here
-	 * This is called AFTER the character has taken damage.
+	 * This is called BEFORE the character has taken damage.
 	**/
 	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext):Void;
 

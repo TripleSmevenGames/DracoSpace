@@ -87,6 +87,17 @@ class GameUtils
 		return array[0];
 	}
 
+	/** Return the cards in a human readable format. **/
+	public static function cardsToString(cards:Array<Card>)
+	{
+		var string = '';
+		for (card in cards)
+		{
+			string += '${card.skillPoints.toString()} ';
+		}
+		return string;
+	}
+
 	/** Get the number price for a skill. **/
 	public static function getSkillPrice(sale = false):Int
 	{

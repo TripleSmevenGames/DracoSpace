@@ -36,13 +36,25 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 {
 	public var type:StatusType;
 	public var name:String;
+
+	/** The indicator icon which is the main body of the Status when it shows up under the character's hp bar.
+	 * It holds the status's name and description inside its tooltip.
+	**/
 	public var icon:IndicatorIcon;
+
+	/** Some statuses may have stacks. Every active status technically has at least 1 stack, but if the status doesn't 
+	 * stacks relevant to its mechanic, don't show the stacks on the icon.
+	**/
 	public var stacks(default, set):Int = 1;
+
 	public var stackable:Bool = true;
 
 	/** The character this status is on. **/
 	public var owner:CharacterSprite;
 
+	/** Remember if this status's tooltip was registered, that way we dont register the tooltip again by accident. 
+	 * Because if we do, we'll probably cause a memory leak.
+	**/
 	var isTooltipRegistered:Bool = false;
 
 	public function set_stacks(val:Int)
@@ -94,7 +106,7 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 	public function onEnemyEndTurn(context:BattleContext) {}
 
 	/** dont modify damage here
-	 * This is called AFTER the character has taken damage.
+	 * This is called BEFORE the character has taken damage.
 	**/
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
