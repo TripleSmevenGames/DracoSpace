@@ -1,6 +1,7 @@
 package models.player;
 
 import models.artifacts.Artifact;
+import models.artifacts.listOfArtifacts.BatteryArtifact;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.MapTile;
@@ -84,8 +85,8 @@ class Player
 
 		// https://haxe.org/manual/lf-condition-compilation.html
 		#if godmode
-		// if you want to test out a skill, just gainSkill() it here so its already in your inventory.
-		// gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
+		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
+		gainArtifact(new BatteryArtifact());
 		money = 1000;
 		exp = 1000;
 		#end

@@ -49,7 +49,7 @@ class CharacterInfo
 	public var currHp(default, set):Int = 1;
 	public var skills:Array<Skill> = [];
 	public var numSkillSlots:Int = 1; // for Player chars only
-	public var artifacts:Array<Artifact> = []; // for Player chars only
+	public var artifacts:Array<Artifact> = []; // for Player chars only. Capped by Player.MAX_ARTIFACT_SLOTS
 
 	public var initialStatuses:Array<StatusType> = [];
 

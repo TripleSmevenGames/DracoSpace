@@ -10,6 +10,8 @@ import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.CharacterInfo;
+import models.player.Player;
+import ui.artifact.ArtifactTile;
 import ui.battle.character.CharacterSprite;
 import ui.header.CharacterDisplay.HpDisplay;
 import ui.skillTile.InventorySkillTile;
@@ -19,13 +21,14 @@ import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 
-/** Not centered. **/
+/** A component showing the character's sprite, their HP, their equipped skills, and equipped artifacts. Not centered. **/
 class CharacterProfile3 extends FlxSpriteGroup
 {
 	public var char:CharacterInfo;
+
+	// these 2 need to be exposed so the parent can set up listeners/handlers on them
 	public var skillTiles:Array<SkillTile>;
-	public var blankSkillTiles:Array<SkillTileBlank>;
-	public var lockedSkillTiles:Array<SkillTileLocked>;
+	public var artifactTiles:Array<ArtifactTile>;
 
 	var skillList:FlxSprite;
 
@@ -45,6 +48,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		return group;
 	}
 
+	/** Not centered. **/
 	function getCharSkillList(fontSize:Int = 24)
 	{
 		var group = new FlxSpriteGroup();
@@ -55,7 +59,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 
 		// create the tiles. There are skill tiles, open slot tiles, and locked slot tiles.
 		var tiles = new Array<FlxSprite>();
-		final slots = 6;
+		final slots = Player.MAX_SKILL_SLOTS;
 		for (i in 0...slots)
 		{
 			var numSkills = char.skills.length;
@@ -72,13 +76,11 @@ class CharacterProfile3 extends FlxSpriteGroup
 			{
 				var blankSkillTile = new SkillTileBlank();
 				tiles.push(blankSkillTile);
-				blankSkillTiles.push(blankSkillTile);
 			}
 			else
 			{
 				var lockedSkillTile = new SkillTileLocked();
 				tiles.push(lockedSkillTile);
-				lockedSkillTiles.push(lockedSkillTile);
 				lockedSkillTile.setupHover(INV);
 			}
 		}
@@ -96,8 +98,52 @@ class CharacterProfile3 extends FlxSpriteGroup
 		return group;
 	}
 
+	/** Very similar to getCharSkillList. **/
+	function getCharArtifactList(fontSize:Int = 24)
+	{
+		var group = new FlxSpriteGroup();
+
+		var titleText = new FlxText(0, 0, 0, 'Artifacts:');
+		titleText.setFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.WHITE);
+		group.add(titleText);
+
+		// create the tiles. There are artifact tiles and open slot tiles.
+		var tiles = new Array<FlxSprite>();
+		final slots = Player.MAX_ARTIFACT_SLOTS;
+		for (i in 0...slots)
+		{
+			var numArtifacts = char.artifacts.length;
+
+			if (i < numArtifacts)
+			{
+				var skillTile = new InventorySkillTile(char.skills[i], 'Unequip');
+				tiles.push(skillTile);
+				skillTiles.push(skillTile);
+				skillTile.setupHover(INV);
+			}
+			else
+			{
+				var blankSkillTile = new SkillTileBlank(); // the blank artifact slot is the same as the blank skill slot :)
+				tiles.push(blankSkillTile);
+			}
+		}
+
+		// put the tiles in a 1x3 grid.
+		for (i in 0...tiles.length)
+		{
+			var tile = tiles[i];
+			var coords = tile.getCoordsForPlacingInGrid(3, i, 4);
+			tile.setPosition(coords.x + titleText.width, coords.y);
+
+			group.add(tile);
+		}
+
+		return group;
+	}
+
 	/** Rerender the profile to reflect current data. 
 	 * It removes and destroys the old skillList, and creates a new one in the same spot.
+	 * Maybe slow? Could be more efficient with less destroying. E.g. save locked skill slots in memory.
 	**/
 	public function refresh()
 	{
@@ -122,12 +168,12 @@ class CharacterProfile3 extends FlxSpriteGroup
 		super();
 		this.char = char;
 		this.skillTiles = [];
-		this.blankSkillTiles = [];
-		this.lockedSkillTiles = [];
 
+		// create a grey-ish background for the character's sprite.
 		var background = new FlxSprite();
 		background.makeGraphic(64 * 3, 80 * 3, FlxColor.fromRGB(0, 0, 0, 100));
 
+		// create the character sprite, which is animated and play's the "idle" animation.
 		var characterSprite = CharacterSprite.loadSpriteSheetInfo(char.spriteSheetInfo);
 		characterSprite.matchBottomCenter(background);
 		characterSprite.y -= 8; // bump it upwards just a bit
@@ -136,6 +182,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		add(characterSprite);
 		characterSprite.animation.play('idle');
 
+		// render the character's name
 		var charName = new FlxText(0, 0, 0, char.name);
 		charName.setFormat(Fonts.STANDARD_FONT, 24, FlxColor.YELLOW);
 		charName.centerSprite(background.width / 2, 0);

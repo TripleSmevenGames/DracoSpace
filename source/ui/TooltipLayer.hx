@@ -6,6 +6,7 @@ import constants.UIMeasurements;
 import flixel.FlxG;
 import flixel.FlxObject;
 import flixel.FlxSprite;
+import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
@@ -122,6 +123,7 @@ class Tooltip extends FlxSpriteGroup
 		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
 	}
 
+	/** Same as bindTo, but uses "put above parent" instead of "centerAboveParent", in case the parent and tooltip are both centered. **/
 	function bindToPut(parent:FlxObject)
 	{
 		this.parent = parent;
@@ -192,9 +194,8 @@ class Tooltip extends FlxSpriteGroup
 		var paddingSide = 6;
 		var font = Fonts.STANDARD_FONT;
 
-		var body = new FlxSprite(0, 0);
+		var body:FlxUI9SliceSprite; // we'll actually setup the body after creating everything else, so we know its height.
 		var bodyHeight:Float = 0;
-		group.add(body);
 
 		var nameText = null;
 		var descText = null;
@@ -204,7 +205,6 @@ class Tooltip extends FlxSpriteGroup
 
 			nameText.setFormat(font, UIMeasurements.BATTLE_UI_FONT_SIZE_LG, FlxColor.WHITE, 'center');
 			bodyHeight += nameText.height;
-			group.add(nameText);
 		}
 		if (desc != null)
 		{
@@ -213,7 +213,6 @@ class Tooltip extends FlxSpriteGroup
 			descText.setPosition(paddingSide, bodyHeight + spaceBetweenNameAndDesc);
 
 			bodyHeight += descText.height + spaceBetweenNameAndDesc;
-			group.add(descText);
 		}
 		// now that we have the content, we can set the body (ie. background's) width and height
 		var bodyWidth:Int;
@@ -227,9 +226,14 @@ class Tooltip extends FlxSpriteGroup
 		{
 			bodyWidth = Std.int(options.width + paddingSide * 2);
 		}
-		body.makeGraphic(bodyWidth, Std.int(bodyHeight + paddingVertical), Colors.BACKGROUND_BLUE);
-		// then make it slightly see-through
-		body.alpha = .7;
+
+		body = ViewUtils.newSlice9(AssetPaths.tooltipDefaultBg__png, bodyWidth, Std.int(bodyHeight + paddingVertical), [4, 4, 28, 28]);
+
+		group.add(body);
+		if (nameText != null)
+			group.add(nameText);
+		if (descText != null)
+			group.add(descText);
 
 		var tooltip = new Tooltip(group, options);
 		tooltip.body = body;

@@ -371,8 +371,8 @@ class BattleEventFactory
 	static var createMushroom = () ->
 	{
 		var skills = [SF.enemySkills.get(shroomSpines)(), SF.enemySkills.get(grow)(1)];
-		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.mushroom50x72x1__png, 50, 72, 1);
-		var mushroom = CharacterInfo.createEnemy('Mushroom', spriteSheetInfo, 20, skills);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.Moonshroom50x72x14__png, 50, 72, 14);
+		var mushroom = CharacterInfo.createEnemy('Moonshroom', spriteSheetInfo, 20, skills);
 		mushroom.avatarPath = AssetPaths.SlimeAvatar__png;
 		mushroom.soundType = PLANT;
 		return mushroom;
@@ -392,8 +392,8 @@ class BattleEventFactory
 	static var createBush = () ->
 	{
 		var skills = [SF.enemySkills.get(acornShot)()];
-		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.bush64x64x1__png, 64, 64, 1);
-		var bush = CharacterInfo.createEnemy('Bush', spriteSheetInfo, 20, skills);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.lionBush64x64x18__png, 64, 64, 18);
+		var bush = CharacterInfo.createEnemy('Bush Lion', spriteSheetInfo, 20, skills);
 		bush.avatarPath = AssetPaths.SlimeAvatar__png;
 		bush.soundType = PLANT;
 		// bush.initialStatuses = [REGENERATE];
