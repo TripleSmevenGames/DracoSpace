@@ -4,6 +4,7 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouse;
+import flixel.input.mouse.FlxMouseButton.FlxMouseButtonID;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.system.FlxAssets.FlxSoundAsset;
@@ -38,11 +39,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public var currBlock(default, set):Int;
 	public var skillSprites:Array<SkillSprite> = new Array<SkillSprite>();
 	public var skillsPlayedThisTurn:Int = 0;
-
 	public var dead(default, set):Bool = false;
 
-	// hack for demo
-	public var drone:FlxSprite;
+	var mouseOverCallbacks:Array<FlxSprite->Void> = [];
+	var mouseOutCallbacks:Array<FlxSprite->Void> = [];
+	var leftClickCallbacks:Array<FlxSprite->Void> = [];
+	var rightClickCallbacks:Array<FlxSprite->Void> = [];
 
 	/*** the "body" of the character. **/
 	public var sprite:FlxSprite;
@@ -428,20 +430,22 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		skillSprite.play(targets, context);
 	}
 
-	/** set a callback when you click on the main body OR the target arrow. **/
+	/** adds a left click callback, which will fire when clicked if the skill is not disabled. **/
 	public function setOnClick(onClick:CharacterSprite->Void)
 	{
-		FlxMouseEventManager.setMouseClickCallback(sprite, (_) -> onClick(this));
-		FlxMouseEventManager.setMouseClickCallback(targetArrow, (_) -> onClick(this));
+		leftClickCallbacks.push((sprite:FlxSprite) -> onClick(this));
 	}
 
-	/** set a callback when you hover on the main body OR the target arrow. **/
-	public function setOnHover(onOver:CharacterSprite->Void, onOut:CharacterSprite->Void)
+	/** adds a right click callback, which will fire when right clicked if the skill is not disabled. **/
+	public function setOnRightClick(onClick:CharacterSprite->Void)
 	{
-		FlxMouseEventManager.setMouseOverCallback(sprite, (_) -> onOver(this));
-		FlxMouseEventManager.setMouseOutCallback(sprite, (_) -> onOut(this));
-		FlxMouseEventManager.setMouseOverCallback(targetArrow, (_) -> onOver(this));
-		FlxMouseEventManager.setMouseOutCallback(targetArrow, (_) -> onOut(this));
+		rightClickCallbacks.push((sprite:FlxSprite) -> onClick(this));
+	}
+
+	public function setOnHover(over:CharacterSprite->Void, out:CharacterSprite->Void)
+	{
+		mouseOverCallbacks.push((sprite:FlxSprite) -> over(this));
+		mouseOutCallbacks.push((sprite:FlxSprite) -> out(this));
 	}
 
 	public function setOnClickCancelSkill(onClick:Void->Void)
@@ -471,7 +475,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		sprite.scale3x();
 		ViewUtils.centerSprite(sprite, 0, 0);
 		this.add(sprite);
-		FlxMouseEventManager.add(sprite, null, null, null, null, false, true, false);
 
 		// add the targeting arrow. Render right side for players, left side for enemies,
 		// assumes sprite is at 0, 0.
@@ -490,14 +493,15 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		add(targetArrow);
 		targetArrow.visible = false;
 
-		FlxMouseEventManager.add(targetArrow, null, null, null, null, false, true, false);
-
 		// if this is an enemy, render the intent container (should be empty rn).
 		if (this.info.type == ENEMY)
 		{
 			this.enemyIntentSprites = new EnemyIntentSprites();
 			add(enemyIntentSprites);
 		}
+
+		// add the hover affect, which just shows the character's name on hover;
+		GameController.battleTooltipLayer.createTooltipForChar(this);
 	}
 
 	/** Make skills to this character. They will be rendered by the DeckSprite */
@@ -578,5 +582,42 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		timer.cancel();
 
 		this.hitSoundArray = BSM.getHitSoundArrayForType(info.soundType);
+
+		// setup the mouse events
+		// setup the mouse events
+		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
+		// In order for right click to work, we need to set the mouseButtons arg
+		var mouseOver = (sprite:FlxSprite) ->
+		{
+			for (callback in mouseOverCallbacks)
+				callback(sprite);
+		};
+
+		var mouseOut = (sprite:FlxSprite) ->
+		{
+			for (callback in mouseOutCallbacks)
+				callback(sprite);
+		};
+
+		var mouseClick = (sprite:FlxSprite) ->
+		{
+			// left click activated this click
+			if (FlxG.mouse.justReleased)
+			{
+				for (callback in leftClickCallbacks)
+					callback(sprite);
+			}
+			// right click activated this click
+			else if (FlxG.mouse.justReleasedRight)
+			{
+				for (callback in rightClickCallbacks)
+					callback(sprite);
+			}
+		};
+
+		// note, for right clicking to work, you MUST add the click handler through add() like this, with the MouseButtons arg.
+		// You cannot do .setMouseClickCallback() for right clicks.
+		FlxMouseEventManager.add(sprite, null, mouseClick, mouseOver, mouseOut, false, true, false, [FlxMouseButtonID.LEFT, FlxMouseButtonID.RIGHT]);
+		FlxMouseEventManager.add(targetArrow, null, mouseClick, mouseOver, mouseOut, false, true, false, [FlxMouseButtonID.LEFT, FlxMouseButtonID.RIGHT]);
 	}
 }

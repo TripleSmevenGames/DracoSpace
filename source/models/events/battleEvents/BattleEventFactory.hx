@@ -179,7 +179,7 @@ class BattleEventFactory
 			skills.push(SF.enemySkills.get(spook)());
 		else
 			skills.push(SF.enemySkills.get(spook2)());
-		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost2__png, 32, 40, 1);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.GhostF32x40x16__png, 32, 40, 16);
 		var hp = 8 + (level * 4);
 		var ghost = CharacterInfo.createEnemy('Ghost Type F', spriteSheetInfo, hp, skills);
 		ghost.avatarPath = AssetPaths.ghost2Avatar__png;
@@ -195,7 +195,7 @@ class BattleEventFactory
 			skills.push(SF.enemySkills.get(spook)());
 		else
 			skills.push(SF.enemySkills.get(spook2)());
-		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.ghost3__png, 32, 40, 1);
+		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.GhostC32x40x16__png, 32, 40, 16);
 		var hp = 8 + (level * 4);
 		var ghost = CharacterInfo.createEnemy('Ghost Type C', spriteSheetInfo, hp, skills);
 		ghost.avatarPath = AssetPaths.ghost3Avatar__png;
@@ -264,7 +264,7 @@ class BattleEventFactory
 		var enemies = [createFirewood()];
 		var hiddenCards = 0;
 		var draw = 2;
-		var deck = new Deck([POW => 10, CON => 8], hiddenCards, draw);
+		var deck = new Deck([POW => 6, CON => 6, AGI => 6], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -284,7 +284,7 @@ class BattleEventFactory
 		var enemies = [createDarkFirewood()];
 		var hiddenCards = 0;
 		var draw = 2;
-		var deck = new Deck([POW => 10, CON => 8], hiddenCards, draw);
+		var deck = new Deck([POW => 8, CON => 8, AGI => 2], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 
@@ -381,7 +381,7 @@ class BattleEventFactory
 	static function mushroom()
 	{
 		var name = 'Mushroom';
-		var desc = 'A mushroom pops out of the ground and glares at you. It\'s probably not edible. ';
+		var desc = 'A mushroom pops out of the ground and glares at ${Player.chars[0].name}. It\'s probably not edible. ';
 		var enemies = [createMushroom()];
 		var hiddenCards = 0;
 		var draw = 1;
@@ -396,14 +396,13 @@ class BattleEventFactory
 		var bush = CharacterInfo.createEnemy('Bush Lion', spriteSheetInfo, 20, skills);
 		bush.avatarPath = AssetPaths.SlimeAvatar__png;
 		bush.soundType = PLANT;
-		// bush.initialStatuses = [REGENERATE];
 		return bush;
 	}
 
 	static function bush()
 	{
 		var name = 'Bush';
-		var desc = 'That is not a tree!';
+		var desc = '${Player.chars[1].name} notices a strange bush. Except, it\'s not a bush.';
 		var enemies = [createBush()];
 		var hiddenCards = 0;
 		var draw = 1;
@@ -414,7 +413,7 @@ class BattleEventFactory
 	static function mushroomBush()
 	{
 		var name = 'Mushroom and Bush';
-		var desc = 'The forest is really trying to stop you. A mushroom and tree monster both appear!';
+		var desc = 'The forest is really trying to stop you. A moonshroom and lion bush both appear!';
 		var enemies = [createBush(), createMushroom()];
 		var hiddenCards = 0;
 		var draw = 2;

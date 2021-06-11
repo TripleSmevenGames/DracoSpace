@@ -27,7 +27,8 @@ class MapTile extends FlxSpriteGroup
 		ELITE => AssetPaths.eliteMapTile__png,
 		BOSS => AssetPaths.bossMapTile__png,
 		TREASURE => AssetPaths.treasureMapTile__png,
-		CAMP => AssetPaths.restMapTile__png,
+		CAMP => AssetPaths.campMapTile__png,
+		CLEARING => AssetPaths.clearingMapTile__png,
 	];
 
 	public function set_here(val:Bool)
@@ -70,9 +71,9 @@ class MapTile extends FlxSpriteGroup
 		highlight.visible = false;
 
 		hereMarker = new FlxSprite(0, 0, AssetPaths.BlueArrow1D__png);
-		hereMarker.scale.set(3, 3);
+		hereMarker.scale.set(6, 6);
 		hereMarker.updateHitbox();
-		hereMarker.centerSprite(0, -48);
+		hereMarker.centerSprite(0, -64);
 		hereMarker.visible = false;
 
 		body = new FlxSprite(0, 0);

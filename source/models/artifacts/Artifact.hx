@@ -62,6 +62,7 @@ class Artifact implements IBattleTriggerable
 	public function new(name:String, desc:String, assetPath:String, ?rarity:Rarity)
 	{
 		this.name = name;
+		this.desc = desc;
 		this.assetPath = assetPath;
 		this.rarity = rarity != null ? rarity : COMMON;
 	}

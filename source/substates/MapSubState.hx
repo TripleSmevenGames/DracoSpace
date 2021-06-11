@@ -67,7 +67,8 @@ class GameMapView extends FlxSpriteGroup
 		switch (type)
 		{
 			case BATTLE:
-				return BattleEventFactory.getNextBattleEvent();
+				// return BattleEventFactory.getNextBattleEvent();
+				return TreasureEvent.getNextTreasureEvent();
 			case ELITE:
 				return BattleEventFactory.getNextEliteEvent();
 			case BOSS:
@@ -76,6 +77,8 @@ class GameMapView extends FlxSpriteGroup
 				return GameEvent.sampleEncounter();
 			case CAMP:
 				return new CampEvent();
+			case CLEARING:
+				return new ClearingEvent();
 			case HOME:
 				return new HomeEvent();
 			case TREASURE:

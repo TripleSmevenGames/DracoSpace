@@ -9,10 +9,10 @@ import utils.GameUtils;
 class CampEvent extends GameEvent
 {
 	/** Get the actual game event which results from pressing the rest choice. **/
-	static function getRestEvent()
+	static function getHealEvent()
 	{
-		var name = 'Rest';
-		var eventDesc = 'Your party takes a quick breather to rest in the cots and grab some rations. You overhear the researchers talking. 
+		var name = 'Medical Tent';
+		var eventDesc = 'Your party gets checked out by the resident medical staff. You overhear the researchers talking. 
 			It seems like the disturbance is definitely not a natural phenomenon. \n\n';
 		for (char in Player.chars)
 			eventDesc += '${char.name} is now at ${char.currHp} health. \n';
@@ -21,20 +21,20 @@ class CampEvent extends GameEvent
 		return new GameEvent(name, eventDesc, SUB, choices);
 	}
 
-	static function getTrainEvent()
+	static function getRerollEvent()
 	{
-		var name = 'Train';
-		var eventDesc = 'Your party decides to spend time in the barracks training. The instructors there give you some advice. \n\n';
+		var name = 'Rec Center';
+		var eventDesc = 'Your party decides to spend time in the rec center. You grab a few drinks and mingle with the members of the camp. \n\n';
 		eventDesc += 'Your skill shop choices have been rerolled.';
 
 		var choices = [Choice.getGoRoot()];
 		return new GameEvent(name, eventDesc, SUB, choices);
 	}
 
-	static function getRestChoice()
+	static function getHealChoice()
 	{
-		var text = 'Rest (Heal party members)';
-		var restEvent = getRestEvent();
+		var text = 'Visit the Medical Tent. (Heal party members)';
+		var restEvent = getHealEvent();
 		var effect = (choice:Choice) ->
 		{
 			for (char in Player.chars)
@@ -46,10 +46,10 @@ class CampEvent extends GameEvent
 		return new Choice(text, effect);
 	}
 
-	static function getTrainChoice()
+	static function getRerollChoice()
 	{
-		var text = 'Train (Reroll skill shop choices)';
-		var trainEvent = getTrainEvent();
+		var text = 'Have a few drinks at the rec center. (Reroll skill shop choices)';
+		var trainEvent = getRerollEvent();
 		var effect = (choice:Choice) ->
 		{
 			Player.rerollSkillShopChoices();
@@ -63,9 +63,9 @@ class CampEvent extends GameEvent
 	public function new()
 	{
 		var name = 'Researcher\'s Camp';
-		var desc = 'A group a researchers studying the forest have setup camp here. A small military presence keeps watch.\n\n'
+		var desc = 'HQ has set up a large camp here for researchers and field personel. A small military presence keeps watch.\n\n'
 			+ 'There\'s a few things you can do here.';
-		var choices:Array<Choice> = [getRestChoice(), getTrainChoice(), Choice.getLeave()];
+		var choices:Array<Choice> = [getHealChoice(), getRerollChoice(), Choice.getLeave()];
 		super(name, desc, CAMP, choices);
 	}
 }

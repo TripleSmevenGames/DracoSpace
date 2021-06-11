@@ -605,7 +605,7 @@
 								}
 							],
 							"targetMethod": 8,
-							"cooldown": 5,
+							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						},
@@ -1108,7 +1108,7 @@
 							"id": "bodyMastery",
 							"name": "Body Mastery",
 							"desc": "Gain Status: On every 5th skill played, gain 1 Dodge.",
-							"rarity": 0,
+							"rarity": 3,
 							"costs": [
 								{
 									"AGI": 3

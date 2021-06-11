@@ -85,7 +85,7 @@ class Player
 
 		// https://haxe.org/manual/lf-condition-compilation.html
 		#if godmode
-		gainSkill(SkillFactory.kiwiSkillsCommon.get(surpriseAttack)());
+		gainSkill(SkillFactory.kiwiSkillsCommon.get(swordCutter)());
 		gainArtifact(new BatteryArtifact());
 		money = 1000;
 		exp = 1000;

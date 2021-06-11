@@ -130,7 +130,7 @@ class IndicatorIcon extends FlxSpriteGroup
 	public static function createInfoIndicator(infoTitle = '', infoText = '', place:TooltipPlace = INV, width = 350)
 	{
 		var options:IndicatorIconOptions = {
-			tooltipOptions: {width: 350},
+			tooltipOptions: {width: width},
 			display: false,
 			place: place,
 		};

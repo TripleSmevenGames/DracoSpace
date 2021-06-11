@@ -31,6 +31,12 @@ class CharacterProfile3 extends FlxSpriteGroup
 	public var artifactTiles:Array<ArtifactTile>;
 
 	var skillList:FlxSprite;
+	var artifactList:FlxSprite;
+
+	/** A trigger zone for dropping artifacts and skills into, which will equip them onto the character. 
+	 * The parent of this component will control that.
+	**/
+	public var mouseZone:FlxSprite;
 
 	// not centered
 	function getCharHpSprite(fontSize:Int = 24)
@@ -143,7 +149,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 
 	/** Rerender the profile to reflect current data. 
 	 * It removes and destroys the old skillList, and creates a new one in the same spot.
-	 * Maybe slow? Could be more efficient with less destroying. E.g. save locked skill slots in memory.
+	 * Maybe slow? Could be more efficient with less destroying. E.g. save locked and blank skill slots in memory.
 	**/
 	public function refresh()
 	{
@@ -161,6 +167,16 @@ class CharacterProfile3 extends FlxSpriteGroup
 		skillList = getCharSkillList();
 		add(skillList);
 		skillList.setPosition(xPos, yPos);
+
+		// now do the same thing for the artifact list.
+		xPos = artifactList.x;
+		yPos = artifactList.y;
+		remove(artifactList);
+		artifactList.destroy();
+
+		artifactList = getCharArtifactList();
+		add(artifactList);
+		artifactList.setPosition(xPos, yPos);
 	}
 
 	public function new(char:CharacterInfo)
@@ -198,5 +214,10 @@ class CharacterProfile3 extends FlxSpriteGroup
 		this.skillList = getCharSkillList();
 		skillList.setPosition(cursor.x, cursor.y);
 		add(skillList);
+
+		cursor.y += skillList.height + 4;
+		this.artifactList = getCharArtifactList();
+		artifactList.setPosition(cursor.x, cursor.y);
+		add(artifactList);
 	}
 }

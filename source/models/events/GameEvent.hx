@@ -13,6 +13,7 @@ enum GameEventType
 	ENCOUNTER;
 	SHOP;
 	CAMP;
+	CLEARING;
 	HOME;
 	SUB; // a sub event of a one of the above root events.
 	TUTORIAL;

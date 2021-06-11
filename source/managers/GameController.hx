@@ -41,6 +41,8 @@ class GameController
 	**/
 	public static var battleSoundManager:BattleSoundManager;
 
+	public static var flags:GameFlags;
+
 	public static var latestException:haxe.Exception;
 
 	public static function initSave()
@@ -70,6 +72,7 @@ class GameController
 		initBattleLayers();
 
 		invTooltipLayer = new TooltipLayer();
+		flags = new GameFlags();
 	}
 
 	public static function initBattleLayers()

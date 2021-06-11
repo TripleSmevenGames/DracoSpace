@@ -223,7 +223,13 @@ class GameMap
 				var node = new Node(++idCounter, i, BOSS);
 				column.push(node);
 			}
-			// If we're making the middle column, just make it 1 CAMP node.
+			// If we're making the second to last last column, just make it 1 CLEARING node.
+			else if (i == numColumns - 2)
+			{
+				var node = new Node(++idCounter, i, CLEARING);
+				column.push(node);
+			}
+			// If we're making the middle column, also make it 1 CAMP node.
 			else if (i == Math.round(numColumns / 2))
 			{
 				var node = new Node(++idCounter, i, CAMP);
@@ -231,7 +237,7 @@ class GameMap
 			}
 			else
 			{
-				// for all other columns, create empty ones to be filled in later.
+				// for all other columns, create empty nodes to be filled in later.
 				// columns can have 2-4 nodes.
 				var nodesInColumn = numNodesWeightedPick();
 

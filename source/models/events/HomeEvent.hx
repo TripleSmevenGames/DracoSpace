@@ -9,10 +9,11 @@ class HomeEvent extends GameEvent
 {
 	static function getTrainingDummyChoice()
 	{
-		var text = 'Spar with the training dummy';
+		var text = 'Spar with the training dummy. (COMBAT TUTORIAL)';
 		var effect = (choice:Choice) ->
 		{
 			GameController.subStateManager.ess.goToSubEvent(BattleEventFactory.trainingDummy());
+			GameController.flags.showTutorial = true;
 		}
 		return new Choice(text, effect);
 	}
@@ -20,8 +21,8 @@ class HomeEvent extends GameEvent
 	public function new()
 	{
 		var name = 'Base';
-		var desc = 'Your mission is to figure out what is causing the disturbance in the forest. The monsters are hostile, '
-			+ 'and ancient machines from the ruins are activating. Take some time to prepare.';
+		var desc = 'HQ has sent your party to investigate this forest. 
+			Monsters are more hostile than usual. Meet up with the research camp deeper in the forest.';
 		var choices:Array<Choice> = [getTrainingDummyChoice(), Choice.getLeave()];
 		super(name, desc, HOME, choices);
 	}

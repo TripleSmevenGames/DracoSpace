@@ -14,8 +14,9 @@ class ArtifactTileInv extends ArtifactTile
 	public function setupHover()
 	{
 		this.addScaledToMouseManager();
+
 		var tooltip = Tooltip.genericTooltip(artifact.name, artifact.desc, {});
-		GameController.invTooltipLayer.registerTooltip(tooltip, this);
+		GameController.invTooltipLayer.registerTooltip(tooltip, this, true);
 	}
 
 	public function new(artifact:Artifact)

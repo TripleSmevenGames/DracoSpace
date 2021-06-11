@@ -43,10 +43,10 @@ class SkillSprite extends FlxSpriteGroup
 	public var currentCharges(default, set):Int = 1;
 	public var disabled(default, set):Bool;
 
-	public var mouseOverCallbacks:Array<FlxSprite->Void> = [];
-	public var mouseOutCallbacks:Array<FlxSprite->Void> = [];
-	public var leftClickCallbacks:Array<FlxSprite->Void> = [];
-	public var rightClickCallbacks:Array<FlxSprite->Void> = [];
+	var mouseOverCallbacks:Array<FlxSprite->Void> = [];
+	var mouseOutCallbacks:Array<FlxSprite->Void> = [];
+	var leftClickCallbacks:Array<FlxSprite->Void> = [];
+	var rightClickCallbacks:Array<FlxSprite->Void> = [];
 
 	public function set_cooldownTimer(val:Int)
 	{
@@ -153,7 +153,7 @@ class SkillSprite extends FlxSpriteGroup
 		});
 	}
 
-	public function addHoverCallback(over:FlxSprite->Void, out:FlxSprite->Void)
+	public function setOnHover(over:FlxSprite->Void, out:FlxSprite->Void)
 	{
 		mouseOverCallbacks.push(over);
 		mouseOutCallbacks.push(out);
@@ -247,7 +247,7 @@ class SkillSprite extends FlxSpriteGroup
 		// setup the default hover effect
 		var darken = (_) -> tile.color = FlxColor.fromRGB(200, 200, 200);
 		var undarken = (_) -> tile.color = FlxColor.WHITE;
-		addHoverCallback(darken, undarken);
+		setOnHover(darken, undarken);
 
 		// setup the tooltip (which is also a hover effect)
 		GameController.battleTooltipLayer.createTooltipForSkill(this);

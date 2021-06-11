@@ -3,6 +3,7 @@ package ui.inventory.equipmentMenu;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxG;
+import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
@@ -20,11 +21,18 @@ using utils.ViewUtils;
 class UnequippedArtifacts extends FlxSpriteGroup
 {
 	public var artifactTiles:Array<ArtifactTileInv> = [];
-	public final bodyHeight = 72;
-	public final bodyWidth = 180; // about 10 tiles?
+	public final bodyHeight = 120;
+	public final bodyWidth = 600; // about 10 tiles?
 
 	// save the blank tiles so we can reuse them when we refresh
 	var blankTiles:Array<SkillTileBlank> = [];
+
+	var body:FlxSprite;
+
+	/** A trigger zone for dropping artifacts and skills into, which will unequip them. 
+	 * The parent of this component will control that.
+	**/
+	public var mouseZone:FlxSprite;
 
 	/** rerender the list to show the current unequipped skills.
 	 * Because we are removing the old tiles and calling setupHover() on the new tiles
@@ -49,16 +57,18 @@ class UnequippedArtifacts extends FlxSpriteGroup
 		artifactTiles = [];
 
 		// then, re render them again according to the current data.
-		var numSkills = Player.inventory.unequippedSkills.length;
+		// the ypos positions them so the are near the bottom of the body.
+		var numArtifacts = Player.inventory.unequippedArtifacts.length;
 		var maxTiles = Player.MAX_UNEQUIPPED_ARTIFACTS;
+		var yPos = body.height / 2 - 40;
 		for (i in 0...maxTiles)
 		{
-			if (i < numSkills)
+			if (i < numArtifacts)
 			{
 				var artifact = Player.inventory.unequippedArtifacts[i];
 				var artifactTile = new ArtifactTileInv(artifact);
 				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, artifactTile.width, 4);
-				artifactTile.setPosition(xPos, 0);
+				artifactTile.setPosition(xPos, yPos);
 				artifactTiles.push(artifactTile);
 				add(artifactTile);
 				artifactTile.setupHover();
@@ -67,7 +77,7 @@ class UnequippedArtifacts extends FlxSpriteGroup
 			{
 				var blankTile = blankTiles[i]; // take a blank tile from the store
 				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, blankTile.width, 4);
-				blankTile.setPosition(xPos, 0);
+				blankTile.setPosition(xPos, yPos);
 				add(blankTile);
 			}
 		}
@@ -77,15 +87,14 @@ class UnequippedArtifacts extends FlxSpriteGroup
 	{
 		super();
 
-		var bodyWidth = FlxG.width / 2;
-		var body = ViewUtils.newSlice9(AssetPaths.greyTeal__png, bodyWidth, bodyHeight, [8, 8, 40, 40]);
+		this.body = ViewUtils.newSlice9(AssetPaths.greyTeal__png, bodyWidth, bodyHeight, [8, 8, 40, 40]);
 		body.centerSprite();
 		add(body);
 
 		var title = new FlxText(0, 0, 0, 'UNEQUIPPED ARTIFACTS');
 		title.setFormat(Fonts.STANDARD_FONT, UIMeasurements.MENU_FONT_SIZE_TITLE, FlxColor.YELLOW);
 		title.centerSprite();
-		title.y -= (body.height + title.height) / 2;
+		title.y -= (body.height - title.height) / 2;
 		add(title);
 
 		// create the store of blank tiles to use.

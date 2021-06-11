@@ -124,7 +124,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 
 		for (word in text)
 		{
-			// turn the word into its correct replacement if needed.
+			// Note, in order to properly do newline, you must put a space before and after the \n.
 			if (word == '\n')
 			{
 				cursor.x = 0;

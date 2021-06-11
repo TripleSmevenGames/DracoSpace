@@ -34,17 +34,20 @@ class RewardItemSprite extends FlxSpriteGroup
 	}
 }
 
-/** Represents the reward portion of the win screen. Money/exp gained, and possible level up reward. **/
+/** Represents the reward portion of the win screen. Money/exp gained, and possible level up reward. CENTERED. **/
 class RewardsSprite extends FlxSpriteGroup
 {
 	static inline final titleFontSize = 36;
+
+	public var bodyWidth:Float;
+	public var bodyHeight:Float;
 
 	public function new(expReward:Int, moneyReward:Int, battleType:GameEventType, onClaim:Void->Void)
 	{
 		super();
 
-		var bodyWidth = FlxG.width * .3;
-		var bodyHeight = FlxG.height * .5;
+		this.bodyWidth = FlxG.width * .3;
+		this.bodyHeight = 300;
 		var body = new FlxUI9SliceSprite(0, 0, AssetPaths.eventBackground__png, new Rectangle(0, 0, bodyWidth, bodyHeight), [8, 8, 40, 40]);
 		body.centerSprite();
 		add(body);

@@ -8,6 +8,7 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import models.player.Player;
+import ui.artifact.ArtifactTile;
 import ui.battle.IndicatorIcon;
 import ui.skillTile.SkillTile;
 
@@ -16,14 +17,14 @@ using utils.ViewUtils;
 /** The character equipment menu. Equip skills and items. NOT Centered. Place at 0, 0**/
 class EquipmentMenu extends FlxSpriteGroup
 {
-	static inline final PADDING = 32;
-
 	var profiles:Array<CharacterProfile3> = [];
 	var unequippedSkillsList:UnequippedSkillsList3;
+	var unequippedArtifacts:UnequippedArtifacts;
 	var infoIcon:IndicatorIcon;
 
 	var equippedSkillTiles:Array<SkillTile> = [];
 	var unequippedSkillTiles:Array<SkillTile> = [];
+	var unequippedArtifactTiles:Array<ArtifactTile> = [];
 
 	var clickSound:FlxSound;
 	var headerHeight:Float;
@@ -104,19 +105,24 @@ class EquipmentMenu extends FlxSpriteGroup
 		}
 
 		unequippedSkillsList = new UnequippedSkillsList3();
+		unequippedArtifacts = new UnequippedArtifacts();
 
 		// put the two profiles side by side under the header, in the middle of the screen.
 		// then put the unequipped list under it.
-		// profiles are not centered at all. The unequipped list is centered on its body.
+		// profiles are not centered at all. The unequipped lists are centered on its body.
 		var centerX = FlxG.width / 2;
 		profiles[0].setPosition(centerX - profiles[0].width - 4, headerHeight + 32);
 		add(profiles[0]);
 		profiles[1].setPosition(centerX + 4, headerHeight + 16);
 		add(profiles[1]);
 
-		var unequippedY = profiles[0].y + profiles[0].height + unequippedSkillsList.bodyHeight / 2 + 72;
+		var unequippedY = profiles[0].y + profiles[0].height + unequippedSkillsList.bodyHeight / 2 + 60;
 		unequippedSkillsList.setPosition(centerX, unequippedY);
 		add(unequippedSkillsList);
+
+		unequippedY += unequippedSkillsList.height + 16;
+		unequippedArtifacts.setPosition(centerX, unequippedY);
+		add(unequippedArtifacts);
 
 		// small help tooltip icon in the corner.
 		var infoText = 'Click on skills to equip or unequip them on your characters. '

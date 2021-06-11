@@ -111,7 +111,7 @@ class EventView extends FlxSpriteGroup
 
 		var windowWidth = FlxG.width * (3 / 5);
 		var windowHeight = FlxG.height / 2;
-		windowSprite = new FlxUI9SliceSprite(0, 0, AssetPaths.eventBackground__png, new Rectangle(0, 0, windowWidth, windowHeight), [8, 8, 40, 40]);
+		windowSprite = ViewUtils.newSlice9(AssetPaths.eventBackground__png, windowWidth, windowHeight, [8, 8, 40, 40]);
 		add(windowSprite);
 
 		titleSprite = new FlxText(0, 0, 0, 'title');

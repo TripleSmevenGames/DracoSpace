@@ -40,7 +40,9 @@ class EventChoiceButton extends FlxUIButton
 
 		super(0, 0, choice.text, actualOnClick);
 
-		final FONT_SIZE = 24;
+		var fontSize = 24;
+		if (choice.text.length > 30)
+			fontSize = 22;
 
 		var upSprite = AssetPaths.greyBlue_light__png;
 		var hoverSprite = AssetPaths.greyBlue__png;
@@ -51,7 +53,7 @@ class EventChoiceButton extends FlxUIButton
 		var slice9Array = [slice9, slice9, slice9];
 		loadGraphicSlice9(graphicArray, WIDTH, HEIGHT, slice9Array);
 
-		setLabelFormat(Fonts.STANDARD_FONT, FONT_SIZE, FlxColor.WHITE);
+		setLabelFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.WHITE);
 		autoCenterLabel();
 	}
 }

@@ -40,6 +40,7 @@ class Hand extends FlxSpriteGroup
 	var type:CharacterType;
 
 	public var titleText:FlxText;
+	public var hintIcon:IndicatorIcon;
 	public var body:FlxSprite;
 
 	var skillPoints:SkillPointCombination;
@@ -439,6 +440,23 @@ class Hand extends FlxSpriteGroup
 		titleText.setFormat(Fonts.STANDARD_FONT, 24);
 		titleText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
 		titleText.centerSprite(0, -body.height / 2 - titleText.height + 6);
+
+		var hintDesc = '1. When the PLAYER sign is glowing yellow, it means it\'s your turn. \n ';
+		hintDesc += '2. You can activate your characters\' skills using the cards in your hand. \n ';
+		hintDesc += '3. Select the cards matching the skill\'s cost, then click on the skill to play it. \n ';
+		hintDesc += '4. You can also right-click a skill to automatically play the right cards.';
+		this.hintIcon = IndicatorIcon.createInfoIndicator('Player Turn Tutorial', hintDesc, BATTLE, 500);
+
+		// for the player hand, add this little hint icon right next to the PLAYER sign.
+		if (type == PLAYER)
+		{
+			hintIcon.setPosition(titleText.x + titleText.width + hintIcon.width, titleText.y + titleText.height / 2);
+			hintIcon.registerTooltip();
+			add(hintIcon);
+
+			// If this is the tutorial battle, add something to draw the player's attention to this.
+		}
+
 		add(titleText);
 
 		/* this.skillPointDisplay = null;

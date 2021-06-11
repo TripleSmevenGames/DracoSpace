@@ -13,6 +13,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
 import ui.battle.SkillSprite;
+import ui.battle.character.CharacterSprite;
 import ui.battle.win.SkillCard;
 import ui.skillTile.SkillTile;
 import utils.ViewUtils;
@@ -98,27 +99,45 @@ class Tooltip extends FlxSpriteGroup
 		this.setPosition(parent.x, parent.y + this.height / 2 + parent.height / 2 + 8);
 	}
 
+	function unCenteredHoverParent(parentCentered = false)
+	{
+		var canFit = parent.y > this.height + 16; // padding;
+		if (options.pos == TOP && canFit)
+			if (parentCentered)
+				centerAboveCenteredParent();
+			else
+				centerAboveParent();
+		else if (options.pos == BOTTOM || !canFit)
+			if (parentCentered)
+				centerBelowCenteredParent();
+			else
+				centerBelowParent();
+		else
+			trace('buggah, options.POS was nothing');
+
+		this.visible = true;
+	}
+
+	function centeredHoverParentCentered()
+	{
+		var canFit = parent.y > this.height + 8; // padding;
+		if (options.pos == TOP && canFit)
+			putAboveParent();
+		else if (options.pos == BOTTOM || !canFit)
+			putBelowParent();
+		else
+			trace('buggah, options.POS was nothing');
+
+		this.visible = true;
+	}
+
 	/** Uses the mouseEventManager to set mouse in/out callbacks on the parent. Assumes you added the parent to the manager already. **/
 	function bindTo(parent:FlxObject, parentCentered:Bool = false)
 	{
 		this.parent = parent;
 		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
 		{
-			var canFit = parent.y > this.height + 16; // padding;
-			if (options.pos == TOP && canFit)
-				if (parentCentered)
-					centerAboveCenteredParent();
-				else
-					centerAboveParent();
-			else if (options.pos == BOTTOM || !canFit)
-				if (parentCentered)
-					centerBelowCenteredParent();
-				else
-					centerBelowParent();
-			else
-				trace('buggah, options.POS was nothing');
-
-			this.visible = true;
+			unCenteredHoverParent(parentCentered);
 		});
 		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
 	}
@@ -127,17 +146,9 @@ class Tooltip extends FlxSpriteGroup
 	function bindToPut(parent:FlxObject)
 	{
 		this.parent = parent;
-		var canFit = parent.y > this.height + 16; // padding;
 		FlxMouseEventManager.setMouseOverCallback(parent, (_) ->
 		{
-			if (options.pos == TOP && canFit)
-				putAboveParent();
-			else if (options.pos == BOTTOM || !canFit)
-				putBelowParent();
-			else
-				trace('buggah, options.POS was nothing');
-
-			this.visible = true;
+			centeredHoverParentCentered();
 		});
 		FlxMouseEventManager.setMouseOutCallback(parent, (_) -> this.visible = false);
 	}
@@ -147,29 +158,21 @@ class Tooltip extends FlxSpriteGroup
 		this.parent = skillSprite.tile;
 		var over = (_) ->
 		{
-			if (options.pos == TOP)
-			{
-				var canFit = parent.y > this.height + 16; // padding;
-				if (canFit)
-					putAboveParent();
-				else
-					putBelowParent();
-			}
-			else if (options.pos == BOTTOM)
-			{
-				var canFit = FlxG.height - parent.y > this.height + 16;
-				if (canFit)
-					putBelowParent();
-				else
-					putAboveParent();
-			}
-			else
-				trace('buggah, options.pos was nothing');
-
-			this.visible = true;
+			centeredHoverParentCentered();
 		};
 		var out = (_) -> this.visible = false;
-		skillSprite.addHoverCallback(over, out);
+		skillSprite.setOnHover(over, out);
+	}
+
+	function bindToChar(char:CharacterSprite)
+	{
+		this.parent = char.sprite;
+		var over = (_) ->
+		{
+			unCenteredHoverParent();
+		};
+		var out = (_) -> this.visible = false;
+		char.setOnHover(over, out);
 	}
 
 	/** Don't change the desc so much that we'd have to recalculate the body's height. I dont want to do that. **/
@@ -302,6 +305,15 @@ class TooltipLayer extends FlxSpriteGroup
 		var tooltip = Tooltip.skillTooltip(skillTile.skill);
 		// we use bindToPut because the skillCard hover is centered already, so we dont want to call centerOverParent. Instead we want putOverParent.
 		tooltip.bindToPut(skillTile);
+		add(tooltip);
+		tooltips.push(tooltip);
+	}
+
+	/** Creates and reigsters tooltip for a characterSprite. **/
+	public function createTooltipForChar(char:CharacterSprite)
+	{
+		var tooltip = Tooltip.genericTooltip(char.info.name, null, {width: 0});
+		tooltip.bindToChar(char);
 		add(tooltip);
 		tooltips.push(tooltip);
 	}

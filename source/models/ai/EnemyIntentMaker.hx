@@ -118,8 +118,11 @@ class EnemyIntentMaker
 
 		// remove the cards we picked from the ghost hand,
 		// so we can accurately decide what additional skills we could play this turn.
-		for (card in pickedCards)
-			ghostHand.remove(card);
+		if (pickedCards != null)
+		{
+			for (card in pickedCards)
+				ghostHand.remove(card);
+		}
 
 		return pickedCards;
 	}
@@ -185,10 +188,14 @@ class EnemyIntentMaker
 		if (skillSprite == null)
 			return null;
 
+		var cardsToPlay = pickCardsForSkill(skillSprite);
+		if (cardsToPlay == null)
+			return null;
+
 		return {
 			skill: skillSprite,
 			targets: decideTargets(skillSprite),
-			cardsToPlay: pickCardsForSkill(skillSprite),
+			cardsToPlay: cardsToPlay,
 		};
 	}
 
