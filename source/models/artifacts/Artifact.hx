@@ -2,7 +2,7 @@ package models.artifacts;
 
 import Castle.SkillData_skills_rarity as Rarity;
 import ui.battle.IBattleTriggerable;
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 

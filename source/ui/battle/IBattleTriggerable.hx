@@ -2,6 +2,7 @@ package ui.battle;
 
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.combatUI.SkillSprite;
 
 /** Can be triggered when certain things happen in battle **/
 interface IBattleTriggerable extends ITurnTriggerable

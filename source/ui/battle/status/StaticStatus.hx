@@ -1,5 +1,6 @@
 package ui.battle.status;
 
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;

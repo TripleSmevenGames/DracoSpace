@@ -67,8 +67,7 @@ class GameMapView extends FlxSpriteGroup
 		switch (type)
 		{
 			case BATTLE:
-				// return BattleEventFactory.getNextBattleEvent();
-				return TreasureEvent.getNextTreasureEvent();
+				return BattleEventFactory.getNextBattleEvent();
 			case ELITE:
 				return BattleEventFactory.getNextEliteEvent();
 			case BOSS:

@@ -1,4 +1,4 @@
-package ui.battle;
+package ui.battle.combatUI;
 
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -250,7 +250,7 @@ class SkillSprite extends FlxSpriteGroup
 		setOnHover(darken, undarken);
 
 		// setup the tooltip (which is also a hover effect)
-		GameController.battleTooltipLayer.createTooltipForSkill(this);
+		GameController.battleTooltipLayer.createTooltipForSkillSprite(this);
 
 		disabled = false;
 	}

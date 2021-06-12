@@ -10,7 +10,7 @@ import models.events.GameEvent;
 import models.player.Player;
 import substates.BattleSubState;
 import ui.battle.IBattleTriggerable;
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleUISounds;

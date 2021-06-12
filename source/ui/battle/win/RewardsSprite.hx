@@ -10,7 +10,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.events.GameEvent.GameEventType;
 import openfl.geom.Rectangle;
-import ui.battle.win.SkillCard;
+import ui.SkillCard;
 
 using utils.ViewUtils;
 

@@ -15,6 +15,7 @@ import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
 import ui.buttons.BasicWhiteButton;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.combatUI.SkillSprite;
 
 using utils.ViewUtils;
 
@@ -338,9 +339,10 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		if (type == PLAYER)
 		{
-			endTurnBtn = new BasicWhiteButton('End Turn (SPACE)', endTurnBtnClick, 150);
+			endTurnBtn = new BasicWhiteButton('End Turn (SPACE)', endTurnBtnClick, 150, 40);
 			// set the btn under-center the Hand with some padding
-			endTurnBtn.setPosition(hand.body.width / 2, hand.body.height / 2 + 4);
+			endTurnBtn.setPosition(0, hand.body.height / 2 + 4);
+			endTurnBtn.centerX(hand.body.width / 2 + drawPile.width);
 			add(endTurnBtn);
 		}
 

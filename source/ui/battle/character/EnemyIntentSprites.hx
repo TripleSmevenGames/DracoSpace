@@ -8,6 +8,7 @@ import models.skills.Skill;
 import ui.TooltipLayer.Tooltip;
 import ui.skillTile.SkillTile;
 import utils.DebugUtils;
+import ui.battle.combatUI.SkillSprite;
 
 using utils.ViewUtils;
 

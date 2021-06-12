@@ -1,5 +1,6 @@
 package ui;
 
+import ui.battle.combatUI.SkillSpriteHover;
 import constants.Colors;
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -12,9 +13,9 @@ import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
-import ui.battle.win.SkillCard;
+import ui.SkillCard;
 import ui.skillTile.SkillTile;
 import utils.ViewUtils;
 
@@ -250,6 +251,12 @@ class Tooltip extends FlxSpriteGroup
 		return new Tooltip(sprite, {});
 	}
 
+	public static function skillSpriteTooltip(skillSprite:SkillSprite)
+	{
+		var sprite = new SkillSpriteHover(skillSprite);
+		return new Tooltip(sprite, {});
+	}
+
 	/* Creates tooltip from a sprite. The sprite probably should be a group that's centered. */
 	public function new(sprite:FlxSprite, options:TooltipOptions)
 	{
@@ -291,9 +298,9 @@ class TooltipLayer extends FlxSpriteGroup
 	}
 
 	/** Creates and reigsters tooltip for a skillSprite. **/
-	public function createTooltipForSkill(skillSprite:SkillSprite)
+	public function createTooltipForSkillSprite(skillSprite:SkillSprite)
 	{
-		var tooltip = Tooltip.skillTooltip(skillSprite.skill);
+		var tooltip = Tooltip.skillSpriteTooltip(skillSprite);
 		tooltip.bindToSkill(skillSprite);
 		add(tooltip);
 		tooltips.push(tooltip);

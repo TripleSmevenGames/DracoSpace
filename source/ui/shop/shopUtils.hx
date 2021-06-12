@@ -7,9 +7,6 @@ import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRandom;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import models.player.Player;
-import ui.battle.win.SkillCard;
-import utils.battleManagerUtils.RewardHelper;
 
 using utils.ViewUtils;
 

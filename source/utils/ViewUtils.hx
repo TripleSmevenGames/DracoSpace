@@ -191,21 +191,27 @@ class ViewUtils
 		return new FlxUI9SliceSprite(0, 0, assetPath, new Rectangle(0, 0, w, h), slice9Array);
 	}
 
-	/** This gets the lmbIcon and the a text together. Not centered. **/
-	public static function getClickToSomethingText(something:String = '', fontSize = 24, padding = 4)
+	/** This gets the lmbIcon or rmbIcon and the text together. Good for hints. Not centered. **/
+	public static function getClickToSomethingText(leftClick:Bool, something:String = '', fontSize = 24, padding = 4)
 	{
 		var group = new FlxSpriteGroup();
 
-		var lmbIcon = new FlxSprite(0, 0, AssetPaths.LMB__png);
-		lmbIcon.scale2x();
-		lmbIcon.centerY();
-		group.add(lmbIcon);
+		var iconPath = '';
+		if (leftClick)
+			iconPath = AssetPaths.LMB__png;
+		else
+			iconPath = AssetPaths.RMB__png;
 
-		var buyText = new FlxText(0, 0, 0, something);
-		buyText.setFormat(Fonts.STANDARD_FONT, fontSize);
-		buyText.setPosition(lmbIcon.width + padding, 0);
-		buyText.centerY();
-		group.add(buyText);
+		var clickIcon = new FlxSprite(0, 0, iconPath);
+		clickIcon.scale2x();
+		clickIcon.centerY();
+		group.add(clickIcon);
+
+		var somethingText = new FlxText(0, 0, 0, something);
+		somethingText.setFormat(Fonts.STANDARD_FONT, fontSize);
+		somethingText.setPosition(clickIcon.width + padding, 0);
+		somethingText.centerY();
+		group.add(somethingText);
 
 		return group;
 	}

@@ -244,7 +244,7 @@ class BattleEventFactory
 		var enemies = [createGhostF(2), createGhostF(2), createGhostC(2), createGhostC(2)];
 		var hiddenCards = 0;
 		var draw = 4;
-		var deck = new Deck([KNO => 10, POW => 6, CON => 2], hiddenCards, draw);
+		var deck = new Deck([KNO => 10, CON => 5], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 

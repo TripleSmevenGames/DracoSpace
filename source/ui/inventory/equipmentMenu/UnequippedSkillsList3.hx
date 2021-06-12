@@ -10,7 +10,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.Player;
 import openfl.geom.Rectangle;
-import ui.battle.win.SkillCard;
+import ui.SkillCard;
 import ui.skillTile.InventorySkillTile;
 import ui.skillTile.SkillTile;
 

@@ -24,10 +24,8 @@ class Header extends FlxSpriteGroup
 	/** Refresh the HP numbers so that they are accurate. **/
 	public function refresh()
 	{
-		for (display in displays) 
-
+		for (display in displays)
 			display.refresh();
-		
 
 		moneyDisplay.refresh();
 		xpDisplay.refresh();
@@ -65,5 +63,8 @@ class Header extends FlxSpriteGroup
 
 		var inventoryIcon = new InventoryIcon();
 		addToView(inventoryIcon);
+
+		// var shopIcon = new ShopIcon();
+		// addToView(shopIcon);
 	}
 }

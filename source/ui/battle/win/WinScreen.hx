@@ -66,7 +66,7 @@ class WinScreen extends FlxSpriteGroup
 		var rewardsSprite = new RewardsSprite(expReward, moneyReward, battleType, onClaim);
 		rewardsSprite.setPosition(FlxG.width / 2, FlxG.height / 2);
 
-		continueBtn.centerSprite(FlxG.width / 2, FlxG.height / 2 + rewardsSprite.bodyHeight / 2 + 24);
+		continueBtn.centerSprite(FlxG.width / 2, FlxG.height / 2 + rewardsSprite.bodyHeight / 2 + 32);
 
 		add(rewardsSprite);
 	}

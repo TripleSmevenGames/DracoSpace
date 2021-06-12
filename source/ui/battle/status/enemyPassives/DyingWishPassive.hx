@@ -31,7 +31,7 @@ class DyingWishPassive extends Status
 			outlined: true,
 			display: false, // this status doesnt have stacks, so dont show a number.
 		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var icon = new IndicatorIcon(AssetPaths.dyingWish__png, name, desc, options);
 
 		this.stackable = false;
 

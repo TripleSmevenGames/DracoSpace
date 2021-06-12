@@ -3,7 +3,7 @@ package models.ai;
 import flixel.math.FlxRandom;
 import models.cards.Card;
 import models.skills.Skill.SkillPointCombination;
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 

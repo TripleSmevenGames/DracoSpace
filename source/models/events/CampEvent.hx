@@ -14,8 +14,7 @@ class CampEvent extends GameEvent
 		var name = 'Medical Tent';
 		var eventDesc = 'Your party gets checked out by the resident medical staff. You overhear the researchers talking. 
 			It seems like the disturbance is definitely not a natural phenomenon. \n\n';
-		for (char in Player.chars)
-			eventDesc += '${char.name} is now at ${char.currHp} health. \n';
+		eventDesc += 'Your party has been healed. \n';
 
 		var choices = [Choice.getGoRoot()];
 		return new GameEvent(name, eventDesc, SUB, choices);

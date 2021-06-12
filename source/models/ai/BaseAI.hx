@@ -4,7 +4,7 @@ import flixel.math.FlxRandom;
 import models.ai.EnemyIntentMaker.Intent;
 import models.cards.Card;
 import models.skills.Skill.SkillPointCombination;
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import utils.battleManagerUtils.BattleContext;

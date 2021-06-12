@@ -6,6 +6,7 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.combatUI.SkillSprite;
 
 class ColdStatus extends DebuffStatus
 {

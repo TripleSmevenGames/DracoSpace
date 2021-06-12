@@ -30,7 +30,7 @@ class InventoryIcon extends FlxSpriteGroup
 		FlxMouseEventManager.add(closeSprite, null, null, null, null, false, true, false);
 
 		// set the onclick to move to the inventory state.
-		var inventoryClick = (sprite:FlxSprite) -> GameController.subStateManager.toggleInventory();
+		var inventoryClick = (sprite:FlxSprite) -> GameController.subStateManager.toggleInventory(EQUIP);
 		FlxMouseEventManager.setMouseClickCallback(closeSprite, inventoryClick);
 
 		// set the onhover to show the open sprite.

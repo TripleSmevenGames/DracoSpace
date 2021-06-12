@@ -1,4 +1,4 @@
-package ui.battle.win;
+package ui;
 
 import constants.Colors;
 import constants.Fonts;
@@ -18,20 +18,15 @@ import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 
-enum HighlightType
-{
-	NORMAL;
-	SHOPCOVER;
-}
-
-/** Informational card describing a skill. It can appear as a tooltip of a skillsprite, or inside the shop as an item to purchase.
+/** Informational card describing a skill. Extended by other components
  * Centered. Added to MouseManager.
 **/
 class SkillCard extends FlxSpriteGroup
 {
 	public var skill:Skill;
+
+	/** A sprite to use as a "hover" effect on this component. Could be anything. **/
 	public var highlight:FlxSprite;
-	public var shopCover:SkillShopChoiceCover;
 
 	public static var bodyWidth = UIMeasurements.SKILL_CARD_WIDTH;
 	public static var bodyHeight = UIMeasurements.SKILL_CARD_HEIGHT;
@@ -44,15 +39,7 @@ class SkillCard extends FlxSpriteGroup
 		Castle.SkillDataKind.generic => 0xFF333333,
 	];
 
-	public function setCanAfford(val:Bool)
-	{
-		if (shopCover == null)
-			trace('tried to set a canAfford on SkillCard with no shopCover.');
-		else
-			shopCover.canAfford = val;
-	}
-
-	public function new(skill:Skill, ?highlightType:HighlightType)
+	public function new(skill:Skill, ?highlight:FlxSprite)
 	{
 		super();
 		this.skill = skill;
@@ -135,27 +122,14 @@ class SkillCard extends FlxSpriteGroup
 		add(cooldownSprite);
 
 		// set up the highlight effect, which appears around the card on hover.
-		if (highlightType != null)
+		if (highlight != null)
 		{
-			if (highlightType == NORMAL)
-			{
-				this.highlight = new CardHighlight(body);
-				highlight.centerSprite();
-			}
-			else if (highlightType == SHOPCOVER)
-			{
-				this.shopCover = new SkillShopChoiceCover();
-				this.highlight = shopCover;
-			}
+			this.highlight = highlight;
+			add(highlight);
+			highlight.visible = false;
 
-			if (highlight != null)
-			{
-				add(highlight);
-				highlight.visible = false;
-
-				FlxMouseEventManager.setMouseOverCallback(this, (_) -> highlight.visible = true);
-				FlxMouseEventManager.setMouseOutCallback(this, (_) -> highlight.visible = false);
-			}
+			FlxMouseEventManager.setMouseOverCallback(this, (_) -> highlight.visible = true);
+			FlxMouseEventManager.setMouseOutCallback(this, (_) -> highlight.visible = false);
 		}
 	}
 }

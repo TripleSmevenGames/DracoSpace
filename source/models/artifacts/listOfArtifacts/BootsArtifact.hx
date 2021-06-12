@@ -1,6 +1,6 @@
 package models.artifacts.listOfArtifacts;
 
-import ui.battle.SkillSprite;
+import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
 
 class BootsArtifact extends Artifact

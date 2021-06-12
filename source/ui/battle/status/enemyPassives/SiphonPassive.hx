@@ -1,5 +1,6 @@
 package ui.battle.status.enemyPassives;
 
+import ui.battle.combatUI.SkillSprite;
 import flixel.math.FlxRandom;
 import managers.BattleManager;
 import models.skills.SkillAnimations;

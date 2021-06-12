@@ -4,6 +4,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import ui.battle.character.CharacterAvatar;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.SkillSprite;
 
 using utils.ViewUtils;
 

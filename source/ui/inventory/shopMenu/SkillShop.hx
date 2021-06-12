@@ -13,7 +13,7 @@ import managers.GameController;
 import models.player.Player;
 import models.skills.Skill;
 import ui.battle.IndicatorIcon;
-import ui.battle.win.SkillCard;
+import ui.SkillCard;
 import utils.GameUtils;
 
 using utils.ViewUtils;
@@ -143,6 +143,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 
 	var priceSprite:FlxText;
 	var skillCard:SkillCard;
+	var shopCover:SkillShopChoiceCover;
 
 	static var random:FlxRandom = new FlxRandom();
 
@@ -175,7 +176,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 		priceSprite.setFormat(Fonts.STANDARD_FONT, 32, color);
 
 		var canAfford = Player.exp >= price;
-		skillCard.setCanAfford(canAfford);
+		shopCover.canAfford = canAfford;
 	}
 
 	public function new(skill:Skill)
@@ -184,7 +185,8 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 		this.skill = skill;
 
 		// create the skillcard with the shop cover.
-		this.skillCard = new SkillCard(skill, SHOPCOVER);
+		this.shopCover = new SkillShopChoiceCover(true);
+		this.skillCard = new SkillCard(skill, shopCover);
 		add(skillCard);
 
 		// now create the price sprite underneath. 20% chance to be on sale.
@@ -198,7 +200,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 
 /** A highlight cover that shows either "LMB to buy" or "Not enough XP" over a skill card choice in the shop. Centered.
  *
- * Go to SkillCard.hx to see how this is attached on top of a skillcard.
+ * Go to SkillCardShopItem.hx to see how this is attached on top of a skillcard.
 **/
 class SkillShopChoiceCover extends FlxSpriteGroup
 {
@@ -241,7 +243,7 @@ class SkillShopChoiceCover extends FlxSpriteGroup
 		body.centerSprite();
 		add(body);
 
-		this.clickToBuyText = ViewUtils.getClickToSomethingText('Buy');
+		this.clickToBuyText = ViewUtils.getClickToSomethingText(true, 'Buy');
 		this.notEnoughXpText = getNotEnoughXpText();
 		clickToBuyText.centerSprite();
 		notEnoughXpText.centerSprite();

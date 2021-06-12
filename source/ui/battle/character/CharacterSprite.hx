@@ -22,10 +22,11 @@ import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
 import ui.battle.IBattleTriggerable;
 import ui.battle.status.Status;
-import ui.battle.win.SkillCard;
+import ui.SkillCard;
 import utils.GameUtils;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.combatUI.SkillSprite;
 
 using utils.GameUtils;
 using utils.ViewUtils;

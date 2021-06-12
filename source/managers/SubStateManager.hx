@@ -69,7 +69,7 @@ class SubStateManager
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
-	function openInventory()
+	function openInventory(screen:InvScreenType = EQUIP)
 	{
 		if (playState.subState == bss)
 			throw new haxe.Exception('Tried to open inventory from bss');
@@ -83,7 +83,7 @@ class SubStateManager
 			iss.openCallback = () ->
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
-				iss.init();
+				iss.init(screen);
 			}
 			playState.openSubState(iss);
 		};
@@ -100,12 +100,12 @@ class SubStateManager
 			throw new haxe.Exception('tried to return to previous from inv, but returnHere was wack');
 	}
 
-	public function toggleInventory()
+	public function toggleInventory(screen:InvScreenType = EQUIP)
 	{
 		if (playState.subState == iss)
 			closeInventory();
 		else
-			openInventory();
+			openInventory(screen);
 	}
 
 	/** Fade out, clean up ALL substates, open the map substate, then fade back in.**/

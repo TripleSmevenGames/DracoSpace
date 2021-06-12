@@ -89,7 +89,7 @@ class SkillRewardsSubScreen extends FlxSpriteGroup
 		var rewards = RewardHelper.getSkillRewards(battleType);
 		for (i in 0...rewards.length)
 		{
-			var skillCard = new SkillCard(rewards[i], NORMAL);
+			var skillCard = new SkillCard(rewards[i]);
 			var xPos = ViewUtils.getXCoordForCenteringLR(i, rewards.length, skillCard.width, 16);
 			skillCard.setPosition(xPos, 0);
 			add(skillCard);

@@ -18,6 +18,12 @@ import ui.inventory.shopMenu.ShopMenu;
 
 using utils.ViewUtils;
 
+enum InvScreenType
+{
+	EQUIP;
+	SHOP;
+}
+
 // a substate containing the event view
 class InventorySubState extends FlxSubState
 {
@@ -41,14 +47,18 @@ class InventorySubState extends FlxSubState
 	}
 
 	/** Call this when we switch to this state. We cleanup tooltips (to prevent memory leaks), so make sure to re-init tooltips. **/
-	public function init()
+	public function init(screen:InvScreenType = EQUIP)
 	{
 		GameController.invTooltipLayer.cleanUpTooltips();
 
 		initEquipment();
 		initShop();
 		header.refresh();
-		equipmentMenu.revive();
+
+		if (screen == EQUIP)
+			equipmentMenu.revive();
+		else if (screen == SHOP)
+			shopMenu.revive();
 
 		// create the tooltip layer, which is where all tooltips will be added to.
 		// remove then add it, to ensure it is at the top of the render stack.
@@ -116,7 +126,6 @@ class InventorySubState extends FlxSubState
 
 	public function refreshHeader()
 	{
-
 		header.refresh();
 	}
 
