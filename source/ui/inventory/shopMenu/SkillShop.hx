@@ -1,5 +1,6 @@
 package ui.inventory.shopMenu;
 
+import flixel.tweens.FlxTween;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxG;
@@ -70,6 +71,10 @@ class SkillShop extends FlxSpriteGroup
 
 			// trigger a refresh of the entire ShopMenu (almost like a React state change)
 			refreshShopMenu();
+
+			// since the shop has new choices, signal that by playing their "appear" anims.
+			for (choiceSprite in skillShopChoiceSprites)
+				choiceSprite.playAppearAnim();
 		}
 		else
 		{
@@ -167,6 +172,16 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 	{
 		// the skill card part is already added to the mouse manager, so dont need to do it again here.
 		FlxMouseEventManager.setMouseClickCallback(this.skillCard, (_) -> onClick(this));
+	}
+
+	/** Make this card "apear" over half a second.
+	 * If we want the cooler "grow" animation, MarkL says using
+	 * FlxNestedSprite works.
+	**/
+	public function playAppearAnim()
+	{
+		this.alpha = 0;
+		FlxTween.tween(this, {alpha: 1}, .5);
 	}
 
 	/** rerender the price sprite to reflect the player's current XP.**/

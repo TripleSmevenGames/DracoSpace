@@ -126,6 +126,18 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return dead;
 	}
 
+	/** Call this when the charSprite is visible (ie its been added by the parent.)
+	 * If you call this before that, the math for the tween will be wrong. It needs to be called
+	 * when the target arrow is actually on the screen at its starting point.
+	**/
+	public function tweenTargetArrow()
+	{
+		if (this.info.type == PLAYER)
+			targetArrow.hoverTweenSideWays(1, -8);
+		else if (this.info.type == ENEMY)
+			targetArrow.hoverTweenSideWays(1, 8);
+	}
+
 	function playHitSound()
 	{
 		var soundToPlay = this.hitSoundArray.getRandomChoice();
@@ -490,7 +502,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
 			ViewUtils.centerSprite(targetArrow, -targetArrowXPos, 0);
 		}
-		targetArrow.scale3x();
+		targetArrow.scaleUp(4);
 		add(targetArrow);
 		targetArrow.visible = false;
 

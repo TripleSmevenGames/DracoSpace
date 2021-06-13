@@ -68,16 +68,20 @@ class ViewUtils
 		sprite.y = other.y + (other.height - sprite.height);
 	}
 
+	public static function scaleUp(sprite:FlxSprite, val:Int)
+	{
+		sprite.scale.set(val, val);
+		sprite.updateHitbox();
+	}
+
 	public static function scale3x(sprite:FlxSprite)
 	{
-		sprite.scale.set(3, 3);
-		sprite.updateHitbox();
+		scaleUp(sprite, 3);
 	}
 
 	public static function scale2x(sprite:FlxSprite)
 	{
-		sprite.scale.set(2, 2);
-		sprite.updateHitbox();
+		scaleUp(sprite, 2);
 	}
 
 	public static final typeColorMap = [
@@ -164,6 +168,13 @@ class ViewUtils
 		if (ease == null)
 			ease = FlxEase.quadOut;
 		FlxTween.tween(sprite, {y: sprite.y + distance}, duration, {type: PINGPONG, ease: ease});
+	}
+
+	public static function hoverTweenSideWays(sprite:FlxSprite, duration:Float = 2, distance:Int = 10, ?ease:Float->Float)
+	{
+		if (ease == null)
+			ease = FlxEase.quadOut;
+		FlxTween.tween(sprite, {x: sprite.x + distance}, duration, {type: PINGPONG, ease: ease});
 	}
 
 	public static function addScaledToMouseManager(sprite:FlxSprite, mouseChildren = false)

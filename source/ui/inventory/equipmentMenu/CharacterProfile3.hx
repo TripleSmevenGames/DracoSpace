@@ -22,7 +22,7 @@ import ui.skillTile.SkillTile;
 using utils.ViewUtils;
 
 /** A component showing the character's sprite, their HP, their equipped skills, and equipped artifacts. Not centered. **/
-class CharacterProfile3 extends FlxSpriteGroup
+class CharacterProfile3 extends FlxSpriteGroup implements IDropZone
 {
 	public var char:CharacterInfo;
 
@@ -33,10 +33,8 @@ class CharacterProfile3 extends FlxSpriteGroup
 	var skillList:FlxSprite;
 	var artifactList:FlxSprite;
 
-	/** A trigger zone for dropping artifacts and skills into, which will equip them onto the character. 
-	 * The parent of this component will control that.
-	**/
-	public var mouseZone:FlxSprite;
+	/** A trigger zone for dropping artifacts and skills into, which will equip them onto the character. **/
+	var dropZone:FlxSprite;
 
 	// not centered
 	function getCharHpSprite(fontSize:Int = 24)
@@ -219,5 +217,10 @@ class CharacterProfile3 extends FlxSpriteGroup
 		this.artifactList = getCharArtifactList();
 		artifactList.setPosition(cursor.x, cursor.y);
 		add(artifactList);
+
+		// render the dropZone
+		dropZone = new FlxSprite();
+		dropZone.makeGraphic(this.width, this.height, FlxColor.fromRBG(0, 0, 0, 100));
+		add(dropZone);
 	}
 }

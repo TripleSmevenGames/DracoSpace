@@ -15,8 +15,8 @@ class SkillSpriteHover extends FlxSpriteGroup
 	{
 		var group = new FlxSpriteGroup();
 
-		var lmbToPlay = ViewUtils.getClickToSomethingText(true, 'Play');
-		var rmbToAutoPlay = ViewUtils.getClickToSomethingText(false, 'Autopay');
+		var lmbToPlay = ViewUtils.getClickToSomethingText(true, 'Activate', 22);
+		var rmbToAutoPlay = ViewUtils.getClickToSomethingText(false, 'Autopay', 22);
 		rmbToAutoPlay.setPosition(0, lmbToPlay.height + 4);
 
 		var bgHeight = lmbToPlay.height * 2 + 8;

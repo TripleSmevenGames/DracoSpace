@@ -167,6 +167,7 @@ class BattleManager extends FlxBasic
 		{
 			char.targetArrow.visible = val;
 			char.targetArrow.alpha = .5;
+			char.tweenTargetArrow();
 		}
 	}
 
