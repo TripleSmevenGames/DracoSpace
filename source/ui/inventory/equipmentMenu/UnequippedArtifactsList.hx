@@ -10,15 +10,15 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.Player;
 import openfl.geom.Rectangle;
-import ui.artifact.ArtifactTileInv;
 import ui.SkillCard;
+import ui.artifact.ArtifactTileInv;
 import ui.skillTile.InventorySkillTile;
 import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
 
 /** Shows the player's unequipped skills in the Inventory menu. Centered on the body**/
-class UnequippedArtifacts extends FlxSpriteGroup
+class UnequippedArtifactsList extends FlxSpriteGroup
 {
 	public var artifactTiles:Array<ArtifactTileInv> = [];
 	public final bodyHeight = 120;

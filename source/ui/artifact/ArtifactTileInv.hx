@@ -23,5 +23,6 @@ class ArtifactTileInv extends ArtifactTile
 	{
 		super(artifact);
 		this.artifact = artifact;
+		this.addScaledToMouseManager();
 	}
 }

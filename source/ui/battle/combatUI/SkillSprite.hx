@@ -9,14 +9,11 @@ import flixel.input.mouse.FlxMouseButton.FlxMouseButtonID;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import managers.BattleManager;
 import managers.GameController;
 import models.cards.Card;
 import models.skills.Skill;
-import ui.TooltipLayer;
 import ui.battle.character.CharacterSprite;
 import ui.skillTile.SkillTile;
-import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
 
 using utils.ViewUtils;

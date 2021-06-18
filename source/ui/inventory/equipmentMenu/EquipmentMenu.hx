@@ -1,15 +1,15 @@
 package ui.inventory.equipmentMenu;
 
 import flixel.FlxG;
-import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxPoint;
 import flixel.system.FlxSound;
 import models.player.Player;
 import ui.artifact.ArtifactTile;
+import ui.artifact.ArtifactTileInv;
 import ui.battle.IndicatorIcon;
+import ui.inventory.equipmentMenu.DragLayer.DropZone;
 import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
@@ -19,12 +19,14 @@ class EquipmentMenu extends FlxSpriteGroup
 {
 	var profiles:Array<CharacterProfile3> = [];
 	var unequippedSkillsList:UnequippedSkillsList3;
-	var unequippedArtifacts:UnequippedArtifacts;
+	var unequippedArtifactsList:UnequippedArtifactsList;
 	var infoIcon:IndicatorIcon;
 
 	var equippedSkillTiles:Array<SkillTile> = [];
 	var unequippedSkillTiles:Array<SkillTile> = [];
 	var unequippedArtifactTiles:Array<ArtifactTile> = [];
+
+	var dragLayer:DragLayer;
 
 	var clickSound:FlxSound;
 	var headerHeight:Float;
@@ -85,6 +87,7 @@ class EquipmentMenu extends FlxSpriteGroup
 			profile.refresh();
 
 		unequippedSkillsList.refresh();
+		unequippedArtifactsList.refresh();
 
 		setupSkillTileHandlers();
 	}
@@ -100,12 +103,24 @@ class EquipmentMenu extends FlxSpriteGroup
 		for (i in 0...Player.chars.length)
 		{
 			var char = Player.chars[i];
-			var profile = new CharacterProfile3(char);
+
+			// this function runs when a tile (skill or artifact) is dragged onto the profile's DropZone sprite.
+			var onDrop = (sprite:FlxSprite) ->
+			{
+				if (Std.isOfType(sprite, ArtifactTileInv))
+				{
+					var casted:ArtifactTileInv = cast(sprite, ArtifactTileInv);
+					// equipArtifact already handles taking the artifact out of the Player's unequippedArtifact array.
+					char.equipArtifact(casted.artifact);
+					refresh();
+				}
+			}
+			var profile = new CharacterProfile3(char, onDrop);
 			profiles.push(profile);
 		}
 
 		unequippedSkillsList = new UnequippedSkillsList3();
-		unequippedArtifacts = new UnequippedArtifacts();
+		unequippedArtifactsList = new UnequippedArtifactsList();
 
 		// put the two profiles side by side under the header, in the middle of the screen.
 		// then put the unequipped list under it.
@@ -121,8 +136,8 @@ class EquipmentMenu extends FlxSpriteGroup
 		add(unequippedSkillsList);
 
 		unequippedY += unequippedSkillsList.height + 16;
-		unequippedArtifacts.setPosition(centerX, unequippedY);
-		add(unequippedArtifacts);
+		unequippedArtifactsList.setPosition(centerX, unequippedY);
+		add(unequippedArtifactsList);
 
 		// small help tooltip icon in the corner.
 		var infoText = 'Click on skills to equip or unequip them on your characters. '
@@ -134,5 +149,17 @@ class EquipmentMenu extends FlxSpriteGroup
 		infoIcon.registerTooltip();
 
 		setupSkillTileHandlers();
+
+		// Create the draglayer so we can start dragging artifacts around.
+		var draggables = new Array<FlxSprite>();
+		for (artifactTile in unequippedArtifactsList.artifactTiles)
+			draggables.push(artifactTile);
+
+		var dropZones = new Array<DropZone>();
+		for (profile in profiles)
+			dropZones.push(profile.dropZone);
+
+		this.dragLayer = new DragLayer(draggables, dropZones);
+		add(dragLayer);
 	}
 }

@@ -1,14 +1,11 @@
 package substates;
 
 import flixel.FlxG;
-import flixel.FlxObject;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
 import flixel.group.FlxSpriteGroup;
-import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
-import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import managers.GameController;
 import managers.SubStateManager;

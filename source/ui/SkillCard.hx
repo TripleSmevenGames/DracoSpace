@@ -8,7 +8,6 @@ import flixel.FlxSprite;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.skills.Skill;

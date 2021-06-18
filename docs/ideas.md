@@ -8,20 +8,25 @@
 * bomb -> make enemy on other side, destroy to deal damage to enemies.
 * enemy can add cards to your deck. When drawn, when in your hand, etc.
 
-* enemy gets stronger if you kill allies
-* kill allies to damage boss
-* switch modes character
-* mark
 * pets
 * weather + day/night
 * Poison level, enemies put poison on you. NPC gives antidote skill, 1 ANY -> remove poison.
 
-* Equip: if a character gains Block twice in a turn, gain Taunt.
 
 * Consumable: Gain Taunt and Dodge
 
-* 
+## Artifact Ideas:
+* if a character gains Block twice in a turn, gain Taunt.
+* When this character Dodges an attack, draw another card next turn.
 
+## Boss/Enemy Ideas:
+* enemy gets stronger if you kill allies
+* kill allies to damage boss
+* switch modes character
+* mark
+* play x skills each turn to weaken enemy
+* bomb -> make enemy on other side, destroy to deal damage to enemies.
+* enemy can add cards to your deck. When drawn, when in your hand, etc.
 
 **Focus**: (Status effect that doesn't stack). This character deals 50% more damage. Lose Focus if this character takes damage.
 1. Snipe: (2 AGI) => Deal 10 damage. Focus bonus is doubled here.

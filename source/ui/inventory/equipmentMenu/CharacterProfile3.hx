@@ -12,8 +12,10 @@ import flixel.util.FlxColor;
 import models.CharacterInfo;
 import models.player.Player;
 import ui.artifact.ArtifactTile;
+import ui.artifact.ArtifactTileInv;
 import ui.battle.character.CharacterSprite;
 import ui.header.CharacterDisplay.HpDisplay;
+import ui.inventory.equipmentMenu.DragLayer.DropZone;
 import ui.skillTile.InventorySkillTile;
 import ui.skillTile.SkillTile.SkillTileBlank;
 import ui.skillTile.SkillTile.SkillTileLocked;
@@ -22,7 +24,7 @@ import ui.skillTile.SkillTile;
 using utils.ViewUtils;
 
 /** A component showing the character's sprite, their HP, their equipped skills, and equipped artifacts. Not centered. **/
-class CharacterProfile3 extends FlxSpriteGroup implements IDropZone
+class CharacterProfile3 extends FlxSpriteGroup
 {
 	public var char:CharacterInfo;
 
@@ -34,7 +36,7 @@ class CharacterProfile3 extends FlxSpriteGroup implements IDropZone
 	var artifactList:FlxSprite;
 
 	/** A trigger zone for dropping artifacts and skills into, which will equip them onto the character. **/
-	var dropZone:FlxSprite;
+	public var dropZone:DropZone;
 
 	// not centered
 	function getCharHpSprite(fontSize:Int = 24)
@@ -177,7 +179,7 @@ class CharacterProfile3 extends FlxSpriteGroup implements IDropZone
 		artifactList.setPosition(xPos, yPos);
 	}
 
-	public function new(char:CharacterInfo)
+	public function new(char:CharacterInfo, onDrop:FlxSprite->Void)
 	{
 		super();
 		this.char = char;
@@ -219,8 +221,7 @@ class CharacterProfile3 extends FlxSpriteGroup implements IDropZone
 		add(artifactList);
 
 		// render the dropZone
-		dropZone = new FlxSprite();
-		dropZone.makeGraphic(this.width, this.height, FlxColor.fromRBG(0, 0, 0, 100));
+		dropZone = new DropZone(onDrop, this.width, this.height);
 		add(dropZone);
 	}
 }

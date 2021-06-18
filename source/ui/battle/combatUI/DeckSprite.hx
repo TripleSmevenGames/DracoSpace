@@ -4,7 +4,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxPoint;
 import flixel.util.FlxColor;
 import managers.BattleManager;
 import managers.GameController;
@@ -13,9 +12,9 @@ import models.cards.Card;
 import models.player.Deck;
 import models.skills.Skill.SkillPointCombination;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.SkillSprite;
 import ui.buttons.BasicWhiteButton;
 import utils.battleManagerUtils.BattleContext;
-import ui.battle.combatUI.SkillSprite;
 
 using utils.ViewUtils;
 
@@ -300,14 +299,21 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			this.hiddenCards = deck.hiddenCards;
 		}
 
-		var cursor = new FlxPoint(0, 0);
+		var cursorX:Float = 0;
+		var cursorY:Float = 0;
 		// for the enemy UI, the stuff is rendered the opposite way, so we have to subtract instead of add
 		var addToCursor = (x:Float, y:Float) ->
 		{
 			if (type == ENEMY)
-				cursor.add(-x, y);
+			{
+				cursorX -= x;
+				cursorY += y;
+			}
 			else
-				cursor.add(x, y);
+			{
+				cursorX += x;
+				cursorY += y;
+			}
 		};
 
 		// all these are centered
@@ -317,14 +323,14 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		// alright, time to meticulously position everything
 		addToCursor(drawPile.width / 2, -drawPile.height / 2);
-		drawPile.setPosition(cursor.x, cursor.y);
+		drawPile.setPosition(cursorX, cursorY);
 		addToCursor(0, discardPile.height);
-		discardPile.setPosition(cursor.x, cursor.y);
+		discardPile.setPosition(cursorX, cursorY);
 
-		cursor.x = 0;
-		cursor.y = 0;
+		cursorX = 0;
+		cursorY = 0;
 		addToCursor(drawPile.width + hand.width / 2, 0);
-		hand.setPosition(cursor.x, cursor.y);
+		hand.setPosition(cursorX, cursorY);
 
 		addToCursor(hand.width / 2 + 30, hand.height / 2 - 30); // 30 is approx half of avatar after scaling
 
@@ -332,7 +338,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.skillLists = getSkillLists();
 		for (skillList in skillLists)
 		{
-			skillList.setPosition(cursor.x, cursor.y);
+			skillList.setPosition(cursorX, cursorY);
 			add(skillList);
 			addToCursor(0, -(skillList.height - 16));
 		}
