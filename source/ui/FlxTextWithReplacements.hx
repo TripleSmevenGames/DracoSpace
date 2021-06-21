@@ -3,7 +3,6 @@ package ui;
 import constants.Fonts;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import models.skills.Skill.SkillPointType;
 import ui.battle.status.Status.StatusType;
@@ -119,7 +118,7 @@ class FlxTextWithReplacements extends FlxSpriteGroup
 	{
 		forEach((sprite:FlxSprite) -> remove(sprite));
 		var text = input.split(' ');
-		var cursor = new FlxPoint();
+		var cursor:Coords = {x: 0, y: 0};
 		var lineheight = options.fontSize * options.lineHeightMultiplier;
 
 		for (word in text)

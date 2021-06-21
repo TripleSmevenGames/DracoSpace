@@ -1,5 +1,6 @@
 package substates;
 
+import ui.battle.combatUI.BattleHeader;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -37,13 +38,14 @@ class BattleView extends FlxSpriteGroup
 	var playerChars:Array<CharacterSprite>;
 	var enemyDeckSprite:DeckSprite;
 	var enemyChars:Array<CharacterSprite>;
-
-	var enemySpots:Array<FlxPoint>;
+	var enemySpots:Array<Coords>;
 
 	/** This is the sprite that shows at the top of the view. 
 	 * It might say something like "PLAYER TURN: SELECT TARGET" or something.
 	**/
 	var battleTitleText:FlxText;
+
+	var battleHeader:BattleHeader;
 
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
@@ -51,6 +53,7 @@ class BattleView extends FlxSpriteGroup
 	final PLAYER_X = FlxG.width * (1 / 4);
 	final ENEMY_X = FlxG.width * (3 / 4);
 
+	// make this use ViewUtil's Coords type instead (FlxPoint supposedly has bloat)
 	function calculateEnemySpots(eChars:Array<CharacterSprite>, spots:Int):Array<FlxPoint>
 	{
 		// find the largest size we have to accomadate
@@ -83,8 +86,12 @@ class BattleView extends FlxSpriteGroup
 		background.centerSprite(FlxG.width / 2, FlxG.height / 2);
 		add(background);
 
+		// add the battle header at the very top
+		this.battleHeader = new BattleHeader();
+		add(battleHeader);
+
 		// create the characters and the deck, but only add the deck first.
-		playerChars = [];
+		this.playerChars = [];
 		for (charInfo in Player.chars)
 		{
 			// make sure the char isnt dead.
@@ -95,7 +102,7 @@ class BattleView extends FlxSpriteGroup
 		playerDeckSprite = new DeckSprite(50, FlxG.height - 120, Player.deck, PLAYER, playerChars);
 		add(playerDeckSprite);
 
-		enemyChars = [];
+		this.enemyChars = [];
 		for (charInfo in event.enemies)
 			enemyChars.push(new CharacterSprite(charInfo));
 
@@ -120,7 +127,7 @@ class BattleView extends FlxSpriteGroup
 		// calculate the spots where enemies can spawn.
 		// Normally if there are x enemies, we calculate x spots.
 		// But some battles might spawn more enemies, so we have to calculate those additional spots ahead of time.
-		var enemySpots = calculateEnemySpots(enemyChars, event.additionalSpots);
+		// var enemySpots = calculateEnemySpots(enemyChars, event.additionalSpots);
 
 		// render the enemy chars
 		for (i in 0...enemyChars.length)

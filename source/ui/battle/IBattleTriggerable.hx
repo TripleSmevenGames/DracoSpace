@@ -4,7 +4,9 @@ import ui.battle.character.CharacterSprite;
 import utils.battleManagerUtils.BattleContext;
 import ui.battle.combatUI.SkillSprite;
 
-/** Can be triggered when certain things happen in battle **/
+/** Can be triggered when certain things happen in battle.
+ * INHERITS from ITurnTriggerable
+**/
 interface IBattleTriggerable extends ITurnTriggerable
 {
 	/** dont modify damage here
@@ -26,4 +28,5 @@ interface IBattleTriggerable extends ITurnTriggerable
 	function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext):Void;
 
 	function onDead(context:BattleContext):Void;
+	// function onBattleStart(context:BattleContext):Void;
 }

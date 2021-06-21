@@ -15,6 +15,10 @@
 
 * Consumable: Gain Taunt and Dodge
 
+## Skill ideas:
+* Gain x equal to damage dealt.
+* Boss: "Jolt" your skills. If you play them, take damage (or maybe he gains stacks). Blue lightning for knowledge
+
 ## Artifact Ideas:
 * if a character gains Block twice in a turn, gain Taunt.
 * When this character Dodges an attack, draw another card next turn.

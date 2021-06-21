@@ -6,7 +6,6 @@ import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxPoint;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.CharacterInfo;
@@ -16,8 +15,8 @@ import ui.artifact.ArtifactTileInv;
 import ui.battle.character.CharacterSprite;
 import ui.header.CharacterDisplay.HpDisplay;
 import ui.inventory.equipmentMenu.DragLayer.DropZone;
-import ui.skillTile.InventorySkillTile;
-import ui.skillTile.SkillTile.SkillTileBlank;
+import ui.skillTile.SkillTileInv;
+import ui.skillTile.SkillTile.TileBlank;
 import ui.skillTile.SkillTile.SkillTileLocked;
 import ui.skillTile.SkillTile;
 
@@ -73,14 +72,14 @@ class CharacterProfile3 extends FlxSpriteGroup
 
 			if (i < numSkills)
 			{
-				var skillTile = new InventorySkillTile(char.skills[i], 'Unequip');
+				var skillTile = new SkillTileInv(char.skills[i], 'Unequip');
 				tiles.push(skillTile);
 				skillTiles.push(skillTile);
 				skillTile.setupHover(INV);
 			}
 			else if (i >= numSkills && i < numSkills + numOpen)
 			{
-				var blankSkillTile = new SkillTileBlank();
+				var blankSkillTile = new TileBlank();
 				tiles.push(blankSkillTile);
 			}
 			else
@@ -113,35 +112,27 @@ class CharacterProfile3 extends FlxSpriteGroup
 		titleText.setFormat(Fonts.STANDARD_FONT, fontSize, FlxColor.WHITE);
 		group.add(titleText);
 
-		// create the tiles. There are artifact tiles and open slot tiles.
-		var tiles = new Array<FlxSprite>();
+		// create and place the tiles. There are artifact tiles and open slot tiles.
 		final slots = Player.MAX_ARTIFACT_SLOTS;
+		var numArtifacts = char.artifacts.length;
 		for (i in 0...slots)
 		{
-			var numArtifacts = char.artifacts.length;
+			var blankSkillTile = new TileBlank(); // the blank artifact slot is the same as the blank skill slot :)
+			var coords = blankSkillTile.getCoordsForPlacingInGrid(3, i, 4);
+			blankSkillTile.setPosition(coords.x + titleText.width, coords.y);
+
+			group.add(blankSkillTile);
 
 			if (i < numArtifacts)
 			{
-				var skillTile = new InventorySkillTile(char.skills[i], 'Unequip');
-				tiles.push(skillTile);
-				skillTiles.push(skillTile);
-				skillTile.setupHover(INV);
-			}
-			else
-			{
-				var blankSkillTile = new SkillTileBlank(); // the blank artifact slot is the same as the blank skill slot :)
-				tiles.push(blankSkillTile);
-			}
-		}
+				var artifactTile = new ArtifactTileInv(char.artifacts[i]);
+				artifactTiles.push(artifactTile);
+				var coords = artifactTile.getCoordsForPlacingInGrid(3, i, 4);
+				artifactTile.setPosition(coords.x + titleText.width, coords.y);
+				artifactTile.setupHover();
 
-		// put the tiles in a 1x3 grid.
-		for (i in 0...tiles.length)
-		{
-			var tile = tiles[i];
-			var coords = tile.getCoordsForPlacingInGrid(3, i, 4);
-			tile.setPosition(coords.x + titleText.width, coords.y);
-
-			group.add(tile);
+				group.add(artifactTile);
+			}
 		}
 
 		return group;
@@ -184,6 +175,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		super();
 		this.char = char;
 		this.skillTiles = [];
+		this.artifactTiles = [];
 
 		// create a grey-ish background for the character's sprite.
 		var background = new FlxSprite();
@@ -205,7 +197,7 @@ class CharacterProfile3 extends FlxSpriteGroup
 		add(charName);
 
 		// render the char's stats. Their hp, skills, and items
-		var cursor = new FlxPoint(background.width + 4, 0);
+		var cursor:Coords = {x: background.width + 4, y: 0};
 		var charHpSprite = getCharHpSprite();
 		charHpSprite.setPosition(cursor.x, cursor.y);
 		add(charHpSprite);

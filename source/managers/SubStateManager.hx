@@ -108,7 +108,10 @@ class SubStateManager
 			openInventory(screen);
 	}
 
-	/** Fade out, clean up ALL substates, open the map substate, then fade back in.**/
+	/** Fade out, clean up ALL substates, open the map substate, then fade back in. Nothing
+	 * bad happens if returnToMap() is repeatedly called, I think because camera.fade() is
+	 * handling it.
+	**/
 	public function returnToMap()
 	{
 		var onFadeComplete = () ->

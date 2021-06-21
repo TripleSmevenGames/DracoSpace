@@ -12,7 +12,7 @@ import models.skills.Skill;
 using utils.ViewUtils;
 
 /** A modified SkillTile to include a hover effect. Appears in the inventory. **/
-class InventorySkillTile extends SkillTile
+class SkillTileInv extends SkillTile
 {
 	public function new(skill:Skill, equipCoverText = '')
 	{

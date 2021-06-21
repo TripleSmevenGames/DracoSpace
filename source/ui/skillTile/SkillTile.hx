@@ -78,7 +78,7 @@ class SkillTile extends FlxSpriteGroup
 	}
 }
 
-class SkillTileBlank extends FlxSpriteGroup
+class TileBlank extends FlxSpriteGroup
 {
 	public function new(centered:Bool = true)
 	{

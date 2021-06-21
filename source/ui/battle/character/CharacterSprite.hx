@@ -1,5 +1,7 @@
 package ui.battle.character;
 
+import ui.battle.combatUI.BattleHeader.CharArtifacts;
+import ui.artifact.ArtifactTileBattle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -31,10 +33,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public var info:CharacterInfo;
 	public var maxHp:Int;
 	public var currHp(default, set):Int;
+	public var dead(default, set):Bool = false;
 	public var currBlock(default, set):Int;
 	public var skillSprites:Array<SkillSprite> = new Array<SkillSprite>();
 	public var skillsPlayedThisTurn:Int = 0;
-	public var dead(default, set):Bool = false;
+
+	// reference to this char's equipped artifact tiles, which the Battle Header will create.
+	public var artifacts:CharArtifacts;
 
 	var mouseOverCallbacks:Array<FlxSprite->Void> = [];
 	var mouseOutCallbacks:Array<FlxSprite->Void> = [];

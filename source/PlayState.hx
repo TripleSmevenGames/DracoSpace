@@ -63,7 +63,7 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float)
 	{
-		if (FlxG.keys.anyPressed([ESCAPE]))
+		if (FlxG.keys.anyPressed([F1]))
 			FlxG.switchState(new MenuState());
 
 		#if desktop

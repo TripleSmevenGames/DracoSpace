@@ -7,7 +7,7 @@ import flixel.group.FlxSpriteGroup;
 import ui.battle.combatUI.SkillSprite;
 
 /** Represents what you see when you hover over a SkillSprite.
- * Really just a SkillCard and button hints. Centered on SkillCard.
+ * Really just a SkillCard and button hints section. Centered on SkillCard.
 **/
 class SkillSpriteHover extends FlxSpriteGroup
 {
@@ -17,7 +17,7 @@ class SkillSpriteHover extends FlxSpriteGroup
 
 		var lmbToPlay = ViewUtils.getClickToSomethingText(true, 'Activate', 22);
 		var rmbToAutoPlay = ViewUtils.getClickToSomethingText(false, 'Autopay', 22);
-		rmbToAutoPlay.setPosition(0, lmbToPlay.height + 4);
+		rmbToAutoPlay.setPosition(0, lmbToPlay.height);
 
 		var bgHeight = lmbToPlay.height * 2 + 8;
 		var bgWidth = rmbToAutoPlay.width + 16;

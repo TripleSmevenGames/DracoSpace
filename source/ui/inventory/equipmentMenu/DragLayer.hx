@@ -9,19 +9,27 @@ import flixel.util.FlxColor;
 import ui.artifact.ArtifactTile;
 
 /** A trigger zone which is used by the DragLayer. Pass in a callback which DragLayer will call when a draggable is dropped into it.
- * T is the thing that is being dragged. E.g. ArtifactTileInv
+ * Not centered.
 **/
-class DropZone extends FlxSprite
+class DropZone extends FlxSpriteGroup
 {
-	/** Reference to some parent**/
-	public var parent:FlxSprite;
-
 	public var onDrop:FlxSprite->Void;
+
+	// The actualy "trigger zone"
+	var body:FlxSprite;
+
+	// some sprites/text to render, telling the player what will happen if a draggable is dropped here
+	// e.g. "Equip Artifact"
+	var messageSprite:FlxSpriteGroup;
 
 	public function isInZone(sprite:FlxSprite):Bool
 	{
-		return sprite.overlaps(this);
+		return sprite.overlaps(body);
 	}
+
+	public function showMessage() {}
+
+	public function hideMessage() {}
 
 	/** Make a drop zone with w width and h height. **/
 	public function new(onDrop:FlxSprite->Void, w:Float, h:Float)
@@ -29,7 +37,9 @@ class DropZone extends FlxSprite
 		super();
 		this.onDrop = onDrop;
 
-		this.makeGraphic(Std.int(w), Std.int(h), FlxColor.fromRGB(0, 0, 0, 50));
+		this.body = new FlxSprite();
+		body.makeGraphic(Std.int(w), Std.int(h), FlxColor.fromRGB(0, 0, 0, 100));
+		add(body);
 	}
 }
 
@@ -52,12 +62,19 @@ class DragLayer extends FlxSpriteGroup
 		currentlyDraggingOriginalPosX = draggable.x;
 		currentlyDraggingOriginalPosY = draggable.y;
 		currentlyDragging = draggable;
+
+		// add the draggable to the DragLayer, which will make it appear above
+		// other flx sprite groups.
+		add(currentlyDragging);
 	}
 
 	function onDraggableMouseUp(draggable:FlxSprite)
 	{
 		if (currentlyDragging == null)
 			return;
+
+		// remove it from the group.
+		remove(currentlyDragging);
 
 		var droppedInZone = false;
 		for (dropZone in dropZones)
@@ -66,10 +83,11 @@ class DragLayer extends FlxSpriteGroup
 			{
 				dropZone.onDrop(draggable);
 				droppedInZone = true;
+				break;
 			}
 		}
 
-		// return the draggable back to its original position
+		// return the draggable back to its original position if we didnt drop it in a zone.
 		if (!droppedInZone)
 			draggable.setPosition(currentlyDraggingOriginalPosX, currentlyDraggingOriginalPosY);
 

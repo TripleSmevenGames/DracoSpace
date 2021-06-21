@@ -101,8 +101,13 @@ class CharacterInfo
 		if (artifacts.length >= Player.MAX_ARTIFACT_SLOTS)
 			return;
 
-		this.artifacts.push(artifact);
+		// remove it from the unequipped list if its there
 		Player.inventory.unequippedArtifacts.remove(artifact);
+		// remove it from all players too
+		for (chars in Player.chars)
+			chars.artifacts.remove(artifact);
+
+		this.artifacts.push(artifact);
 		artifact.ownerInfo = this;
 	}
 

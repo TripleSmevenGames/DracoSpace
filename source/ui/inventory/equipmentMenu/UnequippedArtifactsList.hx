@@ -1,18 +1,15 @@
 package ui.inventory.equipmentMenu;
 
+import ui.inventory.equipmentMenu.DragLayer.DropZone;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxG;
 import flixel.FlxSprite;
-import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.Player;
-import openfl.geom.Rectangle;
-import ui.SkillCard;
 import ui.artifact.ArtifactTileInv;
-import ui.skillTile.InventorySkillTile;
 import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
@@ -25,14 +22,14 @@ class UnequippedArtifactsList extends FlxSpriteGroup
 	public final bodyWidth = 600; // about 10 tiles?
 
 	// save the blank tiles so we can reuse them when we refresh
-	var blankTiles:Array<SkillTileBlank> = [];
+	var blankTiles:Array<TileBlank> = [];
 
 	var body:FlxSprite;
 
 	/** A trigger zone for dropping artifacts and skills into, which will unequip them. 
 	 * The parent of this component will control that.
 	**/
-	public var mouseZone:FlxSprite;
+	public var dropZone:DropZone;
 
 	/** rerender the list to show the current unequipped skills.
 	 * Because we are removing the old tiles and calling setupHover() on the new tiles
@@ -63,6 +60,13 @@ class UnequippedArtifactsList extends FlxSpriteGroup
 		var yPos = body.height / 2 - 40;
 		for (i in 0...maxTiles)
 		{
+			// first, render a blank tile
+			var blankTile = blankTiles[i]; // take a blank tile from the store
+			var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, blankTile.width, 4);
+			blankTile.setPosition(xPos, yPos);
+			add(blankTile);
+
+			// then, if we have an artifact, render the artifact ontop of that blank tile.
 			if (i < numArtifacts)
 			{
 				var artifact = Player.inventory.unequippedArtifacts[i];
@@ -73,17 +77,10 @@ class UnequippedArtifactsList extends FlxSpriteGroup
 				add(artifactTile);
 				artifactTile.setupHover();
 			}
-			else
-			{
-				var blankTile = blankTiles[i]; // take a blank tile from the store
-				var xPos = ViewUtils.getXCoordForCenteringLR(i, maxTiles, blankTile.width, 4);
-				blankTile.setPosition(xPos, yPos);
-				add(blankTile);
-			}
 		}
 	}
 
-	public function new()
+	public function new(onDrop:FlxSprite->Void)
 	{
 		super();
 
@@ -100,9 +97,13 @@ class UnequippedArtifactsList extends FlxSpriteGroup
 		// create the store of blank tiles to use.
 		for (i in 0...Player.MAX_UNEQUIPPED_ARTIFACTS)
 		{
-			var blankTile = new SkillTileBlank();
+			var blankTile = new TileBlank();
 			blankTiles.push(blankTile);
 		}
+
+		dropZone = new DropZone(onDrop, body.width, body.height);
+		dropZone.centerSprite();
+		add(dropZone);
 
 		// call this to initially render the unequipped artifact tiles.
 		refresh();

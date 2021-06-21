@@ -94,8 +94,7 @@ class CharacterDisplay extends FlxSpriteGroup
 		this.char = char;
 
 		var avatar = new FlxSprite(0, 0, char.avatarPath);
-		avatar.scale.set(3, 3);
-		avatar.updateHitbox();
+		avatar.scale3x();
 		avatar.centerSprite();
 
 		hpDisplay = new HpDisplay(char.currHp, char.maxHp);

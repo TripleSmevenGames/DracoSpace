@@ -7,7 +7,6 @@ import flixel.addons.display.FlxNestedSprite;
 import flixel.addons.ui.FlxUI9SliceSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
-import flixel.math.FlxPoint;
 import flixel.system.FlxAssets.FlxGraphicAsset;
 import flixel.text.FlxText;
 import flixel.tweens.FlxEase;
@@ -19,6 +18,12 @@ import openfl.geom.Rectangle;
 import ui.battle.status.Status.StatusType;
 
 using utils.ViewUtils;
+
+typedef Coords =
+{
+	x:Float,
+	y:Float
+}
 
 // utils for handling sprites and views.
 class ViewUtils
@@ -185,16 +190,15 @@ class ViewUtils
 	}
 
 	/** Helper function to get CENTERED sprites into a grid formation, where we assume 0 is the top left corner of the grid.
-	 * Returns an FlxPoint
 	 * Use inside a loop (hence the i param)
 	**/
-	public static function getCoordsForPlacingInGrid(sprite:FlxSprite, spritesPerRow:Int, i:Int, paddingX:Int = 0, paddingY:Int = 0)
+	public static function getCoordsForPlacingInGrid(sprite:FlxSprite, spritesPerRow:Int, i:Int, paddingX:Int = 0, paddingY:Int = 0):Coords
 	{
 		var widthWithPadding = sprite.width + paddingX;
 		var heightWithPadding = sprite.height + paddingY;
 		var xPos = ((i % spritesPerRow) * widthWithPadding) + (widthWithPadding / 2);
 		var yPos = heightWithPadding / 2 + (widthWithPadding * Math.floor(i / spritesPerRow));
-		return new FlxPoint(xPos, yPos);
+		return {x: xPos, y: yPos};
 	}
 
 	public static function newSlice9(assetPath:FlxGraphicAsset, w:Float, h:Float, slice9Array:Array<Int>)

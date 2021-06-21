@@ -79,7 +79,36 @@ class EquipmentMenu extends FlxSpriteGroup
 		}
 	}
 
-	// maybe slow
+	/** Make sure this is called after the unequippedList components are rendered. **/
+	function setupDragLayer()
+	{
+		// setup all the draggales
+		var draggables = new Array<FlxSprite>();
+		for (artifactTile in unequippedArtifactsList.artifactTiles)
+			draggables.push(artifactTile);
+		for (profile in profiles)
+		{
+			for (artifactTile in profile.artifactTiles)
+				draggables.push(artifactTile);
+		}
+
+		// get the dropzones from the char profiles
+		var dropZones = new Array<DropZone>();
+		for (profile in profiles)
+			dropZones.push(profile.dropZone);
+		dropZones.push(unequippedArtifactsList.dropZone);
+
+		// remove the previous dragLayer if exists
+		if (dragLayer != null)
+			remove(this.dragLayer);
+
+		this.dragLayer = new DragLayer(draggables, dropZones);
+		add(this.dragLayer);
+	}
+
+	// maybe slow? Lots of rerendering.
+	// Could maybe save CPU by saving all "tiles" and just rearranging them accordingly,
+	// instead of recreating them according to the Player state every time.
 	// call this when the Player's data changes, so the view can reflect the current state.
 	public function refresh()
 	{
@@ -90,6 +119,7 @@ class EquipmentMenu extends FlxSpriteGroup
 		unequippedArtifactsList.refresh();
 
 		setupSkillTileHandlers();
+		setupDragLayer();
 	}
 
 	public function new(headerHeight:Float)
@@ -98,7 +128,7 @@ class EquipmentMenu extends FlxSpriteGroup
 		this.clickSound = FlxG.sound.load(AssetPaths.pickCard1__wav);
 		this.headerHeight = headerHeight;
 
-		// make all the elements first.
+		// make the 2 character profiles first first.
 		profiles = [];
 		for (i in 0...Player.chars.length)
 		{
@@ -120,7 +150,21 @@ class EquipmentMenu extends FlxSpriteGroup
 		}
 
 		unequippedSkillsList = new UnequippedSkillsList3();
-		unequippedArtifactsList = new UnequippedArtifactsList();
+
+		// this function runs when a tile (skill or artifact) is dragged onto the list's DropZone sprite.
+		var unequippedArtifactonDrop = (sprite:FlxSprite) ->
+		{
+			if (Std.isOfType(sprite, ArtifactTileInv))
+			{
+				var casted:ArtifactTileInv = cast(sprite, ArtifactTileInv);
+				var owner = casted.artifact.ownerInfo;
+				if (owner != null)
+					owner.unequipArtifact(casted.artifact);
+
+				refresh();
+			}
+		}
+		unequippedArtifactsList = new UnequippedArtifactsList(unequippedArtifactonDrop);
 
 		// put the two profiles side by side under the header, in the middle of the screen.
 		// then put the unequipped list under it.
@@ -150,16 +194,6 @@ class EquipmentMenu extends FlxSpriteGroup
 
 		setupSkillTileHandlers();
 
-		// Create the draglayer so we can start dragging artifacts around.
-		var draggables = new Array<FlxSprite>();
-		for (artifactTile in unequippedArtifactsList.artifactTiles)
-			draggables.push(artifactTile);
-
-		var dropZones = new Array<DropZone>();
-		for (profile in profiles)
-			dropZones.push(profile.dropZone);
-
-		this.dragLayer = new DragLayer(draggables, dropZones);
-		add(dragLayer);
+		setupDragLayer();
 	}
 }

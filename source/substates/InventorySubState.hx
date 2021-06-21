@@ -150,4 +150,12 @@ class InventorySubState extends FlxSubState
 		toggleButton.centerSprite(FlxG.width - 200, FlxG.height - 100);
 		add(toggleButton);
 	}
+
+	override public function update(elapsed:Float)
+	{
+		super.update(elapsed);
+
+		if (FlxG.keys.justPressed.ESCAPE)
+			GameController.subStateManager.toggleInventory();
+	}
 }
