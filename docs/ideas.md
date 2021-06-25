@@ -31,6 +31,13 @@
 * play x skills each turn to weaken enemy
 * bomb -> make enemy on other side, destroy to deal damage to enemies.
 * enemy can add cards to your deck. When drawn, when in your hand, etc.
+* lose-lose mechanics: the shroog mom from griftlands, the pig monster from darkest dungeon
+
+## Event ideas
+* choose between maxHP or heal
+* artifact or upgrade skill slot
+* upgrade change deck
+* upgrade a skill to random card in next rarity
 
 **Focus**: (Status effect that doesn't stack). This character deals 50% more damage. Lose Focus if this character takes damage.
 1. Snipe: (2 AGI) => Deal 10 damage. Focus bonus is doubled here.
