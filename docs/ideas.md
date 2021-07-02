@@ -22,6 +22,8 @@
 ## Artifact Ideas:
 * if a character gains Block twice in a turn, gain Taunt.
 * When this character Dodges an attack, draw another card next turn.
+* When you kill an enemy...do/gain x
+* For each enemy...
 
 ## Boss/Enemy Ideas:
 * enemy gets stronger if you kill allies
@@ -32,6 +34,8 @@
 * bomb -> make enemy on other side, destroy to deal damage to enemies.
 * enemy can add cards to your deck. When drawn, when in your hand, etc.
 * lose-lose mechanics: the shroog mom from griftlands, the pig monster from darkest dungeon
+* when it's creature is attacked, draw and discard a card. many diff skills.
+* For each ally...deal x damage, gain x block
 
 ## Event ideas
 * choose between maxHP or heal

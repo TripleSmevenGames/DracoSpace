@@ -21,6 +21,8 @@ class PlayState extends FlxState
 	var bmIndicator:BMIndicator;
 	#end
 
+	var originalVolume:Float = .4;
+
 	override public function create()
 	{
 		super.create();
@@ -53,7 +55,7 @@ class PlayState extends FlxState
 		FlxG.camera.minScrollY = 0;
 		// FlxG.camera.maxScrollY = 1000;
 
-		FlxG.sound.volume = .4;
+		FlxG.sound.volume = originalVolume;
 
 		#if debug
 		memIndicator = new MemIndicator();
@@ -63,8 +65,23 @@ class PlayState extends FlxState
 
 	override public function update(elapsed:Float)
 	{
+		// so when the user presses F1, go back to the menu
 		if (FlxG.keys.anyPressed([F1]))
 			FlxG.switchState(new MenuState());
+
+		// press M to mute or unmute the music
+		if (FlxG.keys.justPressed.M)
+		{
+			if (FlxG.sound.volume == 0)
+			{
+				FlxG.sound.volume = originalVolume;
+			}
+			else
+			{
+				originalVolume = FlxG.sound.volume;
+				FlxG.sound.volume = 0;
+			}
+		}
 
 		#if desktop
 		if (FlxG.keys.justPressed.P)
