@@ -49,6 +49,7 @@ class BattleEventFactory
 
 	public static function getNextBattleEvent():BattleEvent
 	{
+		return bush();
 		var retVal:BattleEvent;
 		if (Player.battlesFought < 4 || Player.getColumn() < 4)
 		{
@@ -396,6 +397,7 @@ class BattleEventFactory
 		var bush = CharacterInfo.createEnemy('Bush Lion', spriteSheetInfo, 20, skills);
 		bush.avatarPath = AssetPaths.SlimeAvatar__png;
 		bush.soundType = PLANT;
+		bush.initialStatuses = [REGENERATE];
 		return bush;
 	}
 

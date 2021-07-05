@@ -30,5 +30,6 @@ class StatusMap
 		MINUSDRAW => (owner:CharacterSprite, initialStacks:Int = 1) -> new MinusDraw(owner, initialStacks),
 		WOUNDED => (owner:CharacterSprite, initialStacks:Int = 1) -> new WoundedStatus(owner, initialStacks),
 		WEAK => (owner:CharacterSprite, initialStacks:Int = 1) -> new WeakStatus(owner, initialStacks),
+		REGENERATE => (owner:CharacterSprite, initialStacks:Int = 1) -> new RegenerateStatus(owner, initialStacks),
 	];
 }
