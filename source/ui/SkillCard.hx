@@ -14,6 +14,7 @@ import models.skills.Skill;
 import ui.FlxTextWithReplacements;
 import ui.inventory.shopMenu.SkillShop.SkillShopChoiceCover;
 import ui.skillTile.SkillTile;
+import Castle;
 
 using utils.ViewUtils;
 
@@ -62,7 +63,7 @@ class SkillCard extends FlxSpriteGroup
 		add(frame);
 
 		// add the title. centered, so just place it in the middle near the top of the card
-		var skillCardTitle = new SkillCardTitle(skill.name, body.width - 16);
+		var skillCardTitle = new SkillCardTitle(skill.name, body.width - 16, skill.rarity);
 		skillCardTitle.setPosition(0, -body.height / 2 + skillCardTitle.height / 2 + 8);
 		add(skillCardTitle);
 
@@ -136,13 +137,23 @@ class SkillCard extends FlxSpriteGroup
 /** The title part of a skill card. Including the text itself and the background. Centered **/
 class SkillCardTitle extends FlxSpriteGroup
 {
-	public function new(titleString:String, width:Float)
+	public function new(titleString:String, width:Float, rarity:SkillData_skills_rarity)
 	{
 		super();
 		var title = new FlxText(0, 0, 0, titleString);
 		var fontSize = titleString.length > 16 ? UIMeasurements.BATTLE_UI_FONT_SIZE_LG - 2 : UIMeasurements.BATTLE_UI_FONT_SIZE_LG;
 		title.setFormat(Fonts.STANDARD_FONT, fontSize);
-		var background = ViewUtils.newSlice9(AssetPaths.skillCardTitle__png, width, title.height + 4, [15, 15, 32, 32]);
+		// var background = ViewUtils.newSlice9(AssetPaths.skillCardTitle__png, width, title.height + 4, [15, 15, 32, 32]);
+		var backgroundpng = AssetPaths.skillCardTitle__png;
+		if (rarity == COMMON)
+			backgroundpng = AssetPaths.skillCardTitle__png;
+		else if (rarity == UNCOMMON)
+			backgroundpng = AssetPaths.skillCardTitleUncommon__png;
+		else if (rarity == RARE)
+			backgroundpng = AssetPaths.skillCardTitleRare__png;
+
+		var background = ViewUtils.newSlice9(backgroundpng, width, title.height + 4, [15, 15, 32, 32]);
+
 		background.centerSprite();
 		// the title is slightly off center, so just bump it upwards a teeny bit.
 		title.centerSprite(0, -2);

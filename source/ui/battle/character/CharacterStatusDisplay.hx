@@ -73,7 +73,11 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerabl
 		}
 
 		// if not, then add it as a new status.
-		var status = StatusMap.map.get(type)(this.owner, stacks);
+
+		var statusfunction = StatusMap.map.get(type);
+		if (statusfunction == null)
+			return;
+		var status = statusfunction(this.owner, stacks);
 		if (status != null)
 		{
 			statuses.push(status);

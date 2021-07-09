@@ -51,6 +51,7 @@ class CharacterInfo
 	public var numSkillSlots:Int = 1; // for Player chars only
 	public var artifacts:Array<Artifact> = []; // for Player chars only. Capped by Player.MAX_ARTIFACT_SLOTS
 
+	/**An array of Status that this character will start the battle with **/
 	public var initialStatuses:Array<StatusType> = [];
 
 	static var sf = SkillFactory;

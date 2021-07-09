@@ -35,6 +35,7 @@ enum StatusType
 	WOUNDED;
 	WEAK;
 	HIDEBREAKER;
+	REGENERATE;
 }
 
 class Status extends FlxSpriteGroup implements IBattleTriggerable
