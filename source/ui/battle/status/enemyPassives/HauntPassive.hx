@@ -1,11 +1,8 @@
 package ui.battle.status.enemyPassives;
 
-import flixel.math.FlxRandom;
-import managers.BattleManager;
 import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class HauntPassive extends Status
@@ -23,14 +20,14 @@ class HauntPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 2)
 	{
-		type = HAUNT;
-		name = 'Haunt';
-		var desc = 'When ${owner.info.name} dies, all its enemies gain ${initialStacks} Exposed.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var info:StatusInfo = {
+			type: HAUNT,
+			name: 'Haunt',
+			desc: 'When ${owner.info.name} dies, all its enemies gain ${initialStacks} Exposed.',
+			iconPath: AssetPaths.AttackDown__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

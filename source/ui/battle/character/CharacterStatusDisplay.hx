@@ -24,7 +24,7 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerabl
 		{
 			var status = statuses[i];
 			remove(status); // remove the status so that we can set its local coords.
-			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.icon.width + 4);
+			status.x = ViewUtils.getXCoordForCenteringLR(i, statuses.length, status.icon.width);
 			status.y = 0;
 			add(status);
 			status.registerTooltip();

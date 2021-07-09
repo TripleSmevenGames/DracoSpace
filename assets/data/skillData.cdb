@@ -476,8 +476,8 @@
 							"chargesPerCD": 1
 						},
 						{
-							"id": "matchMovement",
-							"name": "Match Movement",
+							"id": "reactiveArmor",
+							"name": "Reactive Armor",
 							"desc": "Gain $x Counter. Next turn, gain $x2 Counter.",
 							"rarity": 2,
 							"costs": [

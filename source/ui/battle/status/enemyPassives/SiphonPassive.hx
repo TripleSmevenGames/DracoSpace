@@ -1,12 +1,8 @@
 package ui.battle.status.enemyPassives;
 
-import ui.battle.combatUI.SkillSprite;
-import flixel.math.FlxRandom;
-import managers.BattleManager;
-import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.combatUI.SkillSprite;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class SiphonPassive extends Status
@@ -21,17 +17,14 @@ class SiphonPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = SIPHON;
-		name = 'Siphon';
-		var desc = 'Yuyi draws a card every time an enemy plays a skill. (You\'re her enemy!)';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-			display: false,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var info:StatusInfo = {
+			type: SIPHON,
+			name: 'Siphon',
+			desc: 'Yuyi draws a card every time an enemy plays a skill. (You\'re her enemy!)',
+			iconPath: AssetPaths.AttackDown__png,
+			stackable: false,
+		}
 
-		this.stackable = false;
-
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

@@ -2,6 +2,7 @@ package ui.battle.status.skillSpecific;
 
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
+import ui.battle.status.Status.StatusInfo;
 
 // Real usage is defined in onGainBlock
 class HideBreakerStatus extends DebuffStatus
@@ -13,14 +14,14 @@ class HideBreakerStatus extends DebuffStatus
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = HIDEBREAKER;
-		name = 'Hide Breaker';
-		var desc = 'For the next $initialStacks turn(s), ${owner.info.name} can\'t gain block.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
+		var info:StatusInfo = {
+			type: HIDEBREAKER,
+			name: 'Hide Breaker',
+			desc: 'For the next $initialStacks turn(s), ${owner.info.name} can\'t gain block.',
+			iconPath: AssetPaths.AttackDown__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

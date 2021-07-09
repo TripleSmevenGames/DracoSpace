@@ -1,11 +1,8 @@
 package ui.battle.status.enemyPassives;
 
-import flixel.math.FlxRandom;
-import managers.BattleManager;
 import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class DyingWishPassive extends Status
@@ -24,17 +21,14 @@ class DyingWishPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = DYINGWISH;
-		name = 'Dying Wish';
-		var desc = 'When ${owner.info.name} dies, all allies gain ${owner.info.name}\'s Attack.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-			display: false, // this status doesnt have stacks, so dont show a number.
-		};
-		var icon = new IndicatorIcon(AssetPaths.dyingWish__png, name, desc, options);
+		var info:StatusInfo = {
+			type: DYINGWISH,
+			name: 'Dying Wish',
+			desc: 'When ${owner.info.name} dies, all allies gain ${owner.info.name}\'s Attack.',
+			iconPath: AssetPaths.dyingWish__png,
+			stackable: false,
+		}
 
-		this.stackable = false;
-
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

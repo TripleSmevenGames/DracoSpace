@@ -267,14 +267,13 @@ class SkillFactory
 			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
-		matchMovement => (?priority:Int) ->
+		reactiveArmor => (?priority:Int) ->
 		{
-			var skill = skillFromData(ryder, matchMovement);
+			var skill = skillFromData(ryder, reactiveArmor);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.addStatus(COUNTER, skill.value);
-				// todo
-				// owner.addStatus(MATCHMOVEMENT, skill.value2)
+				owner.addStatus(REACTIVEARMOR, skill.value2);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = ryderPlaceholder;

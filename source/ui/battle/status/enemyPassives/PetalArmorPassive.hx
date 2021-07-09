@@ -1,10 +1,7 @@
 package ui.battle.status.enemyPassives;
 
-import managers.BattleManager;
-import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class PetalArmorPassive extends Status
@@ -20,14 +17,14 @@ class PetalArmorPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks = 2)
 	{
-		type = PETALARMOR;
-		name = 'Petal Armor';
-		var desc = 'Upon taking damage, all alies gain ${initialStacks} block.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.petalArmor__png, name, desc, options);
+		var info:StatusInfo = {
+			type: PETALARMOR,
+			name: 'Petal Armor',
+			desc: 'Upon taking damage, all its alies gain ${initialStacks} block.',
+			iconPath: AssetPaths.petalArmor__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

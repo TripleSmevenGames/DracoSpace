@@ -1,12 +1,12 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
 import managers.BattleManager;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
-import utils.ViewUtils;
-import utils.battleManagerUtils.BattleContext;
 import ui.battle.combatUI.SkillSprite;
+import ui.battle.status.Status.StatusInfo;
+import utils.battleManagerUtils.BattleContext;
 
 class ColdStatus extends DebuffStatus
 {
@@ -27,14 +27,14 @@ class ColdStatus extends DebuffStatus
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = COLD;
-		name = 'Cold';
-		var desc = 'Whenever ${owner.info.name} plays a skill, they discard a card.' + '\n\nLose 1 stack at the end of turn.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Cold1__png, name, desc, options);
+		var info:StatusInfo = {
+			type: COLD,
+			name: 'Cold',
+			desc: 'Whenever ${owner.info.name} plays a skill, they discard a card.' + '\n\nLose 1 stack at the end of turn.',
+			iconPath: AssetPaths.Cold1__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

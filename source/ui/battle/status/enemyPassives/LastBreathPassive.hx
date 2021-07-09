@@ -1,18 +1,15 @@
 package ui.battle.status.enemyPassives;
 
-import flixel.math.FlxRandom;
 import managers.BattleManager;
 import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class LastBreathPassive extends Status
 {
 	override public function onDead(context:BattleContext)
 	{
-		var random = new FlxRandom();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
 			// decide the target when the effect is played rather than when its triggered, because enemies might die between
@@ -21,7 +18,7 @@ class LastBreathPassive extends Status
 			if (trueTarget != null)
 			{
 				trueTarget.currBlock += 10;
-				trueTarget.healHp(15);
+				trueTarget.healHp(5);
 			}
 		}
 		// create a 'play', then call it immediately.
@@ -31,16 +28,14 @@ class LastBreathPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = LASTBREATH;
-		name = 'Last Breath';
-		var desc = 'When ${owner.info.name} dies, an ally gains 10 Block is healed for 15 hp.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.lastBreath__png, name, desc, options);
+		var info:StatusInfo = {
+			type: LASTBREATH,
+			name: 'Last Breath',
+			desc: 'When ${owner.info.name} dies, an ally gains 10 Block is healed for 5 hp.',
+			iconPath: AssetPaths.lastBreath__png,
+			stackable: false,
+		}
 
-		this.stackable = false;
-
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

@@ -1,9 +1,8 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
 import managers.BattleManager;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 
 // taunts usage is defined in EnemyIntentMaker's logic.
 class TauntStatus extends BuffStatus
@@ -15,14 +14,14 @@ class TauntStatus extends BuffStatus
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = TAUNT;
-		name = 'Taunt';
-		var desc = 'Enemies are more likely to target ${owner.info.name} for the next $initialStacks turn(s).';
-		var options:IndicatorIconOptions = {
-			outlined: true,
+		var info:StatusInfo = {
+			type: TAUNT,
+			name: 'Taunt',
+			desc: 'Enemies are more likely to target ${owner.info.name} for the next $initialStacks turn(s).',
+			iconPath: AssetPaths.Taunt1__png,
+			stackable: true,
 		};
-		var icon = new IndicatorIcon(AssetPaths.Taunt1__png, name, desc, options);
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

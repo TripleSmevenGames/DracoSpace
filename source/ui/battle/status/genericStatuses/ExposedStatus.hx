@@ -1,7 +1,8 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
+import ui.battle.status.Status.StatusInfo;
 
 // Exposed usage is defined in onGainBlock somewhere
 class ExposedStatus extends DebuffStatus
@@ -13,14 +14,14 @@ class ExposedStatus extends DebuffStatus
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = EXPOSED;
-		name = 'Exposed';
-		var desc = 'For the next $initialStacks turn(s), ${owner.info.name} gains 50% less Block.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Dodge2__png, name, desc, options);
+		var info:StatusInfo = {
+			type: EXPOSED,
+			name: 'Exposed',
+			desc: 'For the next $initialStacks turn(s), ${owner.info.name} gains 50% less Block.',
+			iconPath: AssetPaths.Dodge2__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

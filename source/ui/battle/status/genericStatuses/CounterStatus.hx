@@ -1,7 +1,8 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class CounterStatus extends Status
@@ -29,15 +30,14 @@ class CounterStatus extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = COUNTER;
-		name = 'Counter';
+		var info:StatusInfo = {
+			type: COUNTER,
+			name: 'Counter',
+			desc: 'This turn, ${owner.info.name} deals $initialStacks damage back to attackers.',
+			iconPath: AssetPaths.Static1__png,
+			stackable: true,
+		}
 
-		var desc = 'This turn, ${owner.info.name} deals $initialStacks damage back to attackers.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.Static1__png, name, desc, options);
-
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

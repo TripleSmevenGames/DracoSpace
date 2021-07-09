@@ -372,7 +372,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		addToCursor(drawPile.width + hand.width / 2, 0);
 		hand.setPosition(cursorX, cursorY);
 
-		addToCursor(hand.width / 2 + 30, hand.height / 2 - 30); // 30 is approx half of avatar after scaling
+		addToCursor(hand.width / 2 + 30, hand.height / 2 - 15); // 30 is approx half of avatar after scaling
 
 		// place the combat skill lists bottom to top
 		this.skillLists = getSkillLists();
@@ -380,7 +380,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			skillList.setPosition(cursorX, cursorY);
 			add(skillList);
-			addToCursor(0, -(skillList.height - 16));
+			addToCursor(0, -(skillList.height - 12));
 		}
 
 		if (type == PLAYER)

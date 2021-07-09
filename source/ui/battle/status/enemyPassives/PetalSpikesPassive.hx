@@ -1,10 +1,7 @@
 package ui.battle.status.enemyPassives;
 
-import managers.BattleManager;
-import models.skills.SkillAnimations;
-import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class PetalSpikesPassive extends Status
@@ -20,14 +17,14 @@ class PetalSpikesPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 3)
 	{
-		type = PETALSPIKES;
-		name = 'Petal Spikes';
-		var desc = 'Upon taking damage, deal $initialStacks to all enemies.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.petalSpikes__png, name, desc, options);
+		var info:StatusInfo = {
+			type: PETALSPIKES,
+			name: 'Petal Spikes',
+			desc: 'Upon taking damage, ${owner.info.name} deals $initialStacks to its all enemies.',
+			iconPath: AssetPaths.petalSpikes__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

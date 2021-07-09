@@ -2,6 +2,7 @@ package ui.battle.status;
 
 import flixel.group.FlxSpriteGroup;
 import managers.BattleManager;
+import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
@@ -35,7 +36,17 @@ enum StatusType
 	WOUNDED;
 	WEAK;
 	HIDEBREAKER;
+	REACTIVEARMOR;
 	REGENERATE;
+}
+
+typedef StatusInfo =
+{
+	name:String,
+	desc:String,
+	type:StatusType,
+	iconPath:String,
+	stackable:Bool,
 }
 
 class Status extends FlxSpriteGroup implements IBattleTriggerable
@@ -136,10 +147,19 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 	/** Override this to do something when the stack changes, like update the tooltip for example. **/
 	public function onSetStacks(valBefore:Int, valAfter:Int) {}
 
-	public function new(owner:CharacterSprite, icon:IndicatorIcon, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, info:StatusInfo, initialStacks:Int = 1)
 	{
 		super(0, 0);
-		this.icon = icon;
+
+		var options:IndicatorIconOptions = {
+			outlined: true,
+			display: info.stackable,
+		};
+		this.icon = new IndicatorIcon(info.iconPath, info.name, info.desc, options);
+
+		this.name = info.name;
+		this.type = info.type;
+		this.stackable = info.stackable;
 		this.owner = owner;
 		this.stacks = initialStacks;
 

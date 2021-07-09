@@ -2,7 +2,7 @@ package ui.battle.status.enemyPassives;
 
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 
 /** usage is defined in characterSprite's onTakeDamage**/
 class SturdyPassive extends Status
@@ -14,14 +14,14 @@ class SturdyPassive extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = STURDY;
-		name = 'Sturdy';
-		var desc = '${owner.info.name} takes $initialStacks less damage from all sources.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.sturdy__png, name, desc, options);
+		var info:StatusInfo = {
+			type: STURDY,
+			name: 'Sturdy',
+			desc: '${owner.info.name} takes $initialStacks less damage from all sources.',
+			iconPath: AssetPaths.sturdy__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

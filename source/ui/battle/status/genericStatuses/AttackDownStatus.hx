@@ -1,8 +1,8 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
-import utils.ViewUtils;
+import ui.battle.status.Status.StatusInfo;
 
 /** usage is defined in characterSprite's dealDamage**/
 class AttackDownStatus extends Status
@@ -14,14 +14,14 @@ class AttackDownStatus extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = ATTACKDOWN;
-		name = 'Attack Down';
-		var desc = '${owner.info.name}\'s skills deal $initialStacks less damage.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
-		};
-		var icon = new IndicatorIcon(AssetPaths.AttackDown__png, name, desc, options);
+		var info:StatusInfo = {
+			type: ATTACKDOWN,
+			name: 'Attack Down',
+			desc: '${owner.info.name}\'s skills deal $initialStacks less damage.',
+			iconPath: AssetPaths.AttackDown__png,
+			stackable: true,
+		}
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }

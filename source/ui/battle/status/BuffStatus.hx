@@ -1,6 +1,7 @@
 package ui.battle.status;
 
 import ui.battle.character.CharacterSprite;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 /** A buff status loses 1 stack at the start of the owner's turn.**/
@@ -18,9 +19,8 @@ class BuffStatus extends Status
 			stacks -= 1;
 	}
 
-	public function new(owner:CharacterSprite, icon:IndicatorIcon, initialStacks:Int = 1)
+	public function new(owner:CharacterSprite, info:StatusInfo, initialStacks:Int = 1)
 	{
-		super(owner, icon);
-		stacks = initialStacks;
+		super(owner, info, initialStacks);
 	}
 }

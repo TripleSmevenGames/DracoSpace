@@ -19,6 +19,7 @@
 * Gain x equal to damage dealt.
 * Boss: "Jolt" your skills. If you play them, take damage (or maybe he gains stacks). Blue lightning for knowledge
 * Bonus for having block. If you have 10 block...do x.
+* Gain x for each damage dealt.
 
 ## Artifact Ideas:
 * if a character gains Block twice in a turn, gain Taunt.
@@ -39,6 +40,7 @@
 * lose-lose mechanics: the shroog mom from griftlands, the pig monster from darkest dungeon
 * when it's creature is attacked, draw and discard a card. many diff skills.
 * For each ally...deal x damage, gain x block
+* When attacked, gains  wounded. Has a strong attack and some other stuff
 
 ## Event ideas
 * choose between maxHP or heal

@@ -1,8 +1,9 @@
-package ui.battle.status;
+package ui.battle.status.genericStatuses;
 
-import ui.battle.combatUI.SkillSprite;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.SkillSprite;
+import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class StaticStatus extends Status
@@ -26,15 +27,14 @@ class StaticStatus extends Status
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
-		type = STATIC;
-		name = 'Static';
-
-		var desc = 'The first time ${owner.info.name} plays a skill each turn, each ally gains 1 Static. Some skills Expend all Static.';
-		var options:IndicatorIconOptions = {
-			outlined: true,
+		var info:StatusInfo = {
+			type: STATIC,
+			name: 'Static',
+			desc: 'The first time ${owner.info.name} plays a skill each turn, each ally gains 1 Static. Some skills Expend all Static.',
+			iconPath: AssetPaths.Static1__png,
+			stackable: true,
 		};
-		var icon = new IndicatorIcon(AssetPaths.Static1__png, name, desc, options);
 
-		super(owner, icon, initialStacks);
+		super(owner, info, initialStacks);
 	}
 }
