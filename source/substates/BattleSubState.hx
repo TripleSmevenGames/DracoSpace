@@ -1,6 +1,5 @@
 package substates;
 
-import ui.battle.combatUI.BattleHeader;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
@@ -18,7 +17,10 @@ import models.events.battleEvents.BattleEvent;
 import models.player.Player;
 import ui.battle.LoseScreen;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.BattleHeader;
+import ui.battle.combatUI.CancelSkillButton;
 import ui.battle.combatUI.DeckSprite;
+import ui.battle.combatUI.TurnBanner;
 import ui.battle.win.WinScreen;
 import ui.debug.BAMIndicator;
 import ui.debug.BMIndicator;
@@ -40,18 +42,18 @@ class BattleView extends FlxSpriteGroup
 	var enemyChars:Array<CharacterSprite>;
 	var enemySpots:Array<Coords>;
 
-	/** This is the sprite that shows at the top of the view. 
-	 * It might say something like "PLAYER TURN: SELECT TARGET" or something.
-	**/
-	var battleTitleText:FlxText;
-
 	var battleHeader:BattleHeader;
+	var turnBanner:TurnBanner;
 
+	public var cancelSkillButton:CancelSkillButton;
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
 
+	// the reference X position of the player and enemy characters.
 	final PLAYER_X = FlxG.width * (1 / 4);
 	final ENEMY_X = FlxG.width * (3 / 4);
+
+	final TURN_BANNER_Y = FlxG.height * (1 / 3);
 
 	// make this use ViewUtil's Coords type instead (FlxPoint supposedly has bloat)
 	function calculateEnemySpots(eChars:Array<CharacterSprite>, spots:Int):Array<FlxPoint>
@@ -78,6 +80,24 @@ class BattleView extends FlxSpriteGroup
 		return retVal;
 	}
 
+	/** Fade in and out the BATTLE START banner. Call this when the battle starts.**/
+	public function queueBattleStartAnimation()
+	{
+		turnBanner.queueAnimation('BATTLE START');
+	}
+
+	/** Fade in and out the PLAYER TURN banner. Call this when the player turn starts.**/
+	public function queuePlayerTurnAnimation()
+	{
+		turnBanner.queueAnimation('PLAYER TURN');
+	}
+
+	/** Fade in and out the ENEMY TURN banner. Call this when the enemy turn starts.**/
+	public function queueEnemyTurnAnimation()
+	{
+		turnBanner.queueAnimation('ENEMY TURN');
+	}
+
 	public function initBattle(event:BattleEvent)
 	{
 		// add background in the middle. This way the bg will still fit different resolutions.
@@ -90,29 +110,42 @@ class BattleView extends FlxSpriteGroup
 		this.battleHeader = new BattleHeader();
 		add(battleHeader);
 
-		// create the characters and the deck, but only add the deck first.
+		// create the cancel button, which will appear when the player is choosing targets for a selected skill.
+		// This lets them cancel their skill and refund their cards.
+		this.cancelSkillButton = new CancelSkillButton();
+		cancelSkillButton.setPosition(FlxG.width / 2, FlxG.height - 100);
+		add(cancelSkillButton);
+		cancelSkillButton.kill();
+
+		// create the player chars (but dont add() them yet)
 		this.playerChars = [];
-		for (charInfo in Player.chars)
+		for (i in 0...Player.chars.length)
 		{
+			var charInfo = Player.chars[i];
 			// make sure the char isnt dead.
 			if (charInfo.currHp != 0)
-				playerChars.push(new CharacterSprite(charInfo));
+			{
+				var playerChar = new CharacterSprite(charInfo);
+				playerChars.push(playerChar);
+			}
 		}
 
-		playerDeckSprite = new DeckSprite(50, FlxG.height - 120, Player.deck, PLAYER, playerChars);
+		// create the deck sprite and add it.
+		playerDeckSprite = new DeckSprite(50, FlxG.height - 120, Player.deck, PLAYER, playerChars, cancelSkillButton);
 		add(playerDeckSprite);
 
+		// now, create the enemy characters (but dont add() them yet)
 		this.enemyChars = [];
 		for (charInfo in event.enemies)
 			enemyChars.push(new CharacterSprite(charInfo));
 
+		// create the enemy deck sprite and add it.
 		enemyDeckSprite = new DeckSprite(FlxG.width - 50, FlxG.height - 120, event.eDeck, ENEMY, enemyChars);
 		add(enemyDeckSprite);
 
-		// the y "0" of where to start rendering characters from.
+		// Start to render the player chars.
+		// middleY is the y-coord reference point to render the characters based on.
 		var middleY = (FlxG.height / 2) - 32;
-
-		// render the player chars
 		for (i in 0...playerChars.length)
 		{
 			var char = playerChars[i];
@@ -143,6 +176,11 @@ class BattleView extends FlxSpriteGroup
 			char.currHp = 1;
 			#end
 		}
+
+		// render the turn banner, which will appear briefly announcing when the player or enemy turn has started.
+		this.turnBanner = new TurnBanner();
+		turnBanner.setPosition(FlxG.width / 2, TURN_BANNER_Y);
+		add(turnBanner);
 
 		winScreen = new WinScreen();
 		add(winScreen);
@@ -196,6 +234,8 @@ class BattleSubState extends FlxSubState
 		setupSoundManager();
 
 		bam.reset();
+
+		// make sure we do this AFTER the battle view has already been setup and added.
 		var context = new BattleContext(view.playerDeckSprite, view.enemyDeckSprite, view.playerChars, view.enemyChars);
 		bm.reset(context, null, event.type);
 	}
@@ -240,6 +280,38 @@ class BattleSubState extends FlxSubState
 	public function showLoseScreen()
 	{
 		view.loseScreen.play();
+	}
+
+	public function queueBattleStartAnimation()
+	{
+		view.queueBattleStartAnimation();
+	}
+
+	/** Fade in and out the PLAYER TURN banner. Call this when the player turn starts.**/
+	public function queuePlayerTurnAnimation()
+	{
+		view.queuePlayerTurnAnimation();
+	}
+
+	/** Fade in and out the ENEMY TURN banner. Call this when the enemy turn starts.**/
+	public function queueEnemyTurnAnimation()
+	{
+		view.queueEnemyTurnAnimation();
+	}
+
+	public function setCancelSkillButtonOnClick(onClick:Void->Void)
+	{
+		view.cancelSkillButton.setOnClick(onClick);
+	}
+
+	public function showCancelSkillButton()
+	{
+		view.cancelSkillButton.revive();
+	}
+
+	public function hideCancelSkillButton()
+	{
+		view.cancelSkillButton.kill();
 	}
 
 	function setupBattleLayers()

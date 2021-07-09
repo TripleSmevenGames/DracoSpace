@@ -19,7 +19,9 @@ class Header extends FlxSpriteGroup
 	var moneyDisplay:MoneyDisplay;
 
 	var cursor:Float = 100;
-	var padding = 50;
+
+	static inline final padding = 50;
+	static inline final HEIGHT = 100;
 
 	/** Refresh the HP numbers so that they are accurate. **/
 	public function refresh()
@@ -43,7 +45,7 @@ class Header extends FlxSpriteGroup
 		super(0, 0);
 
 		body = new FlxSprite(0, 0);
-		body.makeGraphic(FlxG.width, 100, FlxColor.fromRGB(200, 200, 200, 150));
+		body.makeGraphic(FlxG.width, HEIGHT, FlxColor.fromRGB(200, 200, 200, 150));
 		add(body);
 
 		var charDisplay1 = new CharacterDisplay(Player.chars[0]);

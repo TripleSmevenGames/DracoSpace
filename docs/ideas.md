@@ -18,12 +18,15 @@
 ## Skill ideas:
 * Gain x equal to damage dealt.
 * Boss: "Jolt" your skills. If you play them, take damage (or maybe he gains stacks). Blue lightning for knowledge
+* Bonus for having block. If you have 10 block...do x.
 
 ## Artifact Ideas:
 * if a character gains Block twice in a turn, gain Taunt.
 * When this character Dodges an attack, draw another card next turn.
-* When you kill an enemy...do/gain x
+* When you kill an enemy, all allies gain 1 ATTACK.
 * For each enemy...
+* At the start of battle, give a random enemy 2 EXPOSED.
+* At the start of battle, give all enemies 1 WOUNDED.
 
 ## Boss/Enemy Ideas:
 * enemy gets stronger if you kill allies

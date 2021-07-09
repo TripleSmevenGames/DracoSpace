@@ -2,8 +2,8 @@ package models.artifacts;
 
 import Castle.SkillData_skills_rarity as Rarity;
 import ui.battle.IBattleTriggerable;
-import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
 
 /** Represents an equipable item on a player character. 
@@ -43,6 +43,9 @@ class Artifact implements IBattleTriggerable
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	public function onTakeUnblockedDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
+
+	/** This is called immediately after the character gains the block. **/
+	public function onGainBlock(block:Int, context:BattleContext) {}
 
 	/** This is called BEFORE The skill's play() is called, but after the skill has been "counted" for skills played this turn. **/
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}

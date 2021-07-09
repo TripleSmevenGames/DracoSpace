@@ -1,7 +1,5 @@
 package ui.battle.character;
 
-import ui.battle.combatUI.BattleHeader.CharArtifacts;
-import ui.artifact.ArtifactTileBattle;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
@@ -16,10 +14,10 @@ import managers.BattleSoundManager as BSM;
 import managers.GameController;
 import models.CharacterInfo;
 import models.ai.EnemyIntentMaker.Intent;
+import models.artifacts.Artifact;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
-import ui.battle.IBattleTriggerable;
 import ui.battle.combatUI.SkillSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
@@ -38,8 +36,8 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	public var skillSprites:Array<SkillSprite> = new Array<SkillSprite>();
 	public var skillsPlayedThisTurn:Int = 0;
 
-	// reference to this char's equipped artifact tiles, which the Battle Header will create.
-	public var artifacts:CharArtifacts;
+	// reference to this char's equipped artifact tiles
+	public var artifacts:Array<Artifact>;
 
 	var mouseOverCallbacks:Array<FlxSprite->Void> = [];
 	var mouseOutCallbacks:Array<FlxSprite->Void> = [];
@@ -59,9 +57,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 	// enemy only.
 	var enemyIntentSprites:EnemyIntentSprites;
-
-	// the BM will set this btn's click handler to cancel a skill
-	public var cancelSkillBtn:FlxSprite;
 
 	// reference to the global managers.
 	var bm:BattleManager;
@@ -235,10 +230,10 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		val -= this.statusDisplay.getStatus(ATTACKDOWN);
 		var modifiers:Float = 1;
 		if (getStatus(WEAK) > 0)
-			modifiers *= .75;
+			modifiers *= .5;
 
 		if (target.getStatus(WOUNDED) > 0)
-			modifiers *= 1.25;
+			modifiers *= 1.50;
 
 		val = Std.int(val * modifiers);
 
@@ -262,6 +257,18 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		currHp += val;
 		spawnDamageNumber('+${Std.string(val)}', FlxColor.GREEN, false);
+	}
+
+	public function gainBlock(val:Int, context:BattleContext)
+	{
+		// if this character has at least 1 stack of EXPOSED, only gain 1/2 of the block.
+		if (getStatus(EXPOSED) > 0)
+			val = Std.int(val / 2);
+		else if (getStatus(HIDEBREAKER) > 0)
+			val = 0;
+
+		currBlock += val;
+		this.onGainBlock(val, context);
 	}
 
 	function singleFlash()
@@ -352,7 +359,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
-	function refreshAllSkills()
+	function allSkillsOnNewRound()
 	{
 		for (skillSprite in skillSprites)
 		{
@@ -367,15 +374,23 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			skillSprite.checkDisabled();
 	}
 
+	/***************
+	 *
+	 * START BATTLE TRIGGERS --------------------------------------------------------------
+	 *
+	****************/
 	public function onPlayerStartTurn(context:BattleContext)
 	{
 		if (this.info.type == PLAYER)
 		{
-			currBlock = 0;
 			statusDisplay.onPlayerStartTurn(context);
+			for (artifact in artifacts)
+				artifact.onPlayerStartTurn(context);
+
+			currBlock = 0;
 		}
 
-		refreshAllSkills(); // refresh both the players' and the enemies' skills.
+		allSkillsOnNewRound(); // refresh this character's skills, no matter if its a player or enemy.
 	}
 
 	public function onPlayerEndTurn(context:BattleContext)
@@ -383,6 +398,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (this.info.type == PLAYER)
 		{
 			statusDisplay.onPlayerEndTurn(context);
+			for (artifact in artifacts)
+				artifact.onPlayerEndTurn(context);
+
 			skillsPlayedThisTurn = 0;
 		}
 	}
@@ -392,7 +410,11 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (this.info.type == ENEMY)
 		{
 			currBlock = 0;
+
 			statusDisplay.onEnemyStartTurn(context);
+			for (artifact in artifacts)
+				artifact.onEnemyStartTurn(context);
+
 			resetIntents();
 		}
 	}
@@ -402,6 +424,9 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (this.info.type == ENEMY)
 		{
 			statusDisplay.onEnemyEndTurn(context);
+			for (artifact in artifacts)
+				artifact.onEnemyEndTurn(context);
+
 			skillsPlayedThisTurn = 0;
 		}
 	}
@@ -410,12 +435,17 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext)
 	{
 		statusDisplay.onDealDamage(damage, target, context);
+		for (artifact in artifacts)
+			artifact.onDealDamage(damage, target, context);
 	}
 
 	/** This is called BEFORE the char takes the damage. **/
 	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
 		statusDisplay.onTakeDamage(damage, dealer, context);
+		for (artifact in artifacts)
+			artifact.onTakeDamage(damage, dealer, context);
+
 		if (damage > 0 && damage < 10)
 			GameUtils.smallCameraShake();
 		else if (damage < 20)
@@ -424,17 +454,34 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			GameUtils.bigCameraShake();
 	}
 
+	function onGainBlock(block:Int, context:BattleContext)
+	{
+		statusDisplay.onGainBlock(block, context);
+		for (artifact in artifacts)
+			artifact.onGainBlock(block, context);
+	}
+
 	function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)
 	{
 		skillsPlayedThisTurn += 1;
+
 		statusDisplay.onPlaySkill(skillSprite, context);
+		for (artifact in artifacts)
+			artifact.onPlaySkill(skillSprite, context);
 	}
 
 	public function onAnyPlaySkill(skillSprite:SkillSprite, context:BattleContext)
 	{
 		statusDisplay.onAnyPlaySkill(skillSprite, context);
+		for (artifact in artifacts)
+			artifact.onAnyPlaySkill(skillSprite, context);
 	}
 
+	/***********************
+	 *
+	 * END BATTLE TRIGGERS ----------------------------------------
+	 *
+	************************/
 	/** The skill is counted as a played skill before it's play() is called.**/
 	public function playSkill(skillSprite:SkillSprite, targets:Array<CharacterSprite>, context:BattleContext)
 	{
@@ -458,11 +505,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 	{
 		mouseOverCallbacks.push((sprite:FlxSprite) -> over(this));
 		mouseOutCallbacks.push((sprite:FlxSprite) -> out(this));
-	}
-
-	public function setOnClickCancelSkill(onClick:Void->Void)
-	{
-		FlxMouseEventManager.setMouseClickCallback(cancelSkillBtn, (_) -> onClick());
 	}
 
 	public static function sampleRyder()
@@ -489,29 +531,27 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.add(sprite);
 
 		// add the targeting arrow. Render right side for players, left side for enemies,
-		// assumes sprite is at 0, 0.
-		var targetArrowXPos = TARGET_ARROW_DISTANCE + sprite.width / 2;
+		// assumes sprite centered at 0, 0.
 		if (this.info.type == PLAYER)
 		{
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
-			ViewUtils.centerSprite(targetArrow, targetArrowXPos, 0);
+			targetArrow.centerSprite(sprite.width / 2 + TARGET_ARROW_DISTANCE, 0);
 		}
 		else if (this.info.type == ENEMY)
 		{
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
-			ViewUtils.centerSprite(targetArrow, -targetArrowXPos, 0);
+			targetArrow.centerSprite(-(sprite.width / 2) + TARGET_ARROW_DISTANCE, 0);
 		}
+
 		targetArrow.scaleUp(4);
 		add(targetArrow);
 		targetArrow.visible = false;
-
 		// if this is an enemy, render the intent container (should be empty rn).
 		if (this.info.type == ENEMY)
 		{
 			this.enemyIntentSprites = new EnemyIntentSprites();
 			add(enemyIntentSprites);
 		}
-
 		// add the hover affect, which just shows the character's name on hover;
 		GameController.battleTooltipLayer.createTooltipForChar(this);
 	}
@@ -544,19 +584,6 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		add(statusDisplay);
 	}
 
-	function setupCancelSkillButton()
-	{
-		cancelSkillBtn = new FlxSprite(0, 0, AssetPaths.cancelTargeting__png);
-		cancelSkillBtn.scale3x();
-		cancelSkillBtn.centerSprite(-sprite.width);
-		this.add(cancelSkillBtn);
-		// killing the cancel button here causes uber weird behavior, so don't do it!!
-
-		FlxMouseEventManager.add(cancelSkillBtn);
-		var tooltip = Tooltip.genericTooltip('Cancel', null, {});
-		GameController.battleTooltipLayer.registerTooltip(tooltip, cancelSkillBtn);
-	}
-
 	/** Call this after status display is setup**/
 	function setupInitialStatuses()
 	{
@@ -566,10 +593,17 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		}
 	}
 
+	function setupArtifacts()
+	{
+		for (artifact in artifacts)
+			artifact.owner = this;
+	}
+
 	public function new(info:CharacterInfo)
 	{
 		super(0, 0);
 		this.info = info;
+		this.artifacts = info.artifacts;
 		this.bm = GameController.battleManager;
 		this.bam = GameController.battleAnimationManager;
 
@@ -587,15 +621,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		setupInitialStatuses();
 
-		if (info.type == PLAYER)
-			setupCancelSkillButton();
+		setupArtifacts();
 
 		this.timer = new FlxTimer();
 		timer.cancel();
 
 		this.hitSoundArray = BSM.getHitSoundArrayForType(info.soundType);
 
-		// setup the mouse events
 		// setup the mouse events
 		// PixelPerfect arg must be false, for the manager to respect the scaled up sprite's new hitbox.
 		// In order for right click to work, we need to set the mouseButtons arg

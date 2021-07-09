@@ -1,12 +1,15 @@
 package ui.inventory.equipmentMenu;
 
+import constants.Fonts;
 import flixel.FlxBasic;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
+import flixel.text.FlxText;
 import flixel.util.FlxColor;
-import ui.artifact.ArtifactTile;
+
+using utils.ViewUtils;
 
 /** A trigger zone which is used by the DragLayer. Pass in a callback which DragLayer will call when a draggable is dropped into it.
  * Not centered.
@@ -15,31 +18,48 @@ class DropZone extends FlxSpriteGroup
 {
 	public var onDrop:FlxSprite->Void;
 
-	// The actualy "trigger zone"
+	// The actualy "trigger zone". Can also serve as a background for the message text.
 	var body:FlxSprite;
 
-	// some sprites/text to render, telling the player what will happen if a draggable is dropped here
-	// e.g. "Equip Artifact"
-	var messageSprite:FlxSpriteGroup;
+	var messageText:FlxText;
+
+	static inline final FONT_SIZE = 32;
 
 	public function isInZone(sprite:FlxSprite):Bool
 	{
 		return sprite.overlaps(body);
 	}
 
-	public function showMessage() {}
+	/** Call this to show the dropzone's message, e.g. "Drag here to equip"**/
+	public function showMessage()
+	{
+		body.visible = true;
+		messageText.visible = true;
+	}
 
-	public function hideMessage() {}
+	public function hideMessage()
+	{
+		body.visible = false;
+		messageText.visible = false;
+	}
 
 	/** Make a drop zone with w width and h height. **/
-	public function new(onDrop:FlxSprite->Void, w:Float, h:Float)
+	public function new(onDrop:FlxSprite->Void, message:String, w:Float, h:Float)
 	{
 		super();
 		this.onDrop = onDrop;
 
 		this.body = new FlxSprite();
-		body.makeGraphic(Std.int(w), Std.int(h), FlxColor.fromRGB(0, 0, 0, 100));
+		body.makeGraphic(Std.int(w), Std.int(h), FlxColor.fromRGB(0, 0, 0, 50));
 		add(body);
+
+		this.messageText = new FlxText(0, 0, 0, message);
+		messageText.setFormat(Fonts.STANDARD_FONT2, FONT_SIZE);
+		messageText.setBorderStyle(FlxTextBorderStyle.OUTLINE, FlxColor.BLACK, 2);
+		messageText.centerSprite(body.width / 2, body.height / 2);
+		add(messageText);
+
+		hideMessage();
 	}
 }
 
@@ -63,9 +83,11 @@ class DragLayer extends FlxSpriteGroup
 		currentlyDraggingOriginalPosY = draggable.y;
 		currentlyDragging = draggable;
 
-		// add the draggable to the DragLayer, which will make it appear above
-		// other flx sprite groups.
+		// add the draggable to the DragLayer, which will make it appear in the draglayer and above
+		// other flx sprite groups on the screen.
 		add(currentlyDragging);
+
+		showAllMessages();
 	}
 
 	function onDraggableMouseUp(draggable:FlxSprite)
@@ -75,6 +97,8 @@ class DragLayer extends FlxSpriteGroup
 
 		// remove it from the group.
 		remove(currentlyDragging);
+
+		hideAllMessages();
 
 		var droppedInZone = false;
 		for (dropZone in dropZones)
@@ -92,6 +116,18 @@ class DragLayer extends FlxSpriteGroup
 			draggable.setPosition(currentlyDraggingOriginalPosX, currentlyDraggingOriginalPosY);
 
 		currentlyDragging = null;
+	}
+
+	function showAllMessages()
+	{
+		for (dropZone in dropZones)
+			dropZone.showMessage();
+	}
+
+	function hideAllMessages()
+	{
+		for (dropZone in dropZones)
+			dropZone.hideMessage();
 	}
 
 	/** Make sure every item in draggables is already added to the mouse manager. **/

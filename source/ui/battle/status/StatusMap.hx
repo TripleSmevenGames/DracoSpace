@@ -3,7 +3,12 @@ package ui.battle.status;
 import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusType;
 import ui.battle.status.enemyPassives.*;
+import ui.battle.status.skillSpecific.HideBreakerStatus;
 
+/** Giant mapping of StatusType to a function which, when called, creates a new status. 
+ * See its usage in CharacterStatusDisplay for examples.
+ * You must add to this map when you create a new status.
+**/
 class StatusMap
 {
 	public static var map:Map<StatusType, (CharacterSprite, Int) -> Status> = [
@@ -30,5 +35,6 @@ class StatusMap
 		MINUSDRAW => (owner:CharacterSprite, initialStacks:Int = 1) -> new MinusDraw(owner, initialStacks),
 		WOUNDED => (owner:CharacterSprite, initialStacks:Int = 1) -> new WoundedStatus(owner, initialStacks),
 		WEAK => (owner:CharacterSprite, initialStacks:Int = 1) -> new WeakStatus(owner, initialStacks),
+		HIDEBREAKER => (owner:CharacterSprite, initialStacks:Int = 1) -> new HideBreakerStatus(owner, initialStacks),
 	];
 }

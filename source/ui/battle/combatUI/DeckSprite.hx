@@ -35,6 +35,15 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	var endTurnBtn:BasicWhiteButton;
 	var skillLists:Array<CombatSkillList>;
 
+	/** We need to know where the cancel skill button is so refunded cards can animate from it. **/
+	var cancelSkillButton:FlxSprite;
+
+	/** An array of cards. Cards go here directly after they are played.
+	 * This way we can refund these cards if the player cancels the skill before choosing a target.
+	 * Otherwise, they will go into the discard pile afterwards.
+	**/
+	var preDiscardList:Cards;
+
 	var type:CharacterType;
 
 	/** The chars associated with this decksprite. IE players for a player decksprite, enemies for an enemy deck sprite.**/
@@ -86,7 +95,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 
 		if (card != null)
 		{
-			card.onDraw();
+			card.resetForDraw();
 			hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y), hidden, i);
 		}
 		else
@@ -133,17 +142,22 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 			discardPile.addCard(discardedCard);
 	}
 
+	/** Discards all the cards in the hand. Animated, so when you call this function, it really just adds the discard animation to the BAM. 
+	 * I.e., its not guaranteed to happen right away when this function is called. 
+	**/
 	public function discardHand()
 	{
 		discardPile.addCards(hand.getCards());
 		hand.clearHandAnimate(Std.int(discardPile.x), Std.int(discardPile.y));
 	}
 
-	/** Plays the specified cards on the chosen skill and discards those cards. **/
+	/** Plays the specified cards on the chosen skill and put those cards into the preDiscardList. **/
 	public function playCards(cards:Array<Card>, skillSprite:SkillSprite)
 	{
-		discardPile.addCards(cards);
-		return hand.playCardsAnimate(cards, skillSprite.x, skillSprite.y); // return the anims
+		// put the cards into the preDiscardList first.
+		preDiscardList = cards;
+		var type = skillSprite.owner.info.type;
+		return hand.playCardsAnimate(cards, type, skillSprite.x, skillSprite.y); // return the anims
 	}
 
 	/** Plays the picked cards on the chosen skill and discards those cards. For players, since only players "pick" cards. **/
@@ -152,8 +166,32 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return playCards(hand.pickedCards, skillSprite);
 	}
 
+	/** Move the cards from the preDiscardList into the discard pile.
+	 * Call this when the targets are chosen for the played skill.
+	**/
+	public function flushPreDiscardList()
+	{
+		discardPile.addCards(preDiscardList);
+		preDiscardList = [];
+	}
+
+	/** Move cards from the preDiscardList back into the hand.
+	 * This happens when the player cancels the skill they were going to play.
+	 * In that case we refund them the cards they used to initially play the skill.
+	**/
+	public function refundPreDiscardList()
+	{
+		for (card in preDiscardList)
+		{
+			if (cancelSkillButton != null)
+				hand.addCardAnimate(card, Std.int(cancelSkillButton.x), Std.int(cancelSkillButton.y), false, 0);
+		}
+
+		preDiscardList = [];
+	}
+
 	/** This function should be triggered by a player skill during their turn.
-		Pointless to call during the enemy's turn, as they reveal their hand at the start.
+	 * Pointless to call during the enemy's turn, as they reveal their hand at the start.
 	**/
 	public function revealCards(num:Int)
 	{
@@ -284,7 +322,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		hand.titleText.color = FlxColor.WHITE;
 	}
 
-	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>)
+	public function new(x:Int = 0, y:Int = 0, deck:Deck, type:CharacterType, chars:Array<CharacterSprite>, ?cancelSkillBtn:FlxSprite)
 	{
 		super(x, y);
 
@@ -293,6 +331,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		this.bm = GameController.battleManager;
 		this.type = type;
 		this.chars = chars;
+		this.cancelSkillButton = cancelSkillBtn;
+		this.preDiscardList = [];
 
 		if (type == ENEMY)
 		{

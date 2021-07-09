@@ -1,20 +1,25 @@
 package ui.battle;
 
 import ui.battle.character.CharacterSprite;
-import utils.battleManagerUtils.BattleContext;
 import ui.battle.combatUI.SkillSprite;
+import utils.battleManagerUtils.BattleContext;
 
-/** Can be triggered when certain things happen in battle.
+/** Can be triggered when certain things happen in battle, in reference to the character that owns this thing.
+ * For example, this thing might be a Status or an equipped Artifact.
+ * If so, onTakeDamage is called when the character that owns this thing takes damage.
  * INHERITS from ITurnTriggerable
 **/
 interface IBattleTriggerable extends ITurnTriggerable
 {
 	/** dont modify damage here
 	 * This is called BEFORE the character has taken damage.
+	 * Val is the final damage the character will take after all modifiers before block is calculated.
 	**/
 	function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext):Void;
 
 	function onTakeUnblockedDamage(damage:Int, dealer:CharacterSprite, context:BattleContext):Void;
+
+	function onGainBlock(block:Int, context:BattleContext):Void;
 
 	/** This is called BEFORE The skill's play() is called, but after the skill has been "counted" for skills played this turn. **/
 	function onPlaySkill(skillSprite:SkillSprite, context:BattleContext):Void;

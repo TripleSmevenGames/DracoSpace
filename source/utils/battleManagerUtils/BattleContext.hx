@@ -137,7 +137,7 @@ class BattleContext
 	}
 
 	/** Remove all Static from all characters and return the total amount expended. **/
-	public function expendStatic():Int
+	public function expendAllStatic():Int
 	{
 		var total = 0;
 		for (char in pChars)

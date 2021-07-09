@@ -3,9 +3,12 @@ package ui.battle.status;
 import flixel.group.FlxSpriteGroup;
 import managers.BattleManager;
 import ui.battle.character.CharacterSprite;
-import utils.battleManagerUtils.BattleContext;
 import ui.battle.combatUI.SkillSprite;
+import utils.battleManagerUtils.BattleContext;
 
+/** Enum describing which status it is.
+ * NOTE! When you add a new status, you MUST add to this enum, AND add to the StatusMap.hx.
+**/
 enum StatusType
 {
 	BURN;
@@ -31,6 +34,7 @@ enum StatusType
 	MINUSDRAW;
 	WOUNDED;
 	WEAK;
+	HIDEBREAKER;
 }
 
 class Status extends FlxSpriteGroup implements IBattleTriggerable
@@ -112,6 +116,9 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 	public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
 
 	public function onTakeUnblockedDamage(damage:Int, dealer:CharacterSprite, context:BattleContext) {}
+
+	/** This is called immediately after the character gains the block. **/
+	public function onGainBlock(block:Int, context:BattleContext) {}
 
 	/** This is called BEFORE The skill's play() is called, but after the skill has been "counted" for skills played this turn. **/
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext) {}

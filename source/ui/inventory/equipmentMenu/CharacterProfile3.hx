@@ -15,10 +15,10 @@ import ui.artifact.ArtifactTileInv;
 import ui.battle.character.CharacterSprite;
 import ui.header.CharacterDisplay.HpDisplay;
 import ui.inventory.equipmentMenu.DragLayer.DropZone;
-import ui.skillTile.SkillTileInv;
-import ui.skillTile.SkillTile.TileBlank;
 import ui.skillTile.SkillTile.SkillTileLocked;
+import ui.skillTile.SkillTile.TileBlank;
 import ui.skillTile.SkillTile;
+import ui.skillTile.SkillTileInv;
 
 using utils.ViewUtils;
 
@@ -213,7 +213,8 @@ class CharacterProfile3 extends FlxSpriteGroup
 		add(artifactList);
 
 		// render the dropZone
-		dropZone = new DropZone(onDrop, this.width, this.height);
+		var message = 'Drag here to equip';
+		dropZone = new DropZone(onDrop, message, this.width, this.height);
 		add(dropZone);
 	}
 }

@@ -55,7 +55,8 @@ class Hand extends FlxSpriteGroup
 	var bm:BattleManager;
 
 	var pickSound:FlxSound;
-	var playSounds:Array<FlxSound> = [];
+	var playerPlaySound:FlxSound;
+	var enemyPlaySound:FlxSound;
 
 	var random:FlxRandom;
 
@@ -237,7 +238,7 @@ class Hand extends FlxSpriteGroup
 		renderVisual();
 	}
 
-	/** Animate a card moving from the draw pile to your hand. Then adds the card and updates the hand.
+	/** Queue up animation of a card moving from the draw pile to your hand. Then adds the card and updates the hand.
 		*
 		* Enter in global coords of the draw pile, whether the card is hidden (enemy cards only). We also need the
 		ordinal number of this card among cards we are drawing in a row, for placing at the end of the animation.
@@ -295,10 +296,15 @@ class Hand extends FlxSpriteGroup
 	 *
 	 * Enter in global coords of the skill tile.
 	**/
-	public function playCardsAnimate(cards:Array<Card>, skillX:Float, skillY:Float)
+	public function playCardsAnimate(cards:Array<Card>, type:CharacterType, skillX:Float, skillY:Float)
 	{
 		var tweens = new Array<FlxTween>();
-		var playSound = playSounds[random.int(0, 1)];
+		var playSound:FlxSound;
+		if (type == PLAYER)
+			playSound = playerPlaySound;
+		else
+			playSound = enemyPlaySound;
+
 		var onStartAll = () -> playSound.play();
 		for (i in 0...cards.length)
 		{
@@ -470,9 +476,9 @@ class Hand extends FlxSpriteGroup
 		bm = GameController.battleManager;
 
 		this.pickSound = FlxG.sound.load(AssetPaths.pickCard1__wav);
-		this.playSounds = [];
-		this.playSounds.push(FlxG.sound.load(AssetPaths.playCard1__wav));
-		this.playSounds.push(FlxG.sound.load(AssetPaths.playCard2__wav));
+
+		this.playerPlaySound = FlxG.sound.load(AssetPaths.playCard1__wav);
+		this.enemyPlaySound = FlxG.sound.load(AssetPaths.playCard2__wav);
 
 		this.random = GameController.rng;
 

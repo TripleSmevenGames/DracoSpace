@@ -248,9 +248,9 @@ class SkillFactory
 		hideBreaker => (?_) ->
 		{
 			var skill = skillFromData(ryder, steadfast);
-			var extraEffect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) -> {
-				// todo
-				// target.addStatus(DEFENSELESS)
+			var extraEffect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.addStatus(HIDEBREAKER);
 			};
 			skill.play = SkillAnimations.genericAttackPlay(skill.value, null, 0, null, extraEffect);
 			skill.spritePath = ryderPlaceholder;
@@ -285,10 +285,8 @@ class SkillFactory
 			var skill = skillFromData(ryder, staticAura);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				var numStatic = 0;
-				var alivePlayerChars = context.getAlivePlayers();
-				for (char in alivePlayerChars)
-					numStatic += char.getStatus(STATIC);
+				// this will remove all static from characters and return you the total removed.
+				var numStatic = context.expendAllStatic();
 				owner.addStatus(COUNTER, skill.value * numStatic);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
@@ -327,7 +325,7 @@ class SkillFactory
 		revenge => (?priority:Int) ->
 		{
 			var skill = skillFromData(ryder, revenge);
-			skill.play = skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
+			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				var damage = (owner.maxHp - owner.currHp) * 2;
 				SkillAnimations.genericAttackPlay(damage)(targets, owner, context);
@@ -335,6 +333,33 @@ class SkillFactory
 			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
+		brawl => (?_) ->
+		{
+			var skill = skillFromData(ryder, brawl);
+			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
+			{
+				context.pDeck.discardHand();
+				context.eDeck.discardHand();
+			};
+			skill.spritePath = ryderPlaceholder;
+			return skill;
+		},
+		// todo
+		// conductive => (?_) -> {}
+		champion => (?_) ->
+		{
+			var skill = skillFromData(ryder, champion);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				owner.addStatus(TAUNT, skill.value);
+				var currAttack = owner.getStatus(ATTACK);
+				if (currAttack > 0)
+					owner.addStatus(ATTACK, currAttack);
+			};
+			skill.play = SkillAnimations.genericBuffPlay(effect);
+			skill.spritePath = ryderPlaceholder;
+			return skill;
+		}
 	];
 
 	public static var kiwiSkillsBasic = [
@@ -409,7 +434,7 @@ class SkillFactory
 			var animSprite = SkillAnimations.getBlockAnim();
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				target.currBlock += context.expendStatic();
+				target.currBlock += context.expendAllStatic();
 			}
 			var effectFrame = 10;
 			var sound = AssetPaths.gainBlock1__wav;

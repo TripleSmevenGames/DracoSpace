@@ -10,8 +10,8 @@ import models.events.GameEvent;
 import models.player.Player;
 import substates.BattleSubState;
 import ui.battle.IBattleTriggerable;
-import ui.battle.combatUI.SkillSprite;
 import ui.battle.character.CharacterSprite;
+import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
 import utils.battleManagerUtils.BattleUISounds;
 import utils.battleManagerUtils.RewardHelper;
@@ -147,8 +147,6 @@ class BattleManager extends FlxBasic
 			sprite.revive();
 		for (sprite in enemySkillSprites)
 			sprite.revive();
-		for (char in context.pChars)
-			char.cancelSkillBtn.kill();
 	}
 
 	// make all skill sprites invisible and un-interactable
@@ -167,7 +165,6 @@ class BattleManager extends FlxBasic
 		{
 			char.targetArrow.visible = val;
 			char.targetArrow.alpha = .5;
-			char.tweenTargetArrow();
 		}
 	}
 
@@ -245,8 +242,8 @@ class BattleManager extends FlxBasic
 	{
 		if (getState() == PLAYER_TARGET)
 		{
-			// playerIdleState.start();
-			// return your spent cards
+			playerIdleState.start();
+			context.pDeck.refundPreDiscardList();
 		}
 	}
 
@@ -257,6 +254,28 @@ class BattleManager extends FlxBasic
 		{
 			context.pDeck.checkDead();
 			context.eDeck.checkDead();
+		}
+	}
+
+	/** Transition to the win or lose state if appropriate. Else, move to the next state is one is passed in. 
+	 * If you're calling this inside a state's start(), you probably don't want to pass in a nextState.
+	 * If you're calling this inside a state's update(), you probably do.
+	**/
+	function checkWinOrLose(?nextState:BattleManagerState)
+	{
+		// check if we've won or lost
+		if (context.areAllCharsDead(ENEMY))
+		{
+			this.winState.start();
+		}
+		else if (context.areAllCharsDead(PLAYER))
+		{
+			this.loseState.start();
+		}
+		else
+		{
+			if (nextState != null)
+				nextState.start();
 		}
 	}
 
@@ -293,7 +312,7 @@ class BattleManager extends FlxBasic
 			player.onAnyPlaySkill(skillSprite, context);
 	}
 
-	/** Reset the manager for a new battle. Make sure you add() this to the state after the battle view has been setup. **/
+	/** Reset the manager for a new battle. Make sure you add() this to the state after the battle view has been setup and added. **/
 	public function reset(context:BattleContext, ?enemyAI:BaseAI, ?battleType:GameEventType = BATTLE)
 	{
 		this.revive();
@@ -308,7 +327,7 @@ class BattleManager extends FlxBasic
 			char.context = context;
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
-			char.setOnClickCancelSkill(cancelSkillTargeting);
+			char.tweenTargetArrow();
 			for (skillSprite in char.skillSprites)
 			{
 				playerSkillSprites.push(skillSprite);
@@ -322,11 +341,14 @@ class BattleManager extends FlxBasic
 			char.context = context;
 			char.setOnClick(onCharacterClick);
 			char.setOnHover(onCharacterOver, onCharacterOut);
+			char.tweenTargetArrow();
 			for (skillSprite in char.skillSprites)
 			{
 				enemySkillSprites.push(skillSprite);
 			}
 		}
+
+		bss.setCancelSkillButtonOnClick(cancelSkillTargeting);
 
 		this.enemyAI = enemyAI != null ? enemyAI : new BaseAI(enemySkillSprites, context);
 
@@ -352,10 +374,20 @@ class BattleManager extends FlxBasic
 				state = playerStartState;
 
 				sounds.startPlayerTurn.play();
+				playAllCharIdle();
+
+				if (context.turnCounter == 0)
+					bss.queueBattleStartAnimation();
+				else
+					bss.queuePlayerTurnAnimation();
+
 				context.turnCounter++;
 
 				showAllSkillSprites();
+				bss.hideCancelSkillButton();
 
+				// this will trigger the onPlayerStartTurns of the characters and decks.
+				// So it draws your new hand, triggers statuses and artifacts, etc.
 				for (turnTriggerable in this.context.turnTriggerables)
 					turnTriggerable.onPlayerStartTurn(context);
 
@@ -392,6 +424,7 @@ class BattleManager extends FlxBasic
 				availableTargets = [];
 				setTargetArrowsVisible(false, PLAYER);
 				setTargetArrowsVisible(false, ENEMY);
+				bss.hideCancelSkillButton();
 
 				// redecide moves here and render the intent sprites.
 				// it uses the same seed for its RNG, so if all conditions are the same, it should decide on the same moves every time.
@@ -409,14 +442,7 @@ class BattleManager extends FlxBasic
 				checkDead();
 
 				// check if we've won or lost
-				if (context.areAllCharsDead(ENEMY))
-				{
-					winState.start();
-				}
-				else if (context.areAllCharsDead(PLAYER))
-				{
-					loseState.start();
-				}
+				checkWinOrLose();
 			},
 			update: (elapsed:Float) ->
 			{
@@ -455,6 +481,8 @@ class BattleManager extends FlxBasic
 		};
 
 		// Let player select a target for their played skill, if possible. Or, players can cancel this skill. Player can't do anything else.
+		// If they choose a target for their skill, we move to the player animating skill state.
+		// If they cancel their skill, we refund their cards and move back to the player idle state.
 		this.playerTargetState = {
 			name: PLAYER_TARGET,
 			turn: PLAYER,
@@ -482,7 +510,7 @@ class BattleManager extends FlxBasic
 							setTargetArrowsVisible(true, ENEMY);
 							availableTargets = context.getAliveEnemies();
 							hideAllSkillSprites();
-							activeSkillSprite.owner.cancelSkillBtn.revive();
+							bss.showCancelSkillButton();
 
 							// wait for user selection.
 							return;
@@ -496,7 +524,7 @@ class BattleManager extends FlxBasic
 						setTargetArrowsVisible(true, PLAYER);
 						hideAllSkillSprites();
 						availableTargets = context.getAlivePlayers();
-						activeSkillSprite.owner.cancelSkillBtn.revive();
+						bss.showCancelSkillButton();
 
 						// wait for user selection.
 						return;
@@ -512,6 +540,7 @@ class BattleManager extends FlxBasic
 			{
 				if (activeTargets != null)
 				{
+					context.pDeck.flushPreDiscardList();
 					playerAnimatingSkillState.start();
 				}
 			},
@@ -526,12 +555,13 @@ class BattleManager extends FlxBasic
 				this.state = playerAnimatingSkillState;
 
 				// remove the cancel button and all target arrows
-				activeSkillSprite.owner.cancelSkillBtn.kill();
 				setTargetArrowsVisible(false, PLAYER);
 				setTargetArrowsVisible(false, ENEMY);
+				bss.hideCancelSkillButton();
 
 				// play the skill
 				activeSkillSprite.owner.playSkill(activeSkillSprite, activeTargets, context);
+
 				// trigger any characters' onAnyPlaySkill
 				onAnyPlaySkill(activeSkillSprite);
 			},
@@ -568,6 +598,9 @@ class BattleManager extends FlxBasic
 			start: () ->
 			{
 				state = enemyStartState;
+
+				bss.queueEnemyTurnAnimation();
+				bss.hideCancelSkillButton();
 				for (turnTriggerable in this.context.turnTriggerables)
 					turnTriggerable.onEnemyStartTurn(context);
 
@@ -583,19 +616,8 @@ class BattleManager extends FlxBasic
 					// mark any dead characters as dead, by putting the xCover over their avatar
 					checkDead();
 
-					// check if we've won or lost
-					if (context.areAllCharsDead(ENEMY))
-					{
-						winState.start();
-					}
-					else if (context.areAllCharsDead(PLAYER))
-					{
-						loseState.start();
-					}
-					else
-					{
-						enemyIdleState.start();
-					}
+					// check if we've won or lost. If neither, move on to the enemyIdleState
+					checkWinOrLose(enemyIdleState);
 				}
 			}
 		};
@@ -616,14 +638,8 @@ class BattleManager extends FlxBasic
 				activeCards = null;
 				activeTargets = null;
 
-				if (context.areAllCharsDead(ENEMY))
-				{
-					winState.start();
-				}
-				else if (context.areAllCharsDead(PLAYER))
-				{
-					loseState.start();
-				}
+				// check if we've won or lost.
+				checkWinOrLose();
 			},
 			update: (elapsed:Float) ->
 			{
@@ -683,7 +699,12 @@ class BattleManager extends FlxBasic
 			{
 				if (activeTargets != null)
 				{
+					context.pDeck.flushPreDiscardList();
 					enemyAnimatingSkillState.start();
+				}
+				else
+				{
+					throw new haxe.Exception('activeTargets in enemyTargetState was null');
 				}
 			},
 		}
@@ -724,18 +745,7 @@ class BattleManager extends FlxBasic
 					checkDead();
 
 					// check if we've won or lost
-					if (context.areAllCharsDead(ENEMY))
-					{
-						winState.start();
-					}
-					else if (context.areAllCharsDead(PLAYER))
-					{
-						loseState.start();
-					}
-					else
-					{
-						playerStartState.start();
-					}
+					checkWinOrLose(playerStartState);
 				}
 			}
 		};

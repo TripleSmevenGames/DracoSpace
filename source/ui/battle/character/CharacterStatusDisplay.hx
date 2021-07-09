@@ -3,12 +3,12 @@ package ui.battle.character;
 import flixel.group.FlxSpriteGroup;
 import haxe.Exception;
 import ui.battle.IBattleTriggerable;
+import ui.battle.combatUI.SkillSprite;
 import ui.battle.status.*;
 import ui.battle.status.Status;
 import ui.battle.status.enemyPassives.*;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
-import ui.battle.combatUI.SkillSprite;
 
 class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerable
 {
@@ -166,6 +166,12 @@ class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerabl
 	{
 		for (status in statuses)
 			status.onTakeUnblockedDamage(damage, dealer, context);
+	}
+
+	public function onGainBlock(block:Int, context:BattleContext)
+	{
+		for (status in statuses)
+			status.onGainBlock(block, context);
 	}
 
 	public function onPlaySkill(skillSprite:SkillSprite, context:BattleContext)

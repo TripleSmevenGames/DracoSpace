@@ -1,6 +1,5 @@
 package ui.inventory.equipmentMenu;
 
-import ui.inventory.equipmentMenu.DragLayer.DropZone;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxG;
@@ -10,6 +9,7 @@ import flixel.text.FlxText;
 import flixel.util.FlxColor;
 import models.player.Player;
 import ui.artifact.ArtifactTileInv;
+import ui.inventory.equipmentMenu.DragLayer.DropZone;
 import ui.skillTile.SkillTile;
 
 using utils.ViewUtils;
@@ -101,7 +101,8 @@ class UnequippedArtifactsList extends FlxSpriteGroup
 			blankTiles.push(blankTile);
 		}
 
-		dropZone = new DropZone(onDrop, body.width, body.height);
+		var message = '';
+		dropZone = new DropZone(onDrop, message, body.width, body.height);
 		dropZone.centerSprite();
 		add(dropZone);
 

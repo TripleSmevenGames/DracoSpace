@@ -498,7 +498,7 @@
 						{
 							"id": "staticAura",
 							"name": "Static Aura",
-							"desc": "Expend Static: gain 1 Counter per Static.",
+							"desc": "Expend Static: gain $x Counter per Static.",
 							"rarity": 2,
 							"costs": [
 								{
@@ -507,7 +507,7 @@
 								}
 							],
 							"targetMethod": 7,
-							"value": 1,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1

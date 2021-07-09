@@ -1,13 +1,13 @@
 package ui.battle.combatUI;
 
-import models.player.Player;
-import ui.skillTile.SkillTile.TileBlank;
-import ui.artifact.ArtifactTileBattle;
-import models.CharacterInfo;
-import flixel.util.FlxColor;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
+import flixel.util.FlxColor;
+import models.CharacterInfo;
+import models.player.Player;
+import ui.artifact.ArtifactTileBattle;
+import ui.skillTile.SkillTile.TileBlank;
 
 using utils.ViewUtils;
 
@@ -15,12 +15,14 @@ class BattleHeader extends FlxSpriteGroup
 {
 	var body:FlxSprite;
 
+	static inline final HEIGHT = 90;
+
 	public function new()
 	{
 		super();
 
 		body = new FlxSprite(0, 0);
-		body.makeGraphic(FlxG.width, 100, FlxColor.fromRGB(0, 0, 0, 50));
+		body.makeGraphic(FlxG.width, HEIGHT, FlxColor.fromRGB(0, 0, 0, 50));
 		add(body);
 
 		// start rendering 100 pixels from the very left of the screen
@@ -38,8 +40,8 @@ class BattleHeader extends FlxSpriteGroup
 	}
 }
 
-/** Holder for a char's artifacts during battle. The char should have a reference to this so it can
- * trigger stuff during battle.
+/** Holder for a char's artifact tiles during battle.
+ * It will render on the battle header so the user can see what artifacts each character has.
  * Centered Y only. X starts at left most side.
 **/
 class CharArtifacts extends FlxSpriteGroup

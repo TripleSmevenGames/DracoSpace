@@ -113,7 +113,7 @@ class BattleAnimationGroup
 	{
 		options = getDefaultOptions(options);
 
-		// cancel all the tweens, as they will be played as soon as they are created.
+		// cancel all the tweens, as they will be played as soon as they are created otherwise.
 		for (tween in tweens)
 			tween.active = false;
 

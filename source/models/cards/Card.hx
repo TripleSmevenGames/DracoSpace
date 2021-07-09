@@ -102,7 +102,7 @@ class Card extends FlxSpriteGroup
 	}
 
 	/** Reset some things when a card is drawn. **/
-	public function onDraw()
+	public function resetForDraw()
 	{
 		this.only = null;
 		this.carryOver = false;
