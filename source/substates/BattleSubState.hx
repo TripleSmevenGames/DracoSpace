@@ -314,20 +314,23 @@ class BattleSubState extends FlxSubState
 		view.cancelSkillButton.kill();
 	}
 
+	/** Renders different layers where battle UI is rendered.
+	 * The order is important, what's added last is rendered on top of everything before it.
+	**/
 	function setupBattleLayers()
 	{
 		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
 		GameController.battleDamageNumbers.revive();
 		add(GameController.battleDamageNumbers);
 
+		// layer to draw the sprite animations
+		GameController.battleSpriteAnimsLayer.revive();
+		add(GameController.battleSpriteAnimsLayer);
+
 		// create the tooltip layer, which is where all tooltips will be added to.
 		// this lets them be rendered on top of the battle view.
 		GameController.battleTooltipLayer.revive();
 		add(GameController.battleTooltipLayer);
-
-		// layer to draw the sprite animations
-		GameController.battleSpriteAnimsLayer.revive();
-		add(GameController.battleSpriteAnimsLayer);
 	}
 
 	function setupSoundManager()

@@ -20,7 +20,7 @@ using utils.ViewUtils;
 class UpgradeShop extends FlxSpriteGroup
 {
 	public static var skillSlotUpgradePrice = [0, 10, 20, 30, 40];
-	public static var drawUpgradePrice = [0, 0, 15, 25, 50, 80];
+	public static var drawUpgradePrice = [0, 0, 10, 25, 40, 60];
 
 	var items:Array<UpgradeShopItem>;
 	var refreshShopMenu:Void->Void;

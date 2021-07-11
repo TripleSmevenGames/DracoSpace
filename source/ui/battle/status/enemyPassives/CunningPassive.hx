@@ -6,10 +6,11 @@ import utils.battleManagerUtils.BattleContext;
 
 class CunningPassive extends Status
 {
-	override public function onEnemyEndTurn(context:BattleContext)
+	override public function onPlayerStartTurn(context:BattleContext)
 	{
-		// apply carryover to all wisdom cards
-		var cards = context.eDeck.getCardsInHand();
+		// apply carryover to all wisdom cards in the deck every turn.
+		// slow? Shouldn't be that bad. Switch this to OnDraw when thats implemented.
+		var cards = context.eDeck.getCardsInDeck();
 		for (card in cards)
 		{
 			if (card.name == 'Wisdom')

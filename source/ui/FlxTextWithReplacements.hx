@@ -5,7 +5,7 @@ import flixel.FlxSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.text.FlxText;
 import models.skills.Skill.SkillPointType;
-import ui.battle.status.Status.StatusType;
+import ui.battle.status.StatusMap.StatusType;
 import utils.ViewUtils;
 
 using StringTools;

@@ -12,7 +12,7 @@ import ui.battle.combatUI.SkillSprite;
 
 using utils.ViewUtils;
 
-/** Centered around middle intent sprite (this is a group of them)**/
+/** Centered around middle intent sprite (this is a group of intents)**/
 class EnemyIntentSprites extends FlxSpriteGroup
 {
 	var intentSprites:Array<EnemyIntentSprite>;
@@ -43,7 +43,7 @@ class EnemyIntentSprites extends FlxSpriteGroup
 		for (i in 0...intentSprites.length)
 		{
 			var sprite = intentSprites[i];
-			var yPos = ViewUtils.getXCoordForCenteringLR(i, intentSprites.length, sprite.height, 2);
+			var yPos = ViewUtils.getXCoordForCenteringLR(i, intentSprites.length, sprite.height);
 			sprite.setPosition(0, yPos);
 			add(sprite);
 		}

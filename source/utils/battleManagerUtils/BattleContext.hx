@@ -6,7 +6,7 @@ import models.CharacterInfo.CharacterType;
 import ui.battle.ITurnTriggerable;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
-import ui.battle.status.Status.StatusType;
+import ui.battle.status.StatusMap.StatusType;
 
 using utils.GameUtils;
 

@@ -765,6 +765,9 @@ class BattleManager extends FlxBasic
 				var moneyReward = RewardHelper.getMoneyReward(battleType);
 				Player.money += moneyReward;
 
+				// increment the battles fought
+				Player.battlesFought += 1;
+
 				// show the win screen, which contains the rewards screen.
 				bss.showWinScreen(expReward, moneyReward, battleType);
 			},

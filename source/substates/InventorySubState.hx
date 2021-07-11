@@ -142,11 +142,11 @@ class InventorySubState extends FlxSubState
 		header.scrollFactor.set(0, 0);
 		add(header);
 
-		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.toggleInventory());
+		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.toggleInventory(), 150, 50);
 		backBtn.centerSprite(FlxG.width - 200, FlxG.height - 150);
 		add(backBtn);
 
-		this.toggleButton = new BasicWhiteButton('Shop', toggleScreens);
+		this.toggleButton = new BasicWhiteButton('Shop', toggleScreens, 150, 50);
 		toggleButton.centerSprite(FlxG.width - 200, FlxG.height - 100);
 		add(toggleButton);
 	}

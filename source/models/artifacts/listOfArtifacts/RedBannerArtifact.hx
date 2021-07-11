@@ -4,16 +4,18 @@ import utils.battleManagerUtils.BattleContext;
 
 class RedBannerArtifact extends Artifact
 {
+	static inline final value = 3;
+
 	override public function onPlayerStartTurn(context:BattleContext)
 	{
 		if (context.turnCounter == 1)
-			owner.addStatus(TAUNT, 1);
+			owner.addStatus(TAUNT, value);
 	}
 
 	public function new()
 	{
 		var name = 'Red Banner';
-		var desc = 'Start each battle with 1 Taunt.';
+		var desc = 'Start each battle with $value Taunt.';
 		var assetPath = AssetPaths.artifactPlaceholder__png;
 		super(name, desc, assetPath);
 	}

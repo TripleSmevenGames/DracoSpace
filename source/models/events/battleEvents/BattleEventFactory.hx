@@ -14,7 +14,7 @@ class BattleEventFactory
 	/** This is a queue of battle events that will be used from every time the player encounters a battle.
 	 * It will be shuffled at the start of a run.
 	**/
-	static var battleQueueMed = [
+	static var battleQueueTier2 = [
 		twoSlimes,
 		ghostsC,
 		ghostsF,
@@ -25,10 +25,10 @@ class BattleEventFactory
 		mushroom,
 	];
 
-	static var battleQueueMedCounter = 0;
+	static var battleQueueTier2Counter = 0;
 
-	static var battleQueueEasy = [greenSlime, dandelion, ghosts];
-	static var battleQueueEasyCounter = 0;
+	static var battleQueueTier1 = [greenSlime, dandelion, ghosts];
+	static var battleQueueTier1Counter = 0;
 
 	static var battleQueueElite = [ghostsElite, darkFirewood];
 	static var battleQueueEliteCounter = 0;
@@ -49,17 +49,16 @@ class BattleEventFactory
 
 	public static function getNextBattleEvent():BattleEvent
 	{
-		return bush();
 		var retVal:BattleEvent;
-		if (Player.battlesFought < 4 || Player.getColumn() < 4)
+		if (Player.battlesFought < 4 && Player.getColumn() < 5)
 		{
-			retVal = getBattleFromQueue(battleQueueEasy, battleQueueEasyCounter);
-			battleQueueEasyCounter += 1;
+			retVal = getBattleFromQueue(battleQueueTier1, battleQueueTier1Counter);
+			battleQueueTier1Counter += 1;
 		}
 		else
 		{
-			retVal = getBattleFromQueue(battleQueueMed, battleQueueMedCounter);
-			battleQueueMedCounter += 1;
+			retVal = getBattleFromQueue(battleQueueTier2, battleQueueTier2Counter);
+			battleQueueTier2Counter += 1;
 		}
 		return retVal;
 	}
@@ -76,8 +75,8 @@ class BattleEventFactory
 	public static function init()
 	{
 		var random = new FlxRandom();
-		random.shuffle(battleQueueEasy);
-		random.shuffle(battleQueueMed);
+		random.shuffle(battleQueueTier1);
+		random.shuffle(battleQueueTier2);
 		random.shuffle(battleQueueElite);
 	}
 
@@ -87,7 +86,7 @@ class BattleEventFactory
 		{
 			var skills = [SF.enemySkills.get(idle)()];
 			var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.trainingDummy__png, 48, 48, 1);
-			var dummyChar = CharacterInfo.createEnemy('Dummy', spriteSheetInfo, 8, skills);
+			var dummyChar = CharacterInfo.createEnemy('Dummy', spriteSheetInfo, 2, skills);
 			dummyChar.avatarPath = AssetPaths.trainingDummyAvatar__png;
 			dummyChar.soundType = PLANT;
 			return dummyChar;
@@ -95,7 +94,7 @@ class BattleEventFactory
 
 		var name = 'Training Dummy';
 		var desc = 'You decide to spar with the training dummy before heading out.';
-		var enemies = [createDummy()];
+		var enemies = [createDummy(), createDummy()];
 		var deck = new Deck([CON => 10], 0, 1);
 		return new BattleEvent(name, desc, enemies, deck, TUTORIAL);
 	}
@@ -315,7 +314,7 @@ class BattleEventFactory
 	{
 		var skills = [SF.enemySkills.get(petalShield)()];
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(AssetPaths.dandelionGreenIdle32x32x10__png, 32, 32, 10);
-		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 14, skills);
+		var gd = CharacterInfo.createEnemy('Green Dandelion', spriteSheetInfo, 12, skills);
 		gd.avatarPath = AssetPaths.dandelionGreenAvatar__png;
 		gd.initialStatuses = [PETALARMOR];
 		gd.soundType = PLANT;
@@ -327,7 +326,7 @@ class BattleEventFactory
 		var skills = [SF.enemySkills.get(petalBlade)()];
 		var spriteSheet = weak ? AssetPaths.dandelionNoPetalIdle32x32x10__png : AssetPaths.dandelionRedIdle32x32x10__png;
 		var spriteSheetInfo = CharacterInfo.newSpriteSheetInfo(spriteSheet, 32, 32, 10);
-		var hp = weak ? 10 : 14;
+		var hp = weak ? 10 : 12;
 		var rd = CharacterInfo.createEnemy('Red Dandelion', spriteSheetInfo, hp, skills);
 		rd.avatarPath = AssetPaths.dandelionRedAvatar__png;
 		if (!weak)
@@ -354,7 +353,7 @@ class BattleEventFactory
 		var enemies = [createGreenDanelion(), createRedDanelion()];
 		var hiddenCards = 0;
 		var draw = 2;
-		var deck = new Deck([POW => 8, CON => 8], hiddenCards, draw);
+		var deck = new Deck([POW => 6, CON => 6, AGI => 4], hiddenCards, draw);
 		return new BattleEvent(name, desc, enemies, deck, BATTLE);
 	}
 

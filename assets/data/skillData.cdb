@@ -254,7 +254,7 @@
 								}
 							],
 							"targetMethod": 7,
-							"cooldown": 3,
+							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
 							"value": 8,
@@ -546,8 +546,8 @@
 							"value2": 2
 						},
 						{
-							"id": "matchDefense",
-							"name": "Match Defense",
+							"id": "holoBarrier",
+							"name": "Holo-Barrier",
 							"desc": "Gain $x Block. Next turn, gain $x2 Block.",
 							"rarity": 2,
 							"costs": [
@@ -778,7 +778,7 @@
 							"rarity": 1,
 							"costs": [
 								{
-									"AGI": 1
+									"POW": 1
 								}
 							],
 							"targetMethod": 0,
@@ -849,7 +849,7 @@
 							"rarity": 1,
 							"costs": [
 								{
-									"AGI": 1
+									"POW": 1
 								}
 							],
 							"targetMethod": 2,
@@ -1013,7 +1013,7 @@
 							"rarity": 2,
 							"costs": [
 								{
-									"AGI": 2
+									"POW": 2
 								},
 								{
 									"ANY": 4
@@ -1288,8 +1288,8 @@
 							"chargesPerCD": 5
 						},
 						{
-							"id": "holoBarrier",
-							"name": "Holo Barrier",
+							"id": "ancientBarrier",
+							"name": "Ancient Barrier",
 							"desc": "An ally gaines $x Block.",
 							"rarity": 0,
 							"costs": [
@@ -1460,8 +1460,8 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 4,
-							"value2": 4,
+							"value": 3,
+							"value2": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1494,7 +1494,7 @@
 								}
 							],
 							"targetMethod": 7,
-							"value": 10,
+							"value": 9,
 							"value2": 2,
 							"cooldown": 2,
 							"maxCharges": 1,
@@ -1527,7 +1527,7 @@
 								}
 							],
 							"targetMethod": 6,
-							"value": 6,
+							"value": 5,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1

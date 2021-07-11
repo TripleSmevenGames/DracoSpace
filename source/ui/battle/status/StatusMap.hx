@@ -1,10 +1,45 @@
 package ui.battle.status;
 
 import ui.battle.character.CharacterSprite;
-import ui.battle.status.Status.StatusType;
 import ui.battle.status.enemyPassives.*;
 import ui.battle.status.genericStatuses.*;
 import ui.battle.status.skillSpecific.*;
+
+/** Enum describing which status it is.
+ * NOTE! When you add a new status, you MUST add to this enum, AND add to the StatusMap.hx.
+**/
+enum StatusType
+{
+	BURN;
+	STATIC;
+	COLD;
+	ATTACK;
+	ATTACKDOWN;
+	TAUNT;
+	COUNTER;
+	DODGE;
+	STUN;
+	EXPOSED;
+	LASTBREATH;
+	DYINGWISH;
+	HAUNT;
+	CUNNING;
+	SIPHON;
+	PETALARMOR;
+	PETALSPIKES;
+	STURDY;
+	UNSTABLE;
+	PLUSDRAW;
+	MINUSDRAW;
+	WOUNDED;
+	WEAK;
+	HIDEBREAKER;
+	REACTIVEARMOR;
+	HOLOBARRIER;
+	REGENERATE;
+	STATICSHIELD;
+	REPOSITION;
+}
 
 /** Giant mapping of StatusType to a function which, when called, creates a new status. 
  * See its usage in CharacterStatusDisplay for examples.
@@ -39,5 +74,8 @@ class StatusMap
 		HIDEBREAKER => (owner:CharacterSprite, initialStacks:Int = 1) -> new HideBreakerStatus(owner, initialStacks),
 		REGENERATE => (owner:CharacterSprite, initialStacks:Int = 1) -> new RegenerateStatus(owner, initialStacks),
 		REACTIVEARMOR => (owner:CharacterSprite, initialStacks:Int = 1) -> new ReactiveArmorStatus(owner, initialStacks),
+		HOLOBARRIER => (owner:CharacterSprite, initialStacks:Int = 1) -> new HoloBarrierStatus(owner, initialStacks),
+		STATICSHIELD => (owner:CharacterSprite, initialStacks:Int = 1) -> new StaticShieldStatus(owner, initialStacks),
+		REPOSITION => (owner:CharacterSprite, initialStacks:Int = 1) -> new RepositionStatus(owner, initialStacks),
 	];
 }

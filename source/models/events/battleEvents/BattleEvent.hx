@@ -28,6 +28,11 @@ class BattleEvent extends GameEvent
 		this.enemies = enemies;
 		this.eDeck = eDeck;
 		var choices:Array<Choice> = [Choice.getBattle(this)];
+
+		#if godmode
+		// if godmode, you can avoid any battle event by leaving
+		choices.push(Choice.getLeave());
+		#end
 		super(name, desc, type, choices);
 	}
 }

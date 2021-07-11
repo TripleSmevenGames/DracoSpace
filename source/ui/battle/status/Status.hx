@@ -6,39 +6,7 @@ import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
-
-/** Enum describing which status it is.
- * NOTE! When you add a new status, you MUST add to this enum, AND add to the StatusMap.hx.
-**/
-enum StatusType
-{
-	BURN;
-	STATIC;
-	COLD;
-	ATTACK;
-	ATTACKDOWN;
-	TAUNT;
-	COUNTER;
-	DODGE;
-	STUN;
-	EXPOSED;
-	LASTBREATH;
-	DYINGWISH;
-	HAUNT;
-	CUNNING;
-	SIPHON;
-	PETALARMOR;
-	PETALSPIKES;
-	STURDY;
-	UNSTABLE;
-	PLUSDRAW;
-	MINUSDRAW;
-	WOUNDED;
-	WEAK;
-	HIDEBREAKER;
-	REACTIVEARMOR;
-	REGENERATE;
-}
+import ui.battle.status.StatusMap.StatusType;
 
 typedef StatusInfo =
 {

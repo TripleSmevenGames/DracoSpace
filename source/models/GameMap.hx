@@ -18,6 +18,8 @@ class Node
 	public var id:Int;
 	public var connectedNodesId:Array<Int> = new Array<Int>();
 	public var eventType:GameEventType;
+
+	/** What number column this node is in, starting at 0. **/
 	public var column:Int;
 
 	public function new(id:Int, column:Int, ?eventType:GameEventType)

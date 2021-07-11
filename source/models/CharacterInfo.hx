@@ -8,6 +8,7 @@ import models.player.Player;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.battle.status.Status;
+import ui.battle.status.StatusMap.StatusType;
 
 using utils.ViewUtils;
 

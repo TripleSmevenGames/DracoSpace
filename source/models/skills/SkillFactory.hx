@@ -14,6 +14,8 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
 import utils.battleManagerUtils.BattleContext;
 
+using utils.GameUtils;
+
 typedef SPC = SkillPointCombination;
 typedef SkillBlueprint = ?Int->Skill;
 typedef SkillList = Map<SkillData_skillsKind, SkillBlueprint>;
@@ -292,8 +294,20 @@ class SkillFactory
 			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
-		// todo
-		// whirlwindSwing => (?_) -> {}
+		whirlwindSwing => (?_) ->
+		{
+			var skill = skillFromData(ryder, whirlwindSwing);
+			var animSprite = SkillAnimations.getHitAnim();
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				var numSwings = owner.info.getNumSwingSkills();
+				var damage = skill.value * numSwings;
+				owner.dealDamageTo(damage, target, context);
+			};
+			skill.play = SkillAnimations.getCustomPlay(animSprite, effect);
+			skill.spritePath = ryderPlaceholder;
+			return skill;
+		},
 		blitzAttack => (?_) ->
 		{
 			var skill = skillFromData(ryder, blitzAttack);
@@ -305,14 +319,13 @@ class SkillFactory
 			skill.spritePath = ryderPlaceholder;
 			return skill;
 		},
-		matchDefense => (?priority:Int) ->
+		holoBarrier => (?priority:Int) ->
 		{
-			var skill = skillFromData(ryder, matchDefense);
+			var skill = skillFromData(ryder, holoBarrier);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.currBlock += skill.value;
-				// todo
-				// owner.addStatus(MATCHDEFENSE, skill.value2)
+				owner.addStatus(HOLOBARRIER, skill.value2);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = ryderPlaceholder;
@@ -400,9 +413,9 @@ class SkillFactory
 		staticShield => (?priority:Int) ->
 		{
 			var skill = skillFromData(kiwi, staticShield);
-			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) -> {
-				// todo
-				// target.addStatus(STATICSHIELD, skill.value2);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.addStatus(STATICSHIELD, skill.value2);
 			}
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
@@ -422,7 +435,7 @@ class SkillFactory
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				SkillAnimations.genericAttackPlay(skill.value)(targets, owner, context);
-				SkillAnimations.genericBuffPlay(effect)(targets, owner, context);
+				SkillAnimations.genericBuffPlay(effect)([owner], owner, context);
 			}
 			skill.spritePath = kiwiPlaceholder;
 			return skill;
@@ -586,9 +599,9 @@ class SkillFactory
 		reposition => (?priority:Int) ->
 		{
 			var skill = skillFromData(kiwi, reposition);
-			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) -> {
-				// todo
-				// target.addStatus(REPOSITION, skill.value);
+			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+			{
+				target.addStatus(REPOSITION);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = kiwiPlaceholder;
@@ -627,6 +640,7 @@ class SkillFactory
 			skill.spritePath = kiwiPlaceholder;
 			return skill;
 		}
+		// ultimateHeist => (?_) -> {}
 	];
 
 	public static var ryderSkills:CharSkillList = [

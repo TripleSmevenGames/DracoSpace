@@ -4,20 +4,19 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
-class ReactiveArmorStatus extends OneTurnStatus
+class StaticShieldStatus extends OneTurnStatus
 {
-	override public function onPlayerStartTurn(context:BattleContext)
+	override public function onTakeDamage(damage:Int, dealer:CharacterSprite, context:BattleContext)
 	{
-		owner.addStatus(COUNTER, stacks);
-		super.onPlayerStartTurn(context);
+		owner.addStatus(STATIC, stacks);
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		var info:StatusInfo = {
-			type: REACTIVEARMOR,
-			name: 'Reactive Armor',
-			desc: 'Next turn, gain $initialStacks Counter.',
+			type: STATICSHIELD,
+			name: 'Static Shield',
+			desc: 'This turn, gain $initialStacks Static when taking damage.',
 			iconPath: AssetPaths.AttackDown__png,
 			stackable: true,
 		};

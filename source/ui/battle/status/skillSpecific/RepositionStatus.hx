@@ -4,22 +4,22 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
-class ReactiveArmorStatus extends OneTurnStatus
+class RepositionStatus extends OneTurnStatus
 {
 	override public function onPlayerStartTurn(context:BattleContext)
 	{
-		owner.addStatus(COUNTER, stacks);
+		owner.addStatus(DODGE, 1);
 		super.onPlayerStartTurn(context);
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		var info:StatusInfo = {
-			type: REACTIVEARMOR,
-			name: 'Reactive Armor',
-			desc: 'Next turn, gain $initialStacks Counter.',
+			type: REPOSITION,
+			name: 'Reposition',
+			desc: 'Next turn, gain 1 Dodge.',
 			iconPath: AssetPaths.AttackDown__png,
-			stackable: true,
+			stackable: false,
 		};
 
 		super(owner, info, initialStacks);

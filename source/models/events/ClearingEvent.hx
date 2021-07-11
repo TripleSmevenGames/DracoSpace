@@ -14,8 +14,7 @@ class ClearingEvent extends GameEvent
 	{
 		var name = 'Rest';
 		var eventDesc = 'Your party sets up a tent and a campfire. A well needed rest and some rations is enough to keep them going. \n\n';
-		for (char in Player.chars)
-			eventDesc += '${char.name} is now at ${char.currHp} health. \n';
+		eventDesc += 'Your party was healed.';
 
 		var choices = [Choice.getGoRoot()];
 		return new GameEvent(name, eventDesc, SUB, choices);

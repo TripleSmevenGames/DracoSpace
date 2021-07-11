@@ -82,6 +82,7 @@ class Player
 		exp = 0;
 		skillsBought = 0;
 		currentSkillShopChoices = [];
+		battlesFought = 0;
 
 		// https://haxe.org/manual/lf-condition-compilation.html
 		#if godmode

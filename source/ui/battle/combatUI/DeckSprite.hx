@@ -106,9 +106,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** Queue an animation to draw x cards. **/
-	public function drawCards(num:Int, ?only:CharacterSprite)
+	public function drawCards(num:Int, ?only:CharacterSprite, hiddenCount = 0)
 	{
-		var hiddenCount = hiddenCards;
 		for (i in 0...num)
 		{
 			if (hiddenCount > 0)
@@ -223,6 +222,22 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return this.hand.getCards();
 	}
 
+	public function getCardsInDraw()
+	{
+		return this.drawPile.getCards();
+	}
+
+	public function getCardsInDiscard()
+	{
+		return this.discardPile.getCards();
+	}
+
+	/** Get an array of all the cards in deck. **/
+	public function getCardsInDeck()
+	{
+		return cardPool.copy();
+	}
+
 	/** Get shallow copy of picked cards in hand. **/
 	public function getPickedCardsInHand()
 	{
@@ -254,7 +269,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		// reset the modifier since we used it this turn
 		this.drawModifier = 0;
 
-		drawCards(cardsToDraw);
+		drawCards(cardsToDraw, null, hiddenCards);
 	}
 
 	public function onPlayerEndTurn(context:BattleContext)
@@ -367,12 +382,13 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		addToCursor(0, discardPile.height);
 		discardPile.setPosition(cursorX, cursorY);
 
+		// okay lets go back to 0, 0 and place the hand there (which is centered)
 		cursorX = 0;
 		cursorY = 0;
 		addToCursor(drawPile.width + hand.width / 2, 0);
 		hand.setPosition(cursorX, cursorY);
 
-		addToCursor(hand.width / 2 + 30, hand.height / 2 - 15); // 30 is approx half of avatar after scaling
+		addToCursor(hand.width / 2 + 30, hand.height / 2 - 60); // the avatar is about 60 pixels
 
 		// place the combat skill lists bottom to top
 		this.skillLists = getSkillLists();
@@ -380,7 +396,8 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			skillList.setPosition(cursorX, cursorY);
 			add(skillList);
-			addToCursor(0, -(skillList.height - 12));
+			// push the cursor up to place the next character.
+			addToCursor(0, -(skillList.height - 24));
 		}
 
 		if (type == PLAYER)

@@ -21,6 +21,7 @@ import ui.TooltipLayer.Tooltip;
 import ui.battle.combatUI.SkillSprite;
 import ui.battle.status.Status;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.status.StatusMap.StatusType;
 
 using utils.GameUtils;
 using utils.ViewUtils;
@@ -164,12 +165,15 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		return 0;
 	}
 
-	/** Call this function for the character to take damage. **/
-	public function takeDamage(val:Int, dealer:CharacterSprite, context:BattleContext, blockable = true)
+	/** Call this function for the character to take damage.
+	 * It should return the final hp loss taken after all checks.
+	**/
+	public function takeDamage(val:Int, dealer:CharacterSprite, context:BattleContext, blockable = true):Int
 	{
+		var healthBefore = this.currHp;
 		if (dead)
 		{
-			return;
+			return 0;
 			trace('a dead char took damage. ${this.info.name}');
 		}
 
@@ -178,7 +182,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			removeStacksOnStatus(DODGE, 1);
 			GameController.battleSoundManager.playSound(BSM.miss);
 			spawnDamageNumber('MISS');
-			return;
+			return 0;
 		}
 
 		// reduce damage for each stack of sturdy.
@@ -189,11 +193,12 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			GameController.battleSoundManager.playSound(BSM.miss);
 			spawnDamageNumber('MISS');
-			return;
+			return 0;
 		}
 
 		// call onTakeDamage before damage is actually taken.
 		// That way if the character dies from this damage, the status' onTakeDamage will still fire.
+		// maybe this is bad though and we should change this.
 		this.onTakeDamage(val, dealer, context);
 
 		// if the damage is blockable (which is true by default)
@@ -220,11 +225,14 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			currHp -= val;
 		}
 		spawnDamageNumber(Std.string(val));
+		var finalHealthLoss = healthBefore - currHp;
+		return finalHealthLoss;
 	}
 
 	/** Call this when one char deals damage to other char.
+	 * Should return the final hp loss after all checks.
 	**/
-	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext)
+	public function dealDamageTo(val:Int, target:CharacterSprite, context:BattleContext):Int
 	{
 		val += this.statusDisplay.getStatus(ATTACK);
 		val -= this.statusDisplay.getStatus(ATTACKDOWN);
@@ -238,7 +246,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		val = Std.int(val * modifiers);
 
 		onDealDamage(val, target, context);
-		target.takeDamage(val, this, context);
+		return target.takeDamage(val, this, context);
 	}
 
 	/** Call this when a character is paying hp to activate a skill. Still triggers onTakeDamage. **/
@@ -540,7 +548,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		else if (this.info.type == ENEMY)
 		{
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
-			targetArrow.centerSprite(-(sprite.width / 2) + TARGET_ARROW_DISTANCE, 0);
+			targetArrow.centerSprite(-(sprite.width / 2 + TARGET_ARROW_DISTANCE), 0);
 		}
 
 		targetArrow.scaleUp(4);

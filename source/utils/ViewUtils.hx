@@ -15,7 +15,7 @@ import flixel.util.FlxColor;
 import models.player.Player;
 import models.skills.Skill;
 import openfl.geom.Rectangle;
-import ui.battle.status.Status.StatusType;
+import ui.battle.status.StatusMap.StatusType;
 
 using utils.ViewUtils;
 

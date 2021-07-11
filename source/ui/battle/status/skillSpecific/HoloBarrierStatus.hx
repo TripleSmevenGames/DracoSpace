@@ -4,20 +4,20 @@ import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
-class ReactiveArmorStatus extends OneTurnStatus
+class HoloBarrierStatus extends OneTurnStatus
 {
 	override public function onPlayerStartTurn(context:BattleContext)
 	{
-		owner.addStatus(COUNTER, stacks);
+		owner.gainBlock(stacks, context);
 		super.onPlayerStartTurn(context);
 	}
 
 	public function new(owner:CharacterSprite, initialStacks:Int = 1)
 	{
 		var info:StatusInfo = {
-			type: REACTIVEARMOR,
-			name: 'Reactive Armor',
-			desc: 'Next turn, gain $initialStacks Counter.',
+			type: HOLOBARRIER,
+			name: 'Holo-Barrier',
+			desc: 'Next turn, gain $initialStacks Block.',
 			iconPath: AssetPaths.AttackDown__png,
 			stackable: true,
 		};

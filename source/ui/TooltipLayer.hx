@@ -19,8 +19,6 @@ import ui.SkillCard;
 import ui.skillTile.SkillTile;
 import utils.ViewUtils;
 
-// if all these tooltips cause a performance issue, make this one tooltip that "teleports" around instead.
-
 typedef TooltipOptions =
 {
 	?pos:TooltipPos,
@@ -37,7 +35,9 @@ enum TooltipPos
 	BOTTOM;
 }
 
-/** The tooltip you see when you hover over something. **/
+/** The tooltip you see when you hover over something.
+ * A lot of tooltips may cause perf issues? Slow?
+**/
 class Tooltip extends FlxSpriteGroup
 {
 	var sprite:FlxSprite;
@@ -193,8 +193,8 @@ class Tooltip extends FlxSpriteGroup
 	{
 		var group = new FlxSpriteGroup();
 		options = getDefaultOptions(options);
-		var spaceBetweenNameAndDesc = 12;
-		var paddingVertical = 6;
+		var spaceBetweenNameAndDesc = 4;
+		var paddingVertical = 4;
 		var paddingSide = 6;
 		var font = Fonts.STANDARD_FONT;
 

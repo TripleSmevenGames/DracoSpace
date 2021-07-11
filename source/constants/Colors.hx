@@ -7,7 +7,7 @@ class Colors
 	public static inline final COOLDOWN_BLUE = 0xFFb3fffd;
 
 	public static inline final KNOWLEDGE_BLUE = 0xFF0070c0;
-	public static inline final POWER_RED = 0xFFDD0000;
+	public static inline final POWER_RED = 0xFFff3838;
 	public static inline final CONSTITUTION_GREEN = 0xFF00AA00;
 	public static inline final AGILITY_YELLOW = 0xFFfffc30;
 	public static inline final WISDOM_PURPLE = 0xFF330080;

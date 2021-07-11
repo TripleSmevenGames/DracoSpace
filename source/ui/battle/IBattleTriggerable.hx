@@ -33,5 +33,6 @@ interface IBattleTriggerable extends ITurnTriggerable
 	function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext):Void;
 
 	function onDead(context:BattleContext):Void;
-	// function onBattleStart(context:BattleContext):Void;
+	// todo
+	// function onDraw(card:Card, context:BattleContext):Void;
 }

@@ -9,6 +9,7 @@ import ui.battle.status.Status;
 import ui.battle.status.enemyPassives.*;
 import utils.ViewUtils;
 import utils.battleManagerUtils.BattleContext;
+import ui.battle.status.StatusMap.StatusType;
 
 class CharacterStatusDisplay extends FlxSpriteGroup implements IBattleTriggerable
 {
