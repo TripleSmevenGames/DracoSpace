@@ -3,6 +3,8 @@ package models.artifacts;
 import flixel.math.FlxRandom;
 import models.artifacts.listOfArtifacts.*;
 
+using utils.GameUtils;
+
 class ArtifactFactory
 {
 	/** constant list of artifacts. **/
@@ -33,6 +35,13 @@ class ArtifactFactory
 			init();
 
 		var artifactClass = workingList.pop();
+		return Type.createInstance(artifactClass, []);
+	}
+
+	/** Alternatively, we can not care about duplicates and just get a random artifact. **/
+	static public function getRandomArtifact():Artifact
+	{
+		var artifactClass = listOfArtifacts.getRandomChoice();
 		return Type.createInstance(artifactClass, []);
 	}
 }

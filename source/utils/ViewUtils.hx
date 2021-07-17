@@ -104,13 +104,9 @@ class ViewUtils
 	}
 
 	static final statusColorMap = [
-		BURN => Colors.BURN_ORANGE,
-		COLD => Colors.COLD_BLUE,
-		STATIC => Colors.STATIC_YELLOW,
-		TAUNT => Colors.CONSTITUTION_GREEN,
-		COUNTER => Colors.CONSTITUTION_GREEN,
-		ATTACK => Colors.POWER_RED,
-		DODGE => Colors.AGILITY_YELLOW,
+		BURN => Colors.BURN_ORANGE, COLD => Colors.COLD_BLUE, STATIC => Colors.STATIC_YELLOW, TAUNT => Colors.CONSTITUTION_GREEN,
+		COUNTER => Colors.CONSTITUTION_GREEN, ATTACK => Colors.POWER_RED, DODGE => Colors.AGILITY_YELLOW, WEAK => Colors.AGILITY_YELLOW,
+		WOUNDED => Colors.POWER_RED, STUN => Colors.AGILITY_YELLOW,
 	];
 
 	public static function getColorForStatus(status:StatusType)
