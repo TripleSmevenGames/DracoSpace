@@ -7,6 +7,7 @@ import managers.MusicManager;
 import models.artifacts.ArtifactFactory;
 import models.events.HomeEvent;
 import models.events.battleEvents.BattleEventFactory;
+import models.events.encounterEvents.EncounterEventFactory;
 import models.player.Player;
 import models.skills.SkillFactory;
 import ui.debug.BAMIndicator;
@@ -47,6 +48,8 @@ class PlayState extends FlxState
 		Player.init();
 
 		BattleEventFactory.init();
+
+		EncounterEventFactory.init();
 
 		ArtifactFactory.init();
 

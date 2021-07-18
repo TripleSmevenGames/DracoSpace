@@ -96,6 +96,22 @@ class CharacterInfo
 		}
 	}
 
+	/** Take in a skill's NAME and discard it completely. Returns true if a skill was found and removed, false otherwise. **/
+	public function loseSkill(skillName:String):Bool
+	{
+		for (i in 0...this.skills.length)
+		{
+			var skill = skills[i];
+			if (skillName == skill.name)
+			{
+				skills.splice(i, 1);
+				return true;
+			}
+		}
+		trace('Player tried to lose $skillName but it didnt exist.');
+		return false;
+	}
+
 	public function equipArtifact(artifact:Artifact)
 	{
 		if (this.artifacts.contains(artifact))

@@ -13,6 +13,7 @@ import models.GameMap;
 import models.events.*;
 import models.events.GameEvent.GameEventType;
 import models.events.battleEvents.*;
+import models.events.encounterEvents.EncounterEventFactory;
 import models.player.Player;
 import ui.MapTile;
 import ui.header.Header;
@@ -70,7 +71,7 @@ class GameMapView extends FlxSpriteGroup
 			case BOSS:
 				return BossEventFactory.rattle();
 			case ENCOUNTER:
-				return GameEvent.sampleEncounter();
+				return EncounterEventFactory.getNextEvent();
 			case CAMP:
 				return new CampEvent();
 			case CLEARING:
@@ -80,7 +81,7 @@ class GameMapView extends FlxSpriteGroup
 			case TREASURE:
 				return TreasureEvent.getNextTreasureEvent();
 			default:
-				return GameEvent.getGenericEvent('Sample', 'Sample event. Something happened, choose what to do.');
+				return GameEvent.getLeaveEvent('Sample', 'Something went wrong and there is no event to show.');
 		}
 	}
 

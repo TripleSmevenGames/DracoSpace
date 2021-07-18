@@ -7,6 +7,8 @@ import models.skills.SkillFactory;
 import ui.MapTile;
 import utils.battleManagerUtils.RewardHelper;
 
+using utils.GameUtils;
+
 /** Represents the player's party itself outside of battle. Characters, inventory, skills, money, etc. 
  * Also holds a lot of "globals" relating to the inventory menu, equipement, etc.
 **/
@@ -41,7 +43,7 @@ class Player
 	/** Get a list of all the skills the player has. **/
 	public static function getSkills()
 	{
-		var skills = new Array<Skill>();
+		var skills = inventory.unequippedSkills;
 		for (char in chars)
 		{
 			skills = char.skills.concat(skills);
@@ -49,9 +51,43 @@ class Player
 		return skills;
 	}
 
+	/** Get a random skill from either the player's unequipped skills or the characters' equipped skills. **/
+	public static function getRandomSkill()
+	{
+		return getSkills().getRandomChoice();
+	}
+
+	/** Call this any time the player gains a new skill, either from an event, buying it, or battle reward. **/
 	public static function gainSkill(skill:Skill)
 	{
 		inventory.unequippedSkills.push(skill);
+	}
+
+	/** Call this when a player permanently loses a skill. It will search the unequipped skills first before searching the player characters. **/
+	public static function loseSkill(skillName:String):Bool
+	{
+		// first, try searching you unequipped skills.
+		for (i in 0...inventory.unequippedSkills.length)
+		{
+			var skill = inventory.unequippedSkills[i];
+
+			if (skill.name == skillName)
+			{
+				inventory.unequippedSkills.splice(i, 1);
+				return true;
+			}
+		}
+
+		// if we haven't returned already, that means we didnt find it. Try looking in our characters now.
+		for (char in Player.chars)
+		{
+			// this will be true if we found that skill equipped on the character and we removed it.
+			var didLoseSkill = char.loseSkill(skillName);
+			if (didLoseSkill)
+				return true;
+		}
+
+		return false;
 	}
 
 	public static function gainArtifact(artifact:Artifact)

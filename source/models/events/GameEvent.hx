@@ -34,9 +34,16 @@ class GameEvent
 	public var type:GameEventType;
 
 	/** Get a generic event that just has a "leave" choice. Good for creating subevents that end the event chain and bring player back to the map. **/
-	public static function getGenericEvent(name:String, desc:String)
+	public static function getLeaveEvent(name:String, desc:String)
 	{
 		var choices = [Choice.getLeave()];
+		return new GameEvent(name, desc, SUB, choices);
+	}
+
+	/** Get a generic event that just has a "Back" choice. Good for creating subevents that return to the start of the event chain. ie go back to previous screen.  **/
+	public static function getGoToRootEvent(name:String, desc:String)
+	{
+		var choices = [Choice.getGoRoot()];
 		return new GameEvent(name, desc, SUB, choices);
 	}
 
@@ -47,7 +54,7 @@ class GameEvent
 
 		var effect = (choice:Choice) ->
 		{
-			var subEvent = GameEvent.getGenericEvent(name, 'You found 20 Dracocoins.');
+			var subEvent = GameEvent.getLeaveEvent(name, 'You found 20 Dracocoins.');
 			GameController.subStateManager.ess.goToSubEvent(subEvent);
 			Player.money += 20;
 

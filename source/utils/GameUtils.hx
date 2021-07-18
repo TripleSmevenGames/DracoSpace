@@ -133,6 +133,21 @@ class GameUtils
 		return count;
 	}
 
+	/** Pass in a word and return either "a" or "an", depending on the first letter of the passed in word.**/
+	public static function getAOrAn(string:String)
+	{
+		var a_or_an:String;
+		switch (string.charAt(0))
+		{
+			case 'A', 'E', 'I', 'O', 'U':
+				a_or_an = 'an';
+			default:
+				a_or_an = 'a';
+		}
+
+		return a_or_an;
+	}
+
 	/** Call this to shake the camera a little bit. **/
 	public static function smallCameraShake()
 	{

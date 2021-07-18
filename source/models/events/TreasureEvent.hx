@@ -5,6 +5,7 @@ import models.artifacts.Artifact;
 import models.artifacts.ArtifactFactory;
 import models.events.GameEvent.GameEventType;
 import models.player.Player;
+import utils.GameUtils;
 
 class TreasureEvent extends GameEvent
 {
@@ -27,14 +28,7 @@ class TreasureEvent extends GameEvent
 		var choices = [Choice.getLeave()];
 		this.artifact = artifact;
 
-		var a_or_an:String;
-		switch (artifact.name.charAt(0))
-		{
-			case 'A', 'E', 'I', 'O', 'U':
-				a_or_an = 'an';
-			default:
-				a_or_an = 'a';
-		}
+		var a_or_an = GameUtils.getAOrAn(artifact.name);
 		var desc = 'You find an abandoned supply crate. Inside is ${a_or_an} ${artifact.name}!';
 		super(artifact.name, desc, TREASURE, choices);
 	}

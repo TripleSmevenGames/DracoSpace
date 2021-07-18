@@ -83,7 +83,7 @@ class EventView extends FlxSpriteGroup
 		}
 		buttonsGroup = getButtons();
 		// place the buttons so they'll all fit at the bottom of the window.
-		var yPos = windowSprite.y + windowSprite.height - buttonsGroup.height - 8;
+		var yPos = windowSprite.y + windowSprite.height - buttonsGroup.height - 16;
 		buttonsGroup.setPosition(0, yPos);
 		buttonsGroup.centerX(FlxG.width / 2);
 		add(buttonsGroup);

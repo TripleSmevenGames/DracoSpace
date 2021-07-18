@@ -41,6 +41,7 @@
 * when it's creature is attacked, draw and discard a card. many diff skills.
 * For each ally...deal x damage, gain x block
 * When attacked, gains  wounded. Has a strong attack and some other stuff
+* buffs when you play a con skill
 
 ## Event ideas
 * choose between maxHP or heal
