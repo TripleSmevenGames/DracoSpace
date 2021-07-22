@@ -98,22 +98,6 @@ class GameUtils
 		return string;
 	}
 
-	/** Get the int price for a skill, which is based off how many skills have already been bought this run. **/
-	public static function getSkillPrice(sale = false):Int
-	{
-		var basePrice = 10;
-		// each bought skill increases the price by about half the base price.
-		// sales give half off.
-		var multiplier = (Player.skillsBought / 2 + 1) * (sale ? 1 / 2 : 1);
-		var modifier = random.int(-3, 3);
-		var finalPrice = (basePrice * multiplier) + modifier;
-
-		if (finalPrice < 5)
-			finalPrice = 5;
-
-		return Std.int(finalPrice);
-	}
-
 	/** Helper function for the Whirlwind Swing skill.
 	 * Count how many skills this character has equipped that have the word "Swing" in its name.
 	**/
@@ -157,12 +141,12 @@ class GameUtils
 	/** Call this to shake the camera, medium intensity. **/
 	public static function mediumCameraShake()
 	{
-		FlxG.camera.shake(0.03, 0.3);
+		FlxG.camera.shake(0.01, 0.3);
 	}
 
 	/** Call this to shake the camera, strong intensity. **/
 	public static function bigCameraShake()
 	{
-		FlxG.camera.shake(.05, 0.6);
+		FlxG.camera.shake(.03, 0.5);
 	}
 }

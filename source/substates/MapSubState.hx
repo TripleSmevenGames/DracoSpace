@@ -88,7 +88,12 @@ class GameMapView extends FlxSpriteGroup
 	/** Mark the node (ie the map tile) as visited, and open its event. **/
 	public function visit(mapTile:MapTile)
 	{
-		if (currentTile.connectedNodesId.contains(mapTile.id))
+		var godmode = false;
+
+		#if godmode
+		godmode = true;
+		#end
+		if (currentTile.connectedNodesId.contains(mapTile.id) || godmode)
 		{
 			currentTile = mapTile;
 			Player.currentMapTile = mapTile;

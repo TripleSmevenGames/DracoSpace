@@ -1,6 +1,5 @@
 package ui.inventory.shopMenu;
 
-import flixel.tweens.FlxTween;
 import constants.Fonts;
 import constants.UIMeasurements;
 import flixel.FlxG;
@@ -9,12 +8,14 @@ import flixel.group.FlxSpriteGroup;
 import flixel.input.mouse.FlxMouseEventManager;
 import flixel.math.FlxRandom;
 import flixel.text.FlxText;
+import flixel.tweens.FlxTween;
 import flixel.util.FlxColor;
 import managers.GameController;
 import models.player.Player;
 import models.skills.Skill;
-import ui.battle.IndicatorIcon;
 import ui.SkillCard;
+import ui.battle.IndicatorIcon;
+import ui.shop.ShopUtils;
 import utils.GameUtils;
 
 using utils.ViewUtils;
@@ -60,6 +61,7 @@ class SkillShop extends FlxSpriteGroup
 		if (Player.exp >= skillShopChoiceSprite.price && Player.inventory.unequippedSkills.length < Player.MAX_UNEQUIPPED_SKILLS)
 		{
 			Player.exp -= skillShopChoiceSprite.price;
+			Player.skillsBought += 1;
 			Player.gainSkill(skillShopChoiceSprite.skill);
 			remove(skillShopChoiceSprite);
 
@@ -206,7 +208,7 @@ class SkillShopChoiceSprite extends FlxSpriteGroup
 
 		// now create the price sprite underneath. 20% chance to be on sale.
 		this.sale = random.int(1, 5) == 1;
-		this.price = GameUtils.getSkillPrice(sale);
+		this.price = ShopUtils.getSkillPrice(sale);
 		this.priceSprite = getSkillPriceSprite(price, sale);
 		priceSprite.centerSprite(0, SkillCard.bodyHeight / 2 + 16);
 		add(priceSprite);

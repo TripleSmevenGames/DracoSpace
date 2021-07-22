@@ -55,7 +55,7 @@ class SkillFactoryRattle
 				owner.dealDamageTo(skill.value, target, context);
 				if (target.currHp < beforeHp)
 				{
-					context.eDeck.drawCards(skill.value2);
+					context.eDeck.drawCards(skill.value2, null, 0, context);
 				}
 			}
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->

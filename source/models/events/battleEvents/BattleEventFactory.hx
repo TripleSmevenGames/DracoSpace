@@ -230,7 +230,7 @@ class BattleEventFactory
 	{
 		var name = 'Spooky Ghosts';
 		var desc = 'Some more woodland ghosts float towards you. They look a bit stronger than usual ghosts.';
-		var enemies = [createGhostC(1), createGhostC(1)];
+		var enemies = [createGhostF(1), createGhostF(1)];
 		var hiddenCards = 0;
 		var draw = 2;
 		var deck = new Deck([KNO => 8, CON => 2], hiddenCards, draw);

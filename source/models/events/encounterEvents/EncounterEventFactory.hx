@@ -56,7 +56,7 @@ class EncounterEventFactory
 		{
 			var text = 'Give it to ${char.name}. (+3 max HP)';
 
-			var event = GameEvent.getLeaveEvent(name, 'You decided that ${char.name} should get the scraps.');
+			var event = GameEvent.getLeaveEvent(name, 'You decided that ${char.name} should get the scraps. \n\n ${char.name} gained +3 max HP.');
 			var effect = (_) ->
 			{
 				char.maxHp += 3;
@@ -100,7 +100,15 @@ class EncounterEventFactory
 				ess.goToSubEvent(event);
 			}
 
-			return new Choice('Scale the cliff. (All party -3 HP)', effect);
+			var choice = new Choice('Scale the cliff. (All party -3 HP)', effect);
+
+			// disable this choice if any character has 3 or less current hp.
+			for (char in Player.chars)
+			{
+				if (char.currHp <= 3)
+					choice.disabled = true;
+			}
+			return choice;
 		}
 
 		var createUseSkillChoice = () ->
@@ -108,6 +116,7 @@ class EncounterEventFactory
 			var effect = (_) ->
 			{
 				Player.loseSkill(lostSkill.name);
+				Player.gainArtifact(artifact);
 
 				var eventDesc = 'The party uses some of their equipment to scale the cliff safely. They manage to retrieve it.'
 					+ '\n\n You obtained ${a_or_an} ${artifact.name}!'
@@ -118,7 +127,7 @@ class EncounterEventFactory
 			return new Choice('Use some equipment. (Lose ${lostSkill.name})', effect);
 		};
 
-		var choices = [createUseHpChoice(), createUseSkillChoice()];
+		var choices = [createUseHpChoice(), createUseSkillChoice(), Choice.getLeave()];
 		return new GameEvent(name, desc, ENCOUNTER, choices);
 	}
 

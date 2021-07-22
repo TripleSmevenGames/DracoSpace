@@ -122,7 +122,7 @@ class BattleView extends FlxSpriteGroup
 		for (i in 0...Player.chars.length)
 		{
 			var charInfo = Player.chars[i];
-			// make sure the char isnt dead.
+			// make sure the char isnt dead. This should never happen though.
 			if (charInfo.currHp != 0)
 			{
 				var playerChar = new CharacterSprite(charInfo);

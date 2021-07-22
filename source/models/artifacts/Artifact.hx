@@ -1,6 +1,8 @@
 package models.artifacts;
 
 import Castle.SkillData_skills_rarity as Rarity;
+import models.CharacterInfo.CharacterType;
+import models.cards.Card;
 import ui.battle.IBattleTriggerable;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.SkillSprite;
@@ -58,6 +60,8 @@ class Artifact implements IBattleTriggerable
 	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext) {}
 
 	public function onDead(context:BattleContext) {}
+
+	public function onDrawCard(card:Card, type:CharacterType, context:BattleContext) {}
 
 	/** Override this to do something when the stack changes, like update the tooltip for example. **/
 	public function onSetStacks(valBefore:Int, valAfter:Int) {}

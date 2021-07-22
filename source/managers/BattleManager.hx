@@ -699,7 +699,7 @@ class BattleManager extends FlxBasic
 			{
 				if (activeTargets != null)
 				{
-					context.pDeck.flushPreDiscardList();
+					context.eDeck.flushPreDiscardList();
 					enemyAnimatingSkillState.start();
 				}
 				else
@@ -767,6 +767,13 @@ class BattleManager extends FlxBasic
 
 				// increment the battles fought
 				Player.battlesFought += 1;
+
+				// set any dead characters to 1 hp
+				for (char in Player.chars)
+				{
+					if (char.currHp <= 0)
+						char.currHp = 1;
+				}
 
 				// show the win screen, which contains the rewards screen.
 				bss.showWinScreen(expReward, moneyReward, battleType);

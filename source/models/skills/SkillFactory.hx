@@ -65,7 +65,7 @@ class SkillFactory
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				context.eDeck.revealCards(skill.value);
-				context.pDeck.drawCards(1);
+				context.pDeck.drawCards(1, null, 0, context);
 			}
 			skill.spritePath = AssetPaths.watch1__png;
 			return skill;
@@ -85,7 +85,7 @@ class SkillFactory
 			var skill = skillFromData(generic, expertise);
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
-				context.pDeck.drawCards(2, owner);
+				context.pDeck.drawCards(2, owner, 0, context);
 			}
 			skill.spritePath = AssetPaths.emptySkill__png;
 			return skill;
@@ -241,7 +241,7 @@ class SkillFactory
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				owner.payHealth(skill.value, context);
-				context.pDeck.drawCards(2);
+				context.pDeck.drawCards(2, null, 0, context);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = ryderPlaceholder;
@@ -264,7 +264,7 @@ class SkillFactory
 			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
 			{
 				SkillAnimations.genericBlockPlay(skill.value)(targets, owner, context);
-				context.pDeck.drawCards(1);
+				context.pDeck.drawCards(1, null, 0, context);
 			};
 			skill.spritePath = ryderPlaceholder;
 			return skill;
@@ -324,7 +324,7 @@ class SkillFactory
 			var skill = skillFromData(ryder, holoBarrier);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				owner.currBlock += skill.value;
+				owner.gainBlock(skill.value, context);
 				owner.addStatus(HOLOBARRIER, skill.value2);
 			};
 			skill.play = SkillAnimations.genericBuffPlay(effect);
@@ -403,7 +403,7 @@ class SkillFactory
 			var skill = skillFromData(kiwi, parry);
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				owner.currBlock += skill.value;
+				owner.gainBlock(skill.value, context);
 				owner.addStatus(PLUSDRAW);
 				context.pDeck.drawModifier += 1;
 			}
@@ -446,7 +446,7 @@ class SkillFactory
 			var animSprite = SkillAnimations.getBlockAnim();
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
-				target.currBlock += context.expendAllStatic();
+				target.gainBlock(context.expendAllStatic(), context);
 			}
 			var effectFrame = 10;
 			var sound = AssetPaths.gainBlock1__wav;
@@ -495,7 +495,7 @@ class SkillFactory
 			var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 			{
 				target.addStatus(STATIC, skill.value);
-				context.pDeck.drawCards(1);
+				context.pDeck.drawCards(1, null, 0, context);
 			}
 			skill.play = SkillAnimations.genericBuffPlay(effect);
 			skill.spritePath = kiwiPlaceholder;

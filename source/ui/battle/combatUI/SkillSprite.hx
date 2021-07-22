@@ -163,7 +163,8 @@ class SkillSprite extends FlxSpriteGroup
 
 		skill.play(targets, this.owner, context);
 		this.currentCharges -= 1;
-		this.cooldownTimer += skill.cooldown;
+		if (currentCharges == 0)
+			this.cooldownTimer += skill.cooldown;
 	}
 
 	public function onNewRound()

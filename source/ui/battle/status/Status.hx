@@ -2,11 +2,13 @@ package ui.battle.status;
 
 import flixel.group.FlxSpriteGroup;
 import managers.BattleManager;
+import models.CharacterInfo.CharacterType;
+import models.cards.Card;
 import ui.battle.IndicatorIcon.IndicatorIconOptions;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.SkillSprite;
-import utils.battleManagerUtils.BattleContext;
 import ui.battle.status.StatusMap.StatusType;
+import utils.battleManagerUtils.BattleContext;
 
 typedef StatusInfo =
 {
@@ -111,6 +113,8 @@ class Status extends FlxSpriteGroup implements IBattleTriggerable
 	public function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext) {}
 
 	public function onDead(context:BattleContext) {}
+
+	public function onDrawCard(card:Card, type:CharacterType, context:BattleContext) {}
 
 	/** Override this to do something when the stack changes, like update the tooltip for example. **/
 	public function onSetStacks(valBefore:Int, valAfter:Int) {}

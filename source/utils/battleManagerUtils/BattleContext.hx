@@ -3,6 +3,7 @@ package utils.battleManagerUtils;
 import flixel.math.FlxRandom;
 import haxe.Exception;
 import models.CharacterInfo.CharacterType;
+import models.cards.Card;
 import ui.battle.ITurnTriggerable;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.DeckSprite;
@@ -145,6 +146,16 @@ class BattleContext
 			total = char.removeStatus(STATIC);
 		}
 		return total;
+	}
+
+	/** Call this to trigger the onDrawCard on all characters. **/
+	public function triggerOnDrawCard(card:Card, type:CharacterType)
+	{
+		for (char in pChars)
+			char.onDrawCard(card, type, this);
+
+		for (char in eChars)
+			char.onDrawCard(card, type, this);
 	}
 
 	public function new(pDeck:DeckSprite, eDeck:DeckSprite, pChars:Array<CharacterSprite>, eChars:Array<CharacterSprite>)

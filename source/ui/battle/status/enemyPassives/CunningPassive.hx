@@ -1,20 +1,18 @@
 package ui.battle.status.enemyPassives;
 
+import models.CharacterInfo.CharacterType;
+import models.cards.Card;
 import ui.battle.character.CharacterSprite;
 import ui.battle.status.Status.StatusInfo;
 import utils.battleManagerUtils.BattleContext;
 
 class CunningPassive extends Status
 {
-	override public function onPlayerStartTurn(context:BattleContext)
+	override public function onDrawCard(card:Card, type:CharacterType, context:BattleContext)
 	{
-		// apply carryover to all wisdom cards in the deck every turn.
-		// slow? Shouldn't be that bad. Switch this to OnDraw when thats implemented.
-		var cards = context.eDeck.getCardsInDeck();
-		for (card in cards)
+		if (card.name == 'Wisdom' && type == ENEMY)
 		{
-			if (card.name == 'Wisdom')
-				card.carryOver = true;
+			card.carryOver = true;
 		}
 	}
 

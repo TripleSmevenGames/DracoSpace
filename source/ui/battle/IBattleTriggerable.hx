@@ -1,5 +1,7 @@
 package ui.battle;
 
+import models.CharacterInfo.CharacterType;
+import models.cards.Card;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.SkillSprite;
 import utils.battleManagerUtils.BattleContext;
@@ -33,6 +35,7 @@ interface IBattleTriggerable extends ITurnTriggerable
 	function onDealDamage(damage:Int, target:CharacterSprite, context:BattleContext):Void;
 
 	function onDead(context:BattleContext):Void;
-	// todo
-	// function onDraw(card:Card, context:BattleContext):Void;
+
+	/** Called when any card (player or enemy) is drawn. Its called after card.resetForDraw() **/
+	function onDrawCard(card:Card, type:CharacterType, context:BattleContext):Void;
 }

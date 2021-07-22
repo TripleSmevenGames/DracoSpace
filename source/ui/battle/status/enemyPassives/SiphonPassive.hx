@@ -11,7 +11,7 @@ class SiphonPassive extends Status
 	{
 		if (skillSprite.owner.info.type == PLAYER)
 		{
-			context.eDeck.drawCards(1);
+			context.eDeck.drawCards(1, null, 0, context);
 		}
 	}
 

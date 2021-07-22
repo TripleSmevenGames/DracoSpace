@@ -83,7 +83,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** For animation purposes, pass in the ordinal number of this card among cards we are drawing in a row.**/
-	function drawCard(hidden:Bool = false, ?only:CharacterSprite, i:Int)
+	function drawCard(hidden:Bool = false, ?only:CharacterSprite, i:Int, context:BattleContext)
 	{
 		if (drawPile.getCards().length == 0)
 		{
@@ -97,6 +97,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		{
 			card.resetForDraw();
 			hand.addCardAnimate(card, Std.int(drawPile.x), Std.int(drawPile.y), hidden, i);
+			context.triggerOnDrawCard(card, this.type);
 		}
 		else
 		{
@@ -106,18 +107,18 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	}
 
 	/** Queue an animation to draw x cards. **/
-	public function drawCards(num:Int, ?only:CharacterSprite, hiddenCount = 0)
+	public function drawCards(num:Int, ?only:CharacterSprite, hiddenCount = 0, context:BattleContext)
 	{
 		for (i in 0...num)
 		{
 			if (hiddenCount > 0)
 			{
-				drawCard(true, only, i);
+				drawCard(true, only, i, context);
 				hiddenCount -= 1;
 			}
 			else
 			{
-				drawCard(false, only, i);
+				drawCard(false, only, i, context);
 			}
 		}
 	}
@@ -146,7 +147,14 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 	**/
 	public function discardHand()
 	{
-		discardPile.addCards(hand.getCards());
+		var cardsToDiscard = new Array<Card>();
+		for (card in hand.getCards())
+		{
+			if (!card.carryOver)
+				cardsToDiscard.push(card);
+		}
+
+		discardPile.addCards(cardsToDiscard);
 		hand.clearHandAnimate(Std.int(discardPile.x), Std.int(discardPile.y));
 	}
 
@@ -269,7 +277,7 @@ class DeckSprite extends FlxSpriteGroup implements ITurnTriggerable
 		// reset the modifier since we used it this turn
 		this.drawModifier = 0;
 
-		drawCards(cardsToDraw, null, hiddenCards);
+		drawCards(cardsToDraw, null, hiddenCards, context);
 	}
 
 	public function onPlayerEndTurn(context:BattleContext)

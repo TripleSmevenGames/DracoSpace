@@ -16,7 +16,7 @@ class EventChoiceButton extends FlxUIButton
 	public var disabled(default, set):Bool = false;
 
 	static inline final WIDTH = 500;
-	static inline final HEIGHT = 48;
+	static inline final HEIGHT = 60;
 
 	public function set_disabled(val:Bool)
 	{

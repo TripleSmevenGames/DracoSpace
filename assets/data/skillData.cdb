@@ -243,7 +243,7 @@
 						{
 							"id": "distract",
 							"name": "Distract",
-							"desc": "Gain $x Block and $x2 Taunt.",
+							"desc": "An ally gains $x Block and Ryder gains $x2 Taunt.",
 							"rarity": 1,
 							"costs": [
 								{
@@ -253,7 +253,7 @@
 									"ANY": 2
 								}
 							],
-							"targetMethod": 7,
+							"targetMethod": 3,
 							"cooldown": 2,
 							"maxCharges": 1,
 							"chargesPerCD": 1,
@@ -559,6 +559,22 @@
 							"value": 12,
 							"value2": 6,
 							"cooldown": 2,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
+							"id": "tornadoStrike",
+							"name": "Tornado Strike",
+							"desc": "Deal $x damage to all enemies. Gain 1 attack per enemy hit.",
+							"rarity": 2,
+							"costs": [
+								{
+									"POW": 2
+								}
+							],
+							"targetMethod": 2,
+							"value": 7,
+							"cooldown": 3,
 							"maxCharges": 1,
 							"chargesPerCD": 1
 						},
@@ -1058,6 +1074,23 @@
 							"chargesPerCD": 0
 						},
 						{
+							"id": "sliceAndDice",
+							"name": "Slice and Dice",
+							"desc": "Deal $x damage to all enemies and gain 1 Dodge.",
+							"rarity": 3,
+							"costs": [
+								{
+									"POW": 1,
+									"AGI": 1
+								}
+							],
+							"targetMethod": 2,
+							"value": 15,
+							"cooldown": 3,
+							"maxCharges": 1,
+							"chargesPerCD": 1
+						},
+						{
 							"id": "ultimateHeist",
 							"name": "Ultimate Heist",
 							"desc": "Steal all cards from the enemy's hand.",
@@ -1527,7 +1560,7 @@
 								}
 							],
 							"targetMethod": 6,
-							"value": 5,
+							"value": 3,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1
@@ -1674,7 +1707,7 @@
 						},
 						{
 							"id": "snakeFangs",
-							"name": "snakeFangs",
+							"name": "Snake Fangs",
 							"desc": "Deal $x damage. Then, if the target took unblocked damage, draw $x2 cards.",
 							"rarity": 0,
 							"costs": [
@@ -1683,7 +1716,7 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 9,
+							"value": 5,
 							"cooldown": 1,
 							"maxCharges": 1,
 							"chargesPerCD": 1,

@@ -348,12 +348,13 @@ class Hand extends FlxSpriteGroup
 	 *
 	 * Enter in global coords of the discard pile.
 	**/
-	public function clearHandAnimate(discardX:Int, discardY:Int)
+	public function clearHandAnimate(discardX:Int, discardY:Int, checkCarryOver = true)
 	{
 		for (i in 0...cards.length)
 		{
 			var card = cards[i];
-			discardCardAnimate(card, discardX, discardY);
+			if (checkCarryOver && !card.carryOver)
+				discardCardAnimate(card, discardX, discardY);
 		}
 	}
 

@@ -126,7 +126,7 @@ class SkillAnimations
 		var animSprite = getBlockAnim();
 		var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
 		{
-			target.currBlock += block;
+			target.gainBlock(block, context);
 			if (extraEffect != null)
 				extraEffect(target, owner, context);
 		}

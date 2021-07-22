@@ -12,16 +12,18 @@ import managers.BattleAnimationManager;
 import managers.BattleManager;
 import managers.BattleSoundManager as BSM;
 import managers.GameController;
+import models.CharacterInfo.CharacterType;
 import models.CharacterInfo;
 import models.ai.EnemyIntentMaker.Intent;
 import models.artifacts.Artifact;
+import models.cards.Card;
 import models.skills.Skill;
 import models.skills.SkillFactory;
 import ui.TooltipLayer.Tooltip;
 import ui.battle.combatUI.SkillSprite;
 import ui.battle.status.Status;
-import utils.battleManagerUtils.BattleContext;
 import ui.battle.status.StatusMap.StatusType;
+import utils.battleManagerUtils.BattleContext;
 
 using utils.GameUtils;
 using utils.ViewUtils;
@@ -485,6 +487,13 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 			artifact.onAnyPlaySkill(skillSprite, context);
 	}
 
+	public function onDrawCard(card:Card, type:CharacterType, context:BattleContext)
+	{
+		statusDisplay.onDrawCard(card, type, context);
+		for (artifact in artifacts)
+			artifact.onDrawCard(card, type, context);
+	}
+
 	/***********************
 	 *
 	 * END BATTLE TRIGGERS ----------------------------------------
@@ -543,15 +552,16 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		if (this.info.type == PLAYER)
 		{
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
+			targetArrow.scaleUp(4);
 			targetArrow.centerSprite(sprite.width / 2 + TARGET_ARROW_DISTANCE, 0);
 		}
 		else if (this.info.type == ENEMY)
 		{
 			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
+			targetArrow.scaleUp(4);
 			targetArrow.centerSprite(-(sprite.width / 2 + TARGET_ARROW_DISTANCE), 0);
 		}
 
-		targetArrow.scaleUp(4);
 		add(targetArrow);
 		targetArrow.visible = false;
 		// if this is an enemy, render the intent container (should be empty rn).
