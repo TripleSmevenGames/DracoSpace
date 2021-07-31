@@ -52,7 +52,7 @@ class SkillShop extends FlxSpriteGroup
 			skillShopChoiceSprite.refresh();
 
 		// refresh the header because it shows the XP, which can change if the player spends XP.
-		GameController.subStateManager.refreshISSHeader();
+		GameController.header.refresh();
 	}
 
 	/** define what happens when you click a choice in the shop **/

@@ -193,8 +193,17 @@ class MapSubState extends FlxSubState
 	/** Callback when we switch TO the map state.**/
 	public function onSwitch()
 	{
-		if (header != null)
-			header.refresh();
+		if (header == null)
+			trace('header was null onSwitch');
+		else
+			trace('header was not null onSwitch');
+
+		if (header == null)
+			this.header = GameController.header;
+
+		add(header);
+		header.refresh();
+		header.revive();
 
 		FlxG.camera.scroll.x = scrollX;
 	}
@@ -205,9 +214,8 @@ class MapSubState extends FlxSubState
 		view = new GameMapView(0, 0);
 		add(view);
 
-		this.header = new Header();
+		this.header = GameController.header;
 		header.scrollFactor.set(0, 0);
-		add(header);
 	}
 
 	function updateMovement()

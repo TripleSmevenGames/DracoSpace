@@ -14,6 +14,7 @@ import ui.debug.BAMIndicator;
 import ui.debug.BMIndicator;
 import ui.debug.MemIndicator;
 
+/** The FlxState representing the main game loop. We're in this state after we've pressed "New Game" or "Continue Game" from the main menu.**/
 class PlayState extends FlxState
 {
 	#if debug
@@ -37,15 +38,17 @@ class PlayState extends FlxState
 
 		FlxG.fixedTimestep = false;
 
-		GameController.initSSM(this);
-		GameController.initBattleManagers();
-		GameController.subStateManager.initEvent(new HomeEvent());
-
-		MusicManager.init();
-
 		SkillFactory.init();
 
 		Player.init();
+
+		// make sure this is called after Player.init()!
+		GameController.initHeader();
+
+		GameController.initSSM(this);
+		GameController.initBattleManagers();
+
+		MusicManager.init();
 
 		BattleEventFactory.init();
 
@@ -59,6 +62,9 @@ class PlayState extends FlxState
 		// FlxG.camera.maxScrollY = 1000;
 
 		FlxG.sound.volume = originalVolume;
+
+		// finally, start the game with the HomeEvent.
+		GameController.subStateManager.initEvent(new HomeEvent());
 
 		#if debug
 		memIndicator = new MemIndicator();

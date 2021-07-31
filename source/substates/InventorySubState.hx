@@ -31,7 +31,12 @@ class InventorySubState extends FlxSubState
 
 	var equipmentMenu:EquipmentMenu;
 	var shopMenu:ShopMenu;
+
+	/** button to toggle betwen shop or party screen**/
 	var toggleButton:BasicWhiteButton;
+
+	/** Which screen of the inv we are looking at, either Shop or party (aka equip). **/
+	public var screenType:InvScreenType;
 
 	public function cleanup()
 	{
@@ -47,18 +52,25 @@ class InventorySubState extends FlxSubState
 	}
 
 	/** Call this when we switch to this state. We cleanup tooltips (to prevent memory leaks), so make sure to re-init tooltips. **/
-	public function init(screen:InvScreenType = EQUIP)
+	public function init(screenType:InvScreenType = EQUIP)
 	{
+		if (header == null)
+			trace('header was null inv init');
+		else
+			trace('header was not null inv init');
+
 		GameController.invTooltipLayer.cleanUpTooltips();
 
 		initEquipment();
 		initShop();
-		header.refresh();
 
-		if (screen == EQUIP)
-			equipmentMenu.revive();
-		else if (screen == SHOP)
-			shopMenu.revive();
+		if (header == null)
+			this.header = GameController.header;
+
+		add(header);
+		// not sure why, but the FIRST time init is called, the header is invisible. So just call revive() on it.
+		header.revive();
+		header.refresh();
 
 		// create the tooltip layer, which is where all tooltips will be added to.
 		// remove then add it, to ensure it is at the top of the render stack.
@@ -66,8 +78,8 @@ class InventorySubState extends FlxSubState
 		add(GameController.invTooltipLayer);
 
 		FlxG.camera.scroll.x = 0;
-		if (toggleButton != null)
-			toggleButton.label.text = 'Shop';
+
+		switchToScreen(screenType);
 	}
 
 	/** Destroys the old menu and makes a new one. Might be a bit expensive, so only call this when we switch to this state. 
@@ -102,6 +114,24 @@ class InventorySubState extends FlxSubState
 		shopMenu.kill(); // turn off at first
 	}
 
+	public function switchToScreen(type:InvScreenType = EQUIP)
+	{
+		this.screenType = type;
+		if (type == EQUIP)
+		{
+			equipmentMenu.revive();
+			shopMenu.kill();
+			toggleButton.label.text = 'Shop';
+		}
+		else if (type == SHOP)
+		{
+			equipmentMenu.kill();
+			shopMenu.revive();
+			toggleButton.label.text = 'Party';
+		}
+	}
+
+	/** Switch to the other screen.**/
 	public function toggleScreens()
 	{
 		// you must refresh the menu first. If you refresh after calling menu.kill(),
@@ -112,21 +142,12 @@ class InventorySubState extends FlxSubState
 
 		if (!equipmentMenu.alive)
 		{
-			equipmentMenu.revive();
-			shopMenu.kill();
-			toggleButton.label.text = 'Shop';
+			switchToScreen(EQUIP);
 		}
 		else
 		{
-			equipmentMenu.kill();
-			shopMenu.revive();
-			toggleButton.label.text = 'Party';
+			switchToScreen(SHOP);
 		}
-	}
-
-	public function refreshHeader()
-	{
-		header.refresh();
 	}
 
 	override public function create()
@@ -138,11 +159,9 @@ class InventorySubState extends FlxSubState
 		background.scrollFactor.set(0, 0);
 		this.add(background);
 
-		this.header = new Header();
-		header.scrollFactor.set(0, 0);
-		add(header);
+		this.header = GameController.header;
 
-		var backBtn = new BasicWhiteButton('Back', () -> GameController.subStateManager.toggleInventory(), 150, 50);
+		var backBtn = new BasicWhiteButton('Back (ESC)', () -> GameController.subStateManager.toggleInventory(null), 150, 50);
 		backBtn.centerSprite(FlxG.width - 200, FlxG.height - 175);
 		add(backBtn);
 
@@ -156,6 +175,9 @@ class InventorySubState extends FlxSubState
 		super.update(elapsed);
 
 		if (FlxG.keys.justPressed.ESCAPE)
-			GameController.subStateManager.toggleInventory();
+			GameController.subStateManager.toggleInventory(null);
+
+		if (FlxG.keys.justPressed.SPACE)
+			toggleScreens();
 	}
 }

@@ -19,6 +19,7 @@ import ui.battle.LoseScreen;
 import ui.battle.character.CharacterSprite;
 import ui.battle.combatUI.BattleHeader;
 import ui.battle.combatUI.CancelSkillButton;
+import ui.battle.combatUI.ChooseTargetText;
 import ui.battle.combatUI.DeckSprite;
 import ui.battle.combatUI.TurnBanner;
 import ui.battle.win.WinScreen;
@@ -45,7 +46,9 @@ class BattleView extends FlxSpriteGroup
 	var battleHeader:BattleHeader;
 	var turnBanner:TurnBanner;
 
-	public var cancelSkillButton:CancelSkillButton;
+	var cancelSkillButton:CancelSkillButton;
+	var chooseTargetText:ChooseTargetText;
+
 	public var winScreen:WinScreen;
 	public var loseScreen:LoseScreen;
 
@@ -117,6 +120,13 @@ class BattleView extends FlxSpriteGroup
 		add(cancelSkillButton);
 		cancelSkillButton.kill();
 
+		// render the "Choose a target" text, which should pretty much always appear right above
+		// the cancelSkillButton.
+		this.chooseTargetText = new ChooseTargetText();
+		chooseTargetText.centerSprite(cancelSkillButton.x, cancelSkillButton.y - 180);
+		add(chooseTargetText);
+		chooseTargetText.kill();
+
 		// create the player chars (but dont add() them yet)
 		this.playerChars = [];
 		for (i in 0...Player.chars.length)
@@ -166,7 +176,7 @@ class BattleView extends FlxSpriteGroup
 		for (i in 0...enemyChars.length)
 		{
 			var char = enemyChars[i];
-			var effectiveWidth = Math.max(char.sprite.width, 124);
+			var effectiveWidth = Math.max(char.sprite.width, 150);
 			var xPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, effectiveWidth + 16);
 			var yPos = ViewUtils.getXCoordForCenteringLR(i, enemyChars.length, char.sprite.height / 2);
 			char.setPosition(ENEMY_X - xPos, middleY - yPos);
@@ -268,8 +278,8 @@ class BattleSubState extends FlxSubState
 		GameController.battleTooltipLayer.kill();
 		remove(GameController.battleSpriteAnimsLayer);
 		GameController.battleSpriteAnimsLayer.kill();
-		remove(GameController.battleDamageNumbers);
-		GameController.battleDamageNumbers.kill();
+		remove(GameController.battleDamageNumbersLayer);
+		GameController.battleDamageNumbersLayer.kill();
 	}
 
 	public function showWinScreen(expReward:Int, moneyReward:Int, battleType:GameEventType)
@@ -304,14 +314,18 @@ class BattleSubState extends FlxSubState
 		view.cancelSkillButton.setOnClick(onClick);
 	}
 
+	/** show the cancel skill button and the choose target text **/
 	public function showCancelSkillButton()
 	{
 		view.cancelSkillButton.revive();
+		view.chooseTargetText.revive();
 	}
 
+	/** hide the cancel skill button and the choose target text **/
 	public function hideCancelSkillButton()
 	{
 		view.cancelSkillButton.kill();
+		view.chooseTargetText.kill();
 	}
 
 	/** Renders different layers where battle UI is rendered.
@@ -319,9 +333,15 @@ class BattleSubState extends FlxSubState
 	**/
 	function setupBattleLayers()
 	{
+		// layer to add non-specific stuff from the view to, so it appears to render above everything else in the view.
+		// e.g. the target arrows which are part of the characters, so it wont render underneath another character.
+		// same with highlights on cards.
+		GameController.battleMiscUILayer.revive();
+		add(GameController.battleMiscUILayer);
+
 		// layer to draw the damage numbers, which are shot out of characters when they get damaged.
-		GameController.battleDamageNumbers.revive();
-		add(GameController.battleDamageNumbers);
+		GameController.battleDamageNumbersLayer.revive();
+		add(GameController.battleDamageNumbersLayer);
 
 		// layer to draw the sprite animations
 		GameController.battleSpriteAnimsLayer.revive();

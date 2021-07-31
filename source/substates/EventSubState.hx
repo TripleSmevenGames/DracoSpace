@@ -89,6 +89,9 @@ class EventView extends FlxSpriteGroup
 		add(buttonsGroup);
 
 		// update the header
+		if (header == null)
+			this.header = GameController.header;
+		header.revive();
 		header.refresh();
 
 		event.onEventShown();
@@ -104,7 +107,7 @@ class EventView extends FlxSpriteGroup
 		var background = FlxGradient.createGradientFlxSprite(FlxG.width, FlxG.height, backgroundGradient, 8);
 		add(background);
 
-		this.header = new Header();
+		this.header = GameController.header;
 		add(header);
 
 		var windowWidth = FlxG.width * (3 / 5);

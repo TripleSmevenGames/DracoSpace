@@ -327,7 +327,7 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		var spawnX = sprite.x + sprite.width / 2;
 		var spawnY = sprite.y;
 
-		GameController.battleDamageNumbers.spawnDamageNumber(spawnX, spawnY, val, color, usePhysics);
+		GameController.battleDamageNumbersLayer.spawnDamageNumber(spawnX, spawnY, val, color, usePhysics);
 	}
 
 	/** Just places the intent sprites so they float above the body properly.
@@ -551,18 +551,20 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		// assumes sprite centered at 0, 0.
 		if (this.info.type == PLAYER)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3L__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.TargetArrowL__png);
 			targetArrow.scaleUp(4);
 			targetArrow.centerSprite(sprite.width / 2 + TARGET_ARROW_DISTANCE, 0);
 		}
 		else if (this.info.type == ENEMY)
 		{
-			this.targetArrow = new FlxSprite(0, 0, AssetPaths.YellowArrow3R__png);
+			this.targetArrow = new FlxSprite(0, 0, AssetPaths.TargetArrowR__png);
 			targetArrow.scaleUp(4);
 			targetArrow.centerSprite(-(sprite.width / 2 + TARGET_ARROW_DISTANCE), 0);
 		}
 
+		// We add it to the MiscUILayer too so it appears above other characters in the view.
 		add(targetArrow);
+		GameController.battleMiscUILayer.add(targetArrow);
 		targetArrow.visible = false;
 		// if this is an enemy, render the intent container (should be empty rn).
 		if (this.info.type == ENEMY)

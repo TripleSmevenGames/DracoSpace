@@ -38,7 +38,7 @@ class HpBarSprite extends FlxUIBar
 	}
 }
 
-/** Character HP and block indicator during a battle or on the header. **/
+/** Character HP and block indicator during a battle **/
 class CharacterHpBar extends FlxSpriteGroup
 {
 	var bar:HpBarSprite;

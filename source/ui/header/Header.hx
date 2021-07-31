@@ -11,6 +11,10 @@ import models.player.Player;
 
 using utils.ViewUtils;
 
+/** Header that appears on the map, inv, and event states.
+ * Allows player to see their hp, xp, and acess party/shop menus.
+ * Not centered.
+**/
 class Header extends FlxSpriteGroup
 {
 	var body:FlxSprite;
@@ -63,10 +67,13 @@ class Header extends FlxSpriteGroup
 		this.moneyDisplay = new MoneyDisplay();
 		addToView(moneyDisplay);
 
-		var inventoryIcon = new InventoryIcon();
-		addToView(inventoryIcon);
+		// var inventoryIcon = new InventoryIcon();
+		// addToView(inventoryIcon);
 
-		// var shopIcon = new ShopIcon();
-		// addToView(shopIcon);
+		var partyIcon = new PartyIcon();
+		addToView(partyIcon);
+
+		var shopIcon = new ShopIcon();
+		addToView(shopIcon);
 	}
 }

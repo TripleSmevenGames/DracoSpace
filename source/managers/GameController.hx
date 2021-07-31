@@ -3,11 +3,11 @@ package managers;
 import flixel.FlxG;
 import flixel.math.FlxRandom;
 import flixel.util.FlxSave;
-import models.player.Player;
-import models.skills.SkillAnimations;
+import ui.MiscUILayer;
 import ui.TooltipLayer;
-import ui.battle.DamageNumbers;
+import ui.battle.DamageNumbersLayer;
 import ui.battle.SpriteAnimsLayer;
+import ui.header.Header;
 
 class GameController
 {
@@ -32,7 +32,9 @@ class GameController
 	/** global manager for tooltips during inv menu. **/
 	public static var invTooltipLayer:TooltipLayer;
 
-	public static var battleDamageNumbers:DamageNumbers;
+	public static var battleMiscUILayer:MiscUILayer;
+
+	public static var battleDamageNumbersLayer:DamageNumbersLayer;
 
 	public static var battleSpriteAnimsLayer:SpriteAnimsLayer;
 
@@ -40,6 +42,9 @@ class GameController
 	 * The bss needs to set this variable so its easily accessible by its children.
 	**/
 	public static var battleSoundManager:BattleSoundManager;
+
+	/** Global shared header object. Make sure initHeader() was called first. **/
+	public static var header:Header;
 
 	public static var flags:GameFlags;
 
@@ -78,8 +83,19 @@ class GameController
 	public static function initBattleLayers()
 	{
 		// maybe memory leak if we're not destroying before re-creating them??
+		battleMiscUILayer = new MiscUILayer();
 		battleTooltipLayer = new TooltipLayer();
-		battleDamageNumbers = new DamageNumbers();
+		battleDamageNumbersLayer = new DamageNumbersLayer();
 		battleSpriteAnimsLayer = new SpriteAnimsLayer();
+	}
+
+	/** Init the Header, which is the UI bar that appears at the top of the screen for map, event, and inv substates.
+	 * This must be called after Player.init() is called. 
+	 * Through it the player can see their money, xp, hp, and access the inv.
+	 * All other substates access the shared header via the GameController.
+	**/
+	public static function initHeader()
+	{
+		header = new Header();
 	}
 }

@@ -22,4 +22,5 @@ class Colors
 
 	public static inline final COIN_YELLOW = 0xFFe6dc00;
 	public static inline final XP_PURPLE = 0xFFcf96d9; // light purple/pink
+	public static inline final TARGET_BLUE = 0xFF00d5ff; // a sky blue, same color as the target arrow
 }

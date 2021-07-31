@@ -31,7 +31,7 @@ class UpgradeShop extends FlxSpriteGroup
 			item.refresh();
 
 		// refresh the header because it shows the XP, which can change if the player spends XP.
-		GameController.subStateManager.refreshISSHeader();
+		GameController.header.refresh();
 	}
 
 	static function getSkillSlotUpgradePrice(char:CharacterInfo)

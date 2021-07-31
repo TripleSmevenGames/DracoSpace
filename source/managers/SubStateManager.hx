@@ -69,7 +69,8 @@ class SubStateManager
 		FlxG.camera.fade(FlxColor.BLACK, 0.25, false, onFadeComplete);
 	}
 
-	function openInventory(screen:InvScreenType = EQUIP)
+	/** Call this to open the inventory state from another state. **/
+	function openInventory(screenType:InvScreenType = EQUIP)
 	{
 		if (playState.subState == bss)
 			throw new haxe.Exception('Tried to open inventory from bss');
@@ -83,7 +84,7 @@ class SubStateManager
 			iss.openCallback = () ->
 			{
 				FlxG.camera.fade(FlxColor.BLACK, 0.25, true);
-				iss.init(screen);
+				iss.init(screenType);
 			}
 			playState.openSubState(iss);
 		};
@@ -100,12 +101,20 @@ class SubStateManager
 			throw new haxe.Exception('tried to return to previous from inv, but returnHere was wack');
 	}
 
-	public function toggleInventory(screen:InvScreenType = EQUIP)
+	/** Open, close, or switch screens in the inventory. You can pass in a screen, which will open the inv on that screen. Passing in null closes if its open. (aka equip)**/
+	public function toggleInventory(?screenType:InvScreenType)
 	{
 		if (playState.subState == iss)
-			closeInventory();
+		{
+			if (screenType == null)
+				closeInventory();
+			else if (iss.screenType != screenType)
+				iss.switchToScreen(screenType);
+		}
 		else
-			openInventory(screen);
+		{
+			openInventory(screenType);
+		}
 	}
 
 	/** Fade out, clean up ALL substates, open the map substate, then fade back in. Nothing
@@ -135,12 +144,6 @@ class SubStateManager
 	public function returnToHome()
 	{
 		initEvent(new HomeEvent());
-	}
-
-	public function refreshISSHeader()
-	{
-		if (iss != null)
-			iss.refreshHeader();
 	}
 
 	// paranoid function to free up memory. Might be un-needed.

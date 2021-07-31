@@ -81,10 +81,10 @@ class DamageNumber extends FlxSpriteGroup
 	}
 }
 
-class DamageNumbers extends FlxTypedSpriteGroup<DamageNumber>
+/** Render layer for to render damage numbers. Handles holding the numbers and rendering them. **/
+class DamageNumbersLayer extends FlxTypedSpriteGroup<DamageNumber>
 {
 	static inline final POOL_SIZE = 5;
-	static var instance:DamageNumbers;
 
 	var random:FlxRandom;
 

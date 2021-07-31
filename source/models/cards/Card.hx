@@ -146,7 +146,10 @@ class Card extends FlxSpriteGroup
 		// setup hover effect
 		this.highlight = new CardHighlight(body);
 		highlight.centerSprite();
+		// we put the highlight in the miscUILayer too so that it wont get accidentally covered by other things in the view,
+		// like neighboring cards for example.
 		add(highlight);
+		GameController.battleMiscUILayer.add(highlight);
 		highlight.visible = false;
 
 		// add body over the highlight effect

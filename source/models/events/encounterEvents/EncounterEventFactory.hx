@@ -136,10 +136,10 @@ class EncounterEventFactory
 	{
 		var skill = Player.getCurrentSkillShopChoices().getRandomChoice();
 		var name = 'Happy Campers';
-		var desc = 'Your party spots a camp with a few foragers looking for herbs in the forest. No doubt this is a popular place for potion brewers. '
+		var desc = 'There\'s a camp here with a few foragers, no doubt looking for herbs for potions.'
 			+ 'One of the foragers, an anteater, approaches your group. \n\n'
 			+ '\"Hey fellas. I\'ve got this special brew and I need test subjects.\n'
-			+ ' Drinking will unlock some hidden memories of the past, but you might experience short term memory loss. \n\nWhat do you say?\"';
+			+ ' Drinking it will unlock some hidden memories of the past, but you might experience short term memory loss. \n\nInterested?\"';
 
 		var acceptChoice = () ->
 		{
@@ -174,7 +174,7 @@ class EncounterEventFactory
 	{
 		var expCost = 7;
 		var name = 'Happy Campers';
-		var desc = 'Your party spots a camp with a few foragers looking for herbs in the forest. No doubt this is a popular place for potion brewers.'
+		var desc = 'There\'s a camp here with a few foragers, no doubt looking for herbs for potions.'
 			+ 'One of the foragers, an anteater, approaches your group. \n\n'
 			+ '\"Hey fellas. I\'ve got this special brew and I need test subjects.'
 			+ ' This one\'ll clear your mind and let you remember more things. Might have a small headache at first though.\"';

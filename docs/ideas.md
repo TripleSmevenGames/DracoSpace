@@ -42,8 +42,11 @@
 * lose-lose mechanics: the shroog mom from griftlands, the pig monster from darkest dungeon
 * when it's creature is attacked, draw and discard a card. many diff skills.
 * For each ally...deal x damage, gain x block
-* When attacked, gains  wounded. Has a strong attack and some other stuff
+* When attacked, you gain wounded. Has a strong attack and some other stuff
 * buffs when you play a con skill
+* life drain if unblocked
+* doing something stuns the boss
+* gains massive block per turn, break block to stun?. Or just low hp.
 
 ## Event ideas
 * choose between maxHP or heal
