@@ -40,6 +40,7 @@ class PlayState extends FlxState
 
 		SkillFactory.init();
 
+		// this needs to be called after SkillFactory.init()
 		Player.init();
 
 		// make sure this is called after Player.init()!

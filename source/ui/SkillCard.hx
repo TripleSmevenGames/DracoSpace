@@ -1,5 +1,6 @@
 package ui;
 
+import Castle;
 import constants.Colors;
 import constants.Fonts;
 import constants.UIMeasurements;
@@ -14,9 +15,11 @@ import models.skills.Skill;
 import ui.FlxTextWithReplacements;
 import ui.inventory.shopMenu.SkillShop.SkillShopChoiceCover;
 import ui.skillTile.SkillTile;
-import Castle;
 
 using utils.ViewUtils;
+
+// The SkillCard component is made up of many other smaller components, which when combined
+// create the entire card.
 
 /** Informational card describing a skill. Extended by other components
  * Centered. Added to MouseManager.
@@ -39,6 +42,19 @@ class SkillCard extends FlxSpriteGroup
 		Castle.SkillDataKind.generic => 0xFF333333,
 	];
 
+	static function getCardFrameForRarity(?rarity:SkillData_skills_rarity)
+	{
+		switch (rarity)
+		{
+			case UNCOMMON:
+				return AssetPaths.cardFrameUncommon__png;
+			case RARE:
+				return AssetPaths.cardFrameRare__png;
+			default:
+				return AssetPaths.cardFrameGeneric__png;
+		}
+	}
+
 	public function new(skill:Skill, ?highlight:FlxSprite)
 	{
 		super();
@@ -57,8 +73,8 @@ class SkillCard extends FlxSpriteGroup
 
 		add(body);
 
-		// add the white frame
-		var frame = new FlxUI9SliceSprite(0, 0, AssetPaths.cardFrameGeneric__png, new Rectangle(0, 0, body.width, body.height), [5, 5, 15, 15]);
+		// add the card frame, which is a diff color bepending on the rarity.
+		var frame = ViewUtils.newSlice9(getCardFrameForRarity(skill.rarity), body.width, body.height, [5, 5, 15, 15]);
 		frame.centerSprite();
 		add(frame);
 
@@ -143,7 +159,7 @@ class SkillCardTitle extends FlxSpriteGroup
 		var title = new FlxText(0, 0, 0, titleString);
 		var fontSize = titleString.length > 16 ? UIMeasurements.BATTLE_UI_FONT_SIZE_LG - 2 : UIMeasurements.BATTLE_UI_FONT_SIZE_LG;
 		title.setFormat(Fonts.STANDARD_FONT, fontSize);
-		// var background = ViewUtils.newSlice9(AssetPaths.skillCardTitle__png, width, title.height + 4, [15, 15, 32, 32]);
+
 		var backgroundpng = AssetPaths.skillCardTitle__png;
 		if (rarity == COMMON)
 			backgroundpng = AssetPaths.skillCardTitle__png;

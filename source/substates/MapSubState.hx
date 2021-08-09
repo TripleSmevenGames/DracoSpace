@@ -3,6 +3,7 @@ package substates;
 import flixel.FlxG;
 import flixel.FlxSprite;
 import flixel.FlxSubState;
+import flixel.addons.display.FlxTiledSprite;
 import flixel.group.FlxSpriteGroup;
 import flixel.math.FlxRandom;
 import flixel.system.FlxSound;
@@ -20,6 +21,7 @@ import ui.header.Header;
 import utils.ViewUtils;
 
 using flixel.util.FlxSpriteUtil;
+using utils.ViewUtils;
 
 typedef ColumnSprite = Array<MapTile>;
 
@@ -129,9 +131,8 @@ class GameMapView extends FlxSpriteGroup
 		this.ssm = GameController.subStateManager;
 
 		// add the background
-		var bg = new FlxSprite(0, 0, AssetPaths.desertbg__png);
-		bg.setGraphicSize(FlxG.width, FlxG.height);
-		bg.updateHitbox();
+		// the background image needs to already be scaled in the file, since we cant scale a tiled sprite in-code (it seems)
+		var bg = new FlxTiledSprite(AssetPaths.lauraForestBg3x__png, FlxG.width * 3, FlxG.height);
 		add(bg);
 
 		// add this screen first, so the connecting lines will be under the nodes
@@ -193,11 +194,6 @@ class MapSubState extends FlxSubState
 	/** Callback when we switch TO the map state.**/
 	public function onSwitch()
 	{
-		if (header == null)
-			trace('header was null onSwitch');
-		else
-			trace('header was not null onSwitch');
-
 		if (header == null)
 			this.header = GameController.header;
 

@@ -1616,7 +1616,7 @@
 						{
 							"id": "acornShot",
 							"name": "Acorn Shot",
-							"desc": "Deal $x damage.",
+							"desc": "Deal $x damage. If the damage wasn't blocked, heal $x2.",
 							"rarity": 0,
 							"costs": [
 								{
@@ -1624,10 +1624,11 @@
 								}
 							],
 							"targetMethod": 0,
-							"value": 7,
+							"value": 5,
 							"cooldown": 1,
 							"maxCharges": 1,
-							"chargesPerCD": 1
+							"chargesPerCD": 1,
+							"value2": 3
 						}
 					]
 				},

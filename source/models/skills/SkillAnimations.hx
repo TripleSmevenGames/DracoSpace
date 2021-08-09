@@ -57,6 +57,7 @@ class SkillAnimations
 	/** Create a play that will run ONE bam animation group with 1 effect.
 	 * Calling the created play() DOES NOT run the effect at that time.
 	 * The play is a function that, when run, adds an animation to the BAM queue and a sprite to the BSAL.
+	 * The animation in the BAM queue will trigger the effect at the passed in effectFrame number.
 	 * To actually call the play, pass in the targets, owner and context.
 	 * You can combine multiple "play" calls in a single skill's play to create complicated and chaining effects.
 	 * Look at the SkillFactory for examples.

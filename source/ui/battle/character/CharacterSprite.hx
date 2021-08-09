@@ -594,6 +594,8 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		hpBarSprite = new CharacterHpBar(this);
 		hpBarSprite.setPosition(0, this.sprite.height / 2 + 8);
 		add(hpBarSprite);
+		// add to miscUI layer so it doesnt get rendered underneath another character sprite
+		GameController.battleMiscUILayer.add(hpBarSprite);
 	}
 
 	/** Setup the spot under the HP bar where the char's statuses will show up. **/
@@ -602,6 +604,8 @@ class CharacterSprite extends FlxSpriteGroup implements ITurnTriggerable
 		statusDisplay = new CharacterStatusDisplay(this);
 		statusDisplay.setPosition(0, hpBarSprite.y + 28);
 		add(statusDisplay);
+		// add to miscUI layer so it doesnt get rendered underneath another character sprite
+		GameController.battleMiscUILayer.add(statusDisplay);
 	}
 
 	/** Call this after status display is setup**/

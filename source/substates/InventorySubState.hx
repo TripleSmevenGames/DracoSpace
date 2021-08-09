@@ -54,11 +54,6 @@ class InventorySubState extends FlxSubState
 	/** Call this when we switch to this state. We cleanup tooltips (to prevent memory leaks), so make sure to re-init tooltips. **/
 	public function init(screenType:InvScreenType = EQUIP)
 	{
-		if (header == null)
-			trace('header was null inv init');
-		else
-			trace('header was not null inv init');
-
 		GameController.invTooltipLayer.cleanUpTooltips();
 
 		initEquipment();

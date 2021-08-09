@@ -280,6 +280,25 @@ class SkillFactoryEnemy
 		{
 			var skill = skillFromData(enemy, acornShot, priority);
 			skill.play = SkillAnimations.genericAttackPlay(skill.value);
+			skill.play = (targets:Array<CharacterSprite>, owner:CharacterSprite, context:BattleContext) ->
+			{
+				var animSprite = SkillAnimations.getHitAnim();
+				var effect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+				{
+					// if the target loss hp, queue up a heal effect animation.
+					var hpLoss = owner.dealDamageTo(skill.value, target, context);
+					if (hpLoss > 0)
+					{
+						// create a healing effect, then pass it into a genericBuffPlay, then call it.
+						var healEffect = (target:CharacterSprite, owner:CharacterSprite, context:BattleContext) ->
+						{
+							target.healHp(skill.value2);
+						}
+						SkillAnimations.genericBuffPlay(healEffect)([owner], owner, context);
+					}
+				};
+				return SkillAnimations.getCustomPlay(animSprite, effect, 0, null)(targets, owner, context);
+			}
 			skill.spritePath = AssetPaths.petalBlade__png;
 			return skill;
 		},

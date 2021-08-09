@@ -6,7 +6,9 @@ import ui.TooltipLayer.Tooltip;
 
 using utils.ViewUtils;
 
-/** Extends the base artifact tile to do stuff in the inventory substate. **/
+/** Extends the base artifact tile to do stuff in the inventory substate.
+ * In this case, its having a tooltip and adding it to the mouse manager so it can be dragged.
+**/
 class ArtifactTileInv extends ArtifactTile
 {
 	public var artifact:Artifact;
